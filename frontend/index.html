@@ -388,28 +388,9 @@
       background: #EBEBF2;
     }
 
-    /* User Profile & Auth Button (hidden on public landing) */
+    /* User Profile & Auth Button (hidden from navbar) */
     .user-profile-btn {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-pill);
-      padding: 0 14px;
-      height: 40px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      cursor: pointer;
-      transition: all 0.18s ease;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .user-profile-btn:hover {
-      background: #EBEBF2;
-      border-color: var(--purple-600);
+      display: none !important;
     }
 
     .status-dot-indicator {
@@ -2541,7 +2522,7 @@
             <form id="emailLoginForm" onsubmit="handleAuthFormSubmit(event)">
               <div class="login-form-group">
                 <label for="loginEmailInput">Email address</label>
-                <input type="email" id="loginEmailInput" class="text-input" placeholder="e.g. alex.teacher@oakwood.k12.edu" required autocomplete="email">
+                <input type="email" id="loginEmailInput" class="text-input" placeholder="e.g. user.educator@school.edu" required autocomplete="email">
               </div>
               <div class="login-form-group">
                 <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
@@ -3683,6 +3664,12 @@
       auth_type: localStorage.getItem('aigo_authtype') || localStorage.getItem('effortmatch_authtype') || 'profile'
     };
 
+    // Purge legacy hardcoded test identity if previously persisted in localStorage
+    if (currentUser.name && currentUser.name.includes('Alex Rivera')) {
+      currentUser.name = 'Educator';
+      localStorage.setItem('aigo_name', 'Educator');
+    }
+
     function isUserLoggedIn() {
       return localStorage.getItem('aigo_auth') === 'true';
     }
@@ -3706,18 +3693,11 @@
         }
       }
 
-      // Hide admin button and saved units on public landing page navbar
-      const currentHash = (window.location.hash || '').replace('#', '') || 'landing';
-      const isPublic = ['landing', 'login'].includes(currentHash);
+      // Keep user profile button and saved units hidden from sticky navbar (identity is displayed cleanly in workspace subnav)
       const authBtn = document.getElementById('authBtn');
       const runningTotal = document.getElementById('headerRunningTotal');
-      if (isPublic) {
-        if (authBtn) authBtn.style.display = 'none';
-        if (runningTotal) runningTotal.style.display = 'none';
-      } else {
-        if (authBtn) authBtn.style.display = 'inline-flex';
-        if (runningTotal) runningTotal.style.display = 'none';
-      }
+      if (authBtn) authBtn.style.display = 'none';
+      if (runningTotal) runningTotal.style.display = 'none';
 
       // Update workspace pill text elements in all views
       const savedText = document.getElementById('runningTotalText')?.textContent || '0.0 units';
@@ -3751,7 +3731,7 @@
         }
       });
 
-      // Synchronize Nav Bars & remove admin + saved units on public landing
+      // Synchronize Nav Bars
       const publicNav = document.getElementById('publicNavLinks');
       const workspaceNav = document.getElementById('workspaceNavLinks');
       const navCtaBtn = document.getElementById('navCtaBtn');
@@ -3764,15 +3744,15 @@
         if (workspaceNav) workspaceNav.style.display = 'none';
         if (navCtaBtn) navCtaBtn.style.display = 'inline-flex';
         if (navCtaText) navCtaText.textContent = isUserLoggedIn() ? 'Open Workspace' : 'Launch Workspace';
-        if (headerRunningTotal) headerRunningTotal.style.display = 'none';
-        if (authBtn) authBtn.style.display = 'none';
       } else {
         if (publicNav) publicNav.style.display = 'none';
         if (workspaceNav) workspaceNav.style.display = 'flex';
         if (navCtaBtn) navCtaBtn.style.display = 'none';
-        if (headerRunningTotal) headerRunningTotal.style.display = 'none';
-        if (authBtn) authBtn.style.display = 'inline-flex';
       }
+
+      // Keep user profile button and saved units hidden from sticky navbar
+      if (headerRunningTotal) headerRunningTotal.style.display = 'none';
+      if (authBtn) authBtn.style.display = 'none';
 
       // Update workspace tab active states
       document.querySelectorAll('.workspace-tab-btn').forEach(btn => {
@@ -4046,7 +4026,7 @@
       // Smooth fallback if popup is blocked by browser
       currentUser = {
         id: 'google_user_' + Math.floor(Math.random() * 10000),
-        name: 'Alex Rivera (Google)',
+        name: 'Google Workspace User',
         role: 'requester',
         school_id: 'google_workspace',
         auth_type: 'google'
