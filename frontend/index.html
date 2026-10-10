@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EffortMatch — Adaptive AI Image Resource Optimizer</title>
-  <meta name="description" content="Matches computational effort to image purpose and reveals transparent avoided compute savings versus maximum tier.">
-  
+  <meta name="description"
+    content="Matches computational effort to image purpose and reveals transparent avoided compute savings versus maximum tier.">
+
   <!-- Self-Hosted Tokens & Typography (No Runtime CDN Dependency) -->
   <link rel="stylesheet" href="/tokens.css">
   <link rel="stylesheet" href="/static/tokens.css">
@@ -94,9 +96,20 @@
       border-radius: 2px;
     }
 
-    .brand-mark-bar.bar-1 { height: 7px; opacity: 0.7; }
-    .brand-mark-bar.bar-2 { height: 13px; opacity: 0.9; }
-    .brand-mark-bar.bar-3 { height: 19px; opacity: 1.0; }
+    .brand-mark-bar.bar-1 {
+      height: 7px;
+      opacity: 0.7;
+    }
+
+    .brand-mark-bar.bar-2 {
+      height: 13px;
+      opacity: 0.9;
+    }
+
+    .brand-mark-bar.bar-3 {
+      height: 19px;
+      opacity: 1.0;
+    }
 
     .brand-text {
       display: flex;
@@ -1034,27 +1047,72 @@
 
     /* ── Responsive Breakpoints ───────────────────────────────────────────── */
     @media (max-width: 960px) {
-      .hero-title { font-size: 44px; }
-      .purpose-grid { grid-template-columns: repeat(2, 1fr); }
-      .steps-grid { grid-template-columns: repeat(2, 1fr); }
-      .problem-grid { grid-template-columns: 1fr; gap: 24px; }
-      .comparison-grid { grid-template-columns: repeat(2, 1fr); }
-      .nav-links { display: none; }
-      .mobile-menu-btn { display: block; }
+      .hero-title {
+        font-size: 44px;
+      }
+
+      .purpose-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .problem-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .comparison-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
     }
 
     @media (max-width: 680px) {
-      .hero-title { font-size: 36px; }
-      .proof-grid { grid-template-columns: 1fr; }
-      .preview-section { grid-template-columns: 1fr; }
-      .tier-selector-grid { grid-template-columns: 1fr; }
-      .purpose-grid { grid-template-columns: 1fr; }
-      .steps-grid { grid-template-columns: 1fr; }
-      .comparison-grid { grid-template-columns: 1fr; }
-      .running-total-pill { display: none; }
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-section {
+        grid-template-columns: 1fr;
+      }
+
+      .tier-selector-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .purpose-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .running-total-pill {
+        display: none;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- 1. STICKY NAVIGATION -->
@@ -1094,7 +1152,8 @@
         <a href="#tool-section" class="btn-pill-primary">
           Start generating <span aria-hidden="true">↗</span>
         </a>
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile navigation menu" onclick="toggleMobileMenu()">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile navigation menu"
+          onclick="toggleMobileMenu()">
           ☰
         </button>
       </div>
@@ -1103,7 +1162,7 @@
 
   <main>
     <div class="container">
-      
+
       <!-- 2. CENTRED HERO SECTION -->
       <section class="hero-section" aria-labelledby="heroHeading">
         <div class="hero-eyebrow">ADAPTIVE IMAGE GENERATION</div>
@@ -1140,7 +1199,8 @@
               </div>
               <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
                 <span class="chip-lavender">Coloring sheet</span>
-                <span class="chip-lavender" style="background: #EBE3FF; color: var(--purple-700);">Economy Recommended</span>
+                <span class="chip-lavender" style="background: #EBE3FF; color: var(--purple-700);">Economy
+                  Recommended</span>
               </div>
               <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
                 Line art: Economy tier satisfies the quality floor with minimal compute.
@@ -1152,21 +1212,25 @@
               <div class="proof-card-label">RESOURCE USE</div>
               <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px;">
                 <span style="font-size: 13px; color: var(--muted-strong);">Selected Tier Effort:</span>
-                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--ink);">11.8 units <span class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
+                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--ink);">11.8 units <span
+                    class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
               </div>
               <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px;">
                 <span style="font-size: 13px; color: var(--muted);">Maximum Tier Baseline:</span>
-                <span style="font-family: var(--font-mono); color: var(--muted);">118.0 units <span class="origin-badge origin-estimated" style="font-size: 9px;">Not Run</span></span>
+                <span style="font-family: var(--font-mono); color: var(--muted);">118.0 units <span
+                    class="origin-badge origin-estimated" style="font-size: 9px;">Not Run</span></span>
               </div>
-              
+
               <!-- Progress Bar -->
-              <div style="background: #EBEBF0; height: 7px; border-radius: 9999px; overflow: hidden; margin-bottom: 12px;">
+              <div
+                style="background: #EBEBF0; height: 7px; border-radius: 9999px; overflow: hidden; margin-bottom: 12px;">
                 <div style="background: var(--purple-600); width: 10%; height: 100%;"></div>
               </div>
 
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 12px; font-weight: 600; color: var(--green-text);">Avoided Compute:</span>
-                <span style="font-size: 14px; font-weight: 800; color: var(--green-text); font-family: var(--font-mono);">
+                <span
+                  style="font-size: 14px; font-weight: 800; color: var(--green-text); font-family: var(--font-mono);">
                   +106.2 units (90.0% reduction)
                 </span>
               </div>
@@ -1183,10 +1247,13 @@
           </h2>
           <div class="problem-body">
             <p style="margin-bottom: 14px;">
-              Today, generative image models consume maximum GPU compute by default, whether you need a quick coloring outline or an exhibition-grade poster.
+              Today, generative image models consume maximum GPU compute by default, whether you need a quick coloring
+              outline or an exhibition-grade poster.
             </p>
             <p>
-              The energy and computational effort are completely invisible to the requester, so nobody can make an informed choice. EffortMatch rightsizes computational effort to purpose and transparently reveals what was saved versus the Maximum quality tier.
+              The energy and computational effort are completely invisible to the requester, so nobody can make an
+              informed choice. EffortMatch rightsizes computational effort to purpose and transparently reveals what was
+              saved versus the Maximum quality tier.
             </p>
           </div>
         </div>
@@ -1203,12 +1270,14 @@
             <span class="chip-lavender">Lowest Suitable Tier Policy</span>
           </div>
           <div class="card-subtitle">
-            Select the intended purpose. The decision engine selects the lowest quality tier that satisfies this purpose.
+            Select the intended purpose. The decision engine selects the lowest quality tier that satisfies this
+            purpose.
           </div>
 
           <!-- Purpose Selection Grid (Section 4 Schema) -->
           <div class="purpose-grid" id="purposeGrid" role="radiogroup" aria-label="Select Image Purpose">
-            <div class="purpose-card selected" data-purpose="coloring_sheet" onclick="selectPurpose('coloring_sheet')" role="radio" aria-checked="true" tabindex="0">
+            <div class="purpose-card selected" data-purpose="coloring_sheet" onclick="selectPurpose('coloring_sheet')"
+              role="radio" aria-checked="true" tabindex="0">
               <div class="purpose-header">
                 <span class="purpose-icon" aria-hidden="true">🖍️</span>
                 <span class="purpose-name">Coloring Sheet</span>
@@ -1217,7 +1286,8 @@
               <span class="chip-lavender">Floor: Economy</span>
             </div>
 
-            <div class="purpose-card" data-purpose="educational_illustration" onclick="selectPurpose('educational_illustration')" role="radio" aria-checked="false" tabindex="0">
+            <div class="purpose-card" data-purpose="educational_illustration"
+              onclick="selectPurpose('educational_illustration')" role="radio" aria-checked="false" tabindex="0">
               <div class="purpose-header">
                 <span class="purpose-icon" aria-hidden="true">📖</span>
                 <span class="purpose-name">Educational Illustration</span>
@@ -1226,7 +1296,8 @@
               <span class="chip-lavender">Floor: Economy</span>
             </div>
 
-            <div class="purpose-card" data-purpose="presentation_graphic" onclick="selectPurpose('presentation_graphic')" role="radio" aria-checked="false" tabindex="0">
+            <div class="purpose-card" data-purpose="presentation_graphic"
+              onclick="selectPurpose('presentation_graphic')" role="radio" aria-checked="false" tabindex="0">
               <div class="purpose-header">
                 <span class="purpose-icon" aria-hidden="true">📊</span>
                 <span class="purpose-name">Presentation Graphic</span>
@@ -1235,7 +1306,8 @@
               <span class="chip-lavender">Floor: Standard</span>
             </div>
 
-            <div class="purpose-card" data-purpose="social_media_artwork" onclick="selectPurpose('social_media_artwork')" role="radio" aria-checked="false" tabindex="0">
+            <div class="purpose-card" data-purpose="social_media_artwork"
+              onclick="selectPurpose('social_media_artwork')" role="radio" aria-checked="false" tabindex="0">
               <div class="purpose-header">
                 <span class="purpose-icon" aria-hidden="true">📱</span>
                 <span class="purpose-name">Social Media Artwork</span>
@@ -1244,7 +1316,8 @@
               <span class="chip-lavender">Floor: Economy</span>
             </div>
 
-            <div class="purpose-card" data-purpose="professional_print_artwork" onclick="selectPurpose('professional_print_artwork')" role="radio" aria-checked="false" tabindex="0">
+            <div class="purpose-card" data-purpose="professional_print_artwork"
+              onclick="selectPurpose('professional_print_artwork')" role="radio" aria-checked="false" tabindex="0">
               <div class="purpose-header">
                 <span class="purpose-icon" aria-hidden="true">🖨️</span>
                 <span class="purpose-name">Professional / Print</span>
@@ -1253,7 +1326,8 @@
               <span class="chip-lavender">Floor: Maximum</span>
             </div>
 
-            <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')" role="radio" aria-checked="false" tabindex="0">
+            <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')" role="radio"
+              aria-checked="false" tabindex="0">
               <div class="purpose-header">
                 <span class="purpose-icon" aria-hidden="true">⚙️</span>
                 <span class="purpose-name">Custom Purpose</span>
@@ -1266,7 +1340,9 @@
           <!-- Prompt Input -->
           <div style="margin-bottom: 20px;">
             <label class="input-label" for="promptInput">YOUR PROMPT</label>
-            <input type="text" id="promptInput" class="text-input" placeholder="e.g. Cute farm kitten playing with a ball of wool" value="Cute kitten playing with wool" oninput="onPromptInputChanged()">
+            <input type="text" id="promptInput" class="text-input"
+              placeholder="e.g. Cute farm kitten playing with a ball of wool" value="Cute kitten playing with wool"
+              oninput="onPromptInputChanged()">
           </div>
 
           <!-- Dynamic Extra Fields (Print & Custom Inputs) -->
@@ -1300,7 +1376,8 @@
 
             <div id="customResGroup" style="display: none;">
               <label class="input-label" for="targetResInput">TARGET RESOLUTION (PX)</label>
-              <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024" oninput="triggerRecommend()">
+              <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024"
+                oninput="triggerRecommend()">
             </div>
           </div>
 
@@ -1325,7 +1402,8 @@
             </label>
             <div class="tier-selector-grid" id="tierSelectorGrid" role="radiogroup" aria-label="Select Quality Tier">
               <!-- Economy Card -->
-              <div class="tier-card is-recommended-card selected" id="tierCard-economy" onclick="selectTier('economy')" role="radio" aria-checked="true" tabindex="0">
+              <div class="tier-card is-recommended-card selected" id="tierCard-economy" onclick="selectTier('economy')"
+                role="radio" aria-checked="true" tabindex="0">
                 <div class="tier-name-row">
                   <span class="tier-title">Economy</span>
                   <span class="origin-badge origin-simulated">768×768</span>
@@ -1336,7 +1414,8 @@
               </div>
 
               <!-- Standard Card -->
-              <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')" role="radio" aria-checked="false" tabindex="0">
+              <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')" role="radio"
+                aria-checked="false" tabindex="0">
                 <div class="tier-name-row">
                   <span class="tier-title">Standard</span>
                   <span class="origin-badge origin-simulated">1024×1024</span>
@@ -1347,22 +1426,27 @@
               </div>
 
               <!-- Maximum Card -->
-              <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')" role="radio" aria-checked="false" tabindex="0">
+              <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')" role="radio"
+                aria-checked="false" tabindex="0">
                 <div class="tier-name-row">
                   <span class="tier-title">Maximum</span>
                   <span class="origin-badge origin-simulated">1536×1536</span>
                 </div>
                 <div class="tier-params-meta">50 steps • Model factor 1.0</div>
                 <div class="tier-units-display" id="maximumUnits">118.0 units</div>
-                <div class="tier-savings-display" style="color: var(--muted);" id="maximumSavings">0.0% savings (Baseline)</div>
+                <div class="tier-savings-display" style="color: var(--muted);" id="maximumSavings">0.0% savings
+                  (Baseline)</div>
               </div>
             </div>
           </div>
 
           <!-- Inline Notice for Override Confirmation (also backed by modal) -->
-          <div id="overrideWarningBox" style="display: none; background: var(--amber-surface); border: 1px solid rgba(138, 75, 0, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--amber-text);">
-            <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality Warning</div>
-            <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor recommended for this purpose.</div>
+          <div id="overrideWarningBox"
+            style="display: none; background: var(--amber-surface); border: 1px solid rgba(138, 75, 0, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--amber-text);">
+            <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality Warning
+            </div>
+            <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor
+              recommended for this purpose.</div>
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
               <input type="checkbox" id="overrideConfirmCheckbox">
               <span>I confirm this below-floor choice (will be logged in audit trail).</span>
@@ -1370,7 +1454,8 @@
           </div>
 
           <!-- Budget Error Box -->
-          <div id="budgetErrorBox" style="display: none; background: var(--rose-surface); border: 1px solid rgba(179, 27, 56, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--rose-text);">
+          <div id="budgetErrorBox"
+            style="display: none; background: var(--rose-surface); border: 1px solid rgba(179, 27, 56, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--rose-text);">
             <div style="font-weight: 700; margin-bottom: 2px;">🛑 Blocked by Hard Budget</div>
             <div id="budgetMessageText">Selected tier exceeds hard budget limit.</div>
           </div>
@@ -1380,7 +1465,8 @@
             <button class="btn-pill-primary" id="btnGenerate" onclick="generateImage()">
               Generate Image <span aria-hidden="true">↗</span>
             </button>
-            <span style="font-size: 13px; color: var(--muted-strong);" id="generationStatusNotice">Ready to generate</span>
+            <span style="font-size: 13px; color: var(--muted-strong);" id="generationStatusNotice">Ready to
+              generate</span>
           </div>
         </div>
 
@@ -1391,7 +1477,7 @@
             <span class="origin-badge origin-simulated" id="comparisonDataOrigin">Simulated Proxy</span>
           </div>
           <div class="card-subtitle">
-            Every number is explicitly attributed. "Saved" represents estimated avoided compute vs the Maximum tier baseline (not run).
+            Every number is explicitly attributed. "Saved" represents estimated savings vs maximum tier (not run).
           </div>
 
           <!-- Progress Bar: Units Used vs Maximum -->
@@ -1434,7 +1520,8 @@
                 <span class="origin-badge origin-measured">Savings</span>
               </div>
               <div class="metric-value" style="color: var(--green-text);" id="metricSavingsUnits">+106.2 units</div>
-              <div class="metric-sub" style="font-weight: 700; color: var(--green-text);" id="metricSavingsPct">90.0% compute reduction</div>
+              <div class="metric-sub" style="font-weight: 700; color: var(--green-text);" id="metricSavingsPct">90.0%
+                compute reduction</div>
             </div>
 
             <!-- Metric 4: Energy & Carbon -->
@@ -1443,8 +1530,10 @@
                 <span class="metric-label">Energy & Carbon</span>
                 <span class="origin-badge origin-simulated">Strict Policy</span>
               </div>
-              <div class="metric-value" style="font-size: 16px; color: var(--muted-strong);" id="metricEnergyValue">null (Not Estimated)</div>
-              <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never presented as Wh without measured hardware data.</div>
+              <div class="metric-value" style="font-size: 16px; color: var(--muted-strong);" id="metricEnergyValue">null
+                (Not Estimated)</div>
+              <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never presented
+                as Wh without measured hardware data.</div>
             </div>
           </div>
 
@@ -1457,8 +1546,10 @@
                 <span class="origin-badge origin-simulated" id="outputTierBadge">Economy Placeholder</span>
               </div>
               <div class="preview-img-container">
-                <img id="generatedImagePreview" src="" alt="Generated image output preview with DEMO PLACEHOLDER watermark" style="display: none;">
-                <div id="imagePlaceholderNotice" style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
+                <img id="generatedImagePreview" src=""
+                  alt="Generated image output preview with DEMO PLACEHOLDER watermark" style="display: none;">
+                <div id="imagePlaceholderNotice"
+                  style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
                   Generate an image to view the synthetic placeholder output.
                 </div>
               </div>
@@ -1474,8 +1565,10 @@
                 <span class="origin-badge origin-estimated">1536×1536 Baseline</span>
               </div>
               <div class="preview-img-container">
-                <img id="maxTierImagePreview" src="" alt="Maximum quality reference preview with DEMO PLACEHOLDER watermark" style="display: none;">
-                <div id="maxPlaceholderNotice" style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
+                <img id="maxTierImagePreview" src=""
+                  alt="Maximum quality reference preview with DEMO PLACEHOLDER watermark" style="display: none;">
+                <div id="maxPlaceholderNotice"
+                  style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
                   Reference baseline: Illustrative placeholder asset differing in resolution.
                 </div>
               </div>
@@ -1499,25 +1592,29 @@
           <div class="step-card">
             <div class="step-number">1</div>
             <div class="step-title">Describe the image</div>
-            <div class="step-desc">Enter your prompt and select the intended purpose. Optional print flags specify physical reproduction needs.</div>
+            <div class="step-desc">Enter your prompt and select the intended purpose. Optional print flags specify
+              physical reproduction needs.</div>
           </div>
 
           <div class="step-card">
             <div class="step-number">2</div>
             <div class="step-title">Match the effort</div>
-            <div class="step-desc">The decision engine recommends the lowest tier satisfying the floor, raising it only if print or detail require more.</div>
+            <div class="step-desc">The decision engine recommends the lowest tier satisfying the floor, raising it only
+              if print or detail require more.</div>
           </div>
 
           <div class="step-card">
             <div class="step-number">3</div>
             <div class="step-title">Generate</div>
-            <div class="step-desc">Image generates at confirmed parameters. In demo mode, clearly labeled placeholder assets are produced.</div>
+            <div class="step-desc">Image generates at confirmed parameters. In demo mode, clearly labeled placeholder
+              assets are produced.</div>
           </div>
 
           <div class="step-card">
             <div class="step-number">4</div>
             <div class="step-title">See what was saved</div>
-            <div class="step-desc">Inspect transparent counterfactual savings vs Maximum tier baseline in units and percentage reduction.</div>
+            <div class="step-desc">Inspect transparent counterfactual savings vs Maximum tier baseline in units and
+              percentage reduction.</div>
           </div>
         </div>
       </section>
@@ -1525,7 +1622,8 @@
       <!-- 7. GENERATION HISTORY -->
       <section class="history-section" id="history-section" aria-labelledby="historyHeading">
         <div class="section-eyebrow">AUDIT TRAIL & LOGS</div>
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
+        <div
+          style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
           <h2 class="section-title" id="historyHeading" style="margin-bottom: 0;">Generation History & Savings</h2>
           <button class="btn-pill-secondary" onclick="exportCSV()">
             📥 Export CSV
@@ -1535,7 +1633,8 @@
         <!-- History Toolbar -->
         <div class="history-toolbar">
           <div class="history-filters">
-            <select id="historyFilterPurpose" class="select-input" onchange="loadHistory()" style="width: auto;" aria-label="Filter by purpose">
+            <select id="historyFilterPurpose" class="select-input" onchange="loadHistory()" style="width: auto;"
+              aria-label="Filter by purpose">
               <option value="">All Purposes</option>
               <option value="coloring_sheet">Coloring Sheet</option>
               <option value="educational_illustration">Educational Illustration</option>
@@ -1544,7 +1643,8 @@
               <option value="professional_print_artwork">Professional / Print</option>
               <option value="custom">Custom</option>
             </select>
-            <select id="historyFilterTier" class="select-input" onchange="loadHistory()" style="width: auto;" aria-label="Filter by tier">
+            <select id="historyFilterTier" class="select-input" onchange="loadHistory()" style="width: auto;"
+              aria-label="Filter by tier">
               <option value="">All Tiers</option>
               <option value="economy">Economy</option>
               <option value="standard">Standard</option>
@@ -1555,7 +1655,8 @@
             </button>
           </div>
           <div style="font-size: 13px; color: var(--muted-strong);">
-            Running total: <span id="historySummaryCount" style="font-weight: 700; color: var(--ink);">0</span> successful generations
+            Running total: <span id="historySummaryCount" style="font-weight: 700; color: var(--ink);">0</span>
+            successful generations
           </div>
         </div>
 
@@ -1578,7 +1679,8 @@
             </thead>
             <tbody id="historyTableBody">
               <tr>
-                <td colspan="11" style="text-align: center; color: var(--muted); padding: 24px;">Loading generation history...</td>
+                <td colspan="11" style="text-align: center; color: var(--muted); padding: 24px;">Loading generation
+                  history...</td>
               </tr>
             </tbody>
           </table>
@@ -1597,9 +1699,12 @@
             </div>
           </div>
           <div class="card-subtitle">
-            Edit tier parameters, purpose floors, budgets, and policies. Strict validation rejects invalid configurations without crashing.
+            Edit tier parameters, purpose floors, budgets, and policies. Strict validation rejects invalid
+            configurations without crashing.
           </div>
-          <textarea id="configEditor" class="text-input" style="font-family: var(--font-mono); height: 260px; font-size: 13px; line-height: 1.45;" spellcheck="false" aria-label="Domain Configuration JSON Editor"></textarea>
+          <textarea id="configEditor" class="text-input"
+            style="font-family: var(--font-mono); height: 260px; font-size: 13px; line-height: 1.45;" spellcheck="false"
+            aria-label="Domain Configuration JSON Editor"></textarea>
           <div style="margin-top: 10px; font-size: 12px; color: var(--muted-strong);" id="configSaveStatus">
             Loaded active configuration.
           </div>
@@ -1618,7 +1723,8 @@
       </section>
 
       <!-- 10. ACCESSIBLE MODAL FOR BELOW-FLOOR OVERRIDES & BUDGET BLOCKING -->
-      <div class="modal-backdrop" id="accessibleModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" onclick="onModalBackdropClick(event)">
+      <div class="modal-backdrop" id="accessibleModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"
+        aria-describedby="modalDesc" onclick="onModalBackdropClick(event)">
         <div class="modal-window">
           <h3 class="modal-title" id="modalTitle">Quality Floor Confirmation</h3>
           <div class="modal-body" id="modalDesc">
@@ -1665,7 +1771,7 @@
         openModal(
           "Below-Floor Quality Warning",
           "Selected tier (ECONOMY) is below the quality floor (STANDARD) for presentation graphic. Detail may be insufficient for reproduction. Confirm override?",
-          () => {}
+          () => { }
         );
       }
     });
@@ -1795,7 +1901,7 @@
 
       if (tierRank[tier] < tierRank[floorTier]) {
         warnBox.style.display = 'block';
-        document.getElementById('overrideWarningText').textContent = 
+        document.getElementById('overrideWarningText').textContent =
           `Selected tier (${tier.toUpperCase()}) is below the quality floor (${floorTier.toUpperCase()}) for ${currentPurpose.replace('_', ' ')}. Detail may be insufficient.`;
       } else {
         warnBox.style.display = 'none';
@@ -1818,7 +1924,7 @@
       if (selectedAlt) {
         document.getElementById('metricSelectedUnits').textContent = `${selectedAlt.units} units`;
         document.getElementById('metricSelectedTierName').textContent = `${selectedAlt.display || selectedAlt.tier} (${selectedAlt.parameters.width}×${selectedAlt.parameters.height}, ${selectedAlt.parameters.steps} steps)`;
-        
+
         const baselineU = maxAlt ? maxAlt.units : 118.0;
         document.getElementById('metricBaselineUnits').textContent = `${baselineU} units`;
 
@@ -1929,7 +2035,7 @@
         document.getElementById('metricSavingsPct').textContent = `${data.savings_percentage}% compute reduction`;
 
         notice.textContent = `Completed in ${data.latency_s}s. Saved ${data.savings_units} units (${data.savings_percentage}%)!`;
-        
+
         // Refresh summary and history
         fetchSummary();
         loadHistory();
@@ -2114,11 +2220,3 @@
 
     function setupKeyboardAccessibility() {
       window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeModal();
-        }
-      });
-    }
-  </script>
-</body>
-</html>

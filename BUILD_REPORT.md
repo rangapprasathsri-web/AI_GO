@@ -1,8 +1,8 @@
 # Build Report: Adaptive AI Image Resource Optimizer
 
 **Date**: 2026-10-10  
-**Status**: All P0 and P1 requirements complete and verified.  
-**Test Suite**: 124 passed, 0 failed (100% pass rate).  
+**Status**: All requirements, Minimal Editorial SaaS theme, and accessibility standards complete and verified.  
+**Test Suite**: 146 passed, 0 failed (100% pass rate).  
 **Demo Script**: All 7 steps in Section 11 reproduce cleanly (`make demo`).
 
 ---
@@ -46,20 +46,22 @@
 - `GET /config` & `PUT /config`: Sanitized configuration retrieval (no secrets) and hot-reloading with validation and rollback.
 - `GET /health`: Health status and domain verification.
 
-### E. Frontend UI
-- Full web interface at `http://localhost:8000` with Outfit and JetBrains Mono typography, dark mode glassmorphism, responsive grid, and accessible controls.
-- Running Total widget: *"You have saved about X units across N images (estimated, not measured)"*.
-- Interactive quality tier selector with `[★ RECOMMENDED]` pre-selection.
-- Centerpiece Resource Comparison panel with Selected Effort, Maximum Baseline, Avoided Savings, and Side-by-side placeholder preview.
-- Below-floor confirmation checkbox modal and hard budget error notices.
+### E. Minimal Editorial SaaS Frontend & Design System
+- **Design Tokens**: Standardized CSS variables (`frontend/tokens.css`) defining `--canvas (#FFFFFF)`, `--surface (#F7F7FA)`, `--border (#E8E8ED)`, `--ink (#111113)`, `--purple-600 (#6E34E2)`, `--purple-700 (#5221BA)`, `--lavender (#F2EDFF)`, and accessible text variants.
+- **Self-Hosted Geist Fonts**: 4 weights (400, 500, 600, 700) hosted locally under `frontend/fonts/` with `font-display: swap` and system sans fallbacks. Zero external CDN dependencies.
+- **Editorial Layout Flow**: Sticky navigation with original tier-bars brand mark and running total pill; centered hero ("Right effort. Every image."); live proof preview shell; asymmetric problem section; interactive generator; 4-step methodology; ruled history table; accessible override modal dialog; closing CTA.
+- **WCAG AA Compliance**: Every foreground/background color pair mathematically verified in `test_contrast.py` (>= 4.5:1 normal text, >= 3.0:1 UI/large text).
+- **Responsive Verification**: Headless Firefox screenshots verified at 1280px (desktop), 820px (tablet), and 390px (mobile) stored under `docs/screenshots/`.
 
 ---
 
 ## 2. Test Verification Summary
 
 Ran `make test` (`python -m pytest backend/tests/ -v`):
-- **Total Tests Passed**: **124**
+- **Total Tests Passed**: **146**
 - **Failed**: **0**
+- **WCAG AA Contrast Tests (`test_contrast.py`)**: **14 passed**
+- **Frontend Accessibility & Honesty Tests (`test_frontend_accessibility.py`)**: **8 passed**
 - **Validation Scenarios (Section 10)**:
   1. `test_scenario_1_coloring_sheet_recommends_economy`: PASSED
   2. `test_scenario_2_print_artwork_recommends_maximum`: PASSED

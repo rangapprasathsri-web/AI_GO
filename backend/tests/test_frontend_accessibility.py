@@ -50,12 +50,12 @@ def test_self_hosted_fonts_no_google_fonts_cdn(html_soup):
 
 def test_honesty_labels_present_in_markup(html_soup):
     """Honesty constraints: Disclaimers and placeholder marks must remain prominent."""
-    text_content = html_soup.get_text()
-    assert "DEMO PLACEHOLDER" in text_content
-    assert "estimated avoided compute vs the Maximum tier baseline (not run)" in text_content.lower() or \
-           "avoided compute vs the maximum tier baseline (not run)" in text_content.lower()
-    assert "not estimated" in text_content.lower()
-    assert "simulated" in text_content.lower()
+    text_content = html_soup.get_text().lower()
+    assert "demo placeholder" in text_content
+    assert "estimated avoided compute vs the maximum tier baseline (not run)" in text_content or \
+           "estimated savings vs maximum tier (not run)" in text_content
+    assert "not estimated" in text_content
+    assert "simulated" in text_content
 
 
 def test_modal_accessibility_attributes(html_soup):
