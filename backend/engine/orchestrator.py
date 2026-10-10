@@ -353,6 +353,10 @@ class Orchestrator:
         record.cost = record_cost(
             strategy, decision.cost_estimate, execution, attempts
         )
+        if record.analysis and record.analysis.analysis_overhead_cost > 0:
+            record.cost.actual_cost = round(record.cost.actual_cost + record.analysis.analysis_overhead_cost, 4)
+            record.cost.breakdown["llm_analysis_overhead"] = record.analysis.analysis_overhead_cost
+            record.cost.breakdown["total"] = record.cost.actual_cost
 
         if quality_result.passed:
             record.status = RequestStatus.COMPLETED

@@ -149,16 +149,59 @@ class RulesBasedAnalyser(AnalysisInterface):
 
 class LLMAnalyser(AnalysisInterface):
     """
-    P2: LLM-based analyser behind the same interface.
-    Falls back to rules-based when LLM is unavailable.
+    LLM-assisted intent analyser behind the same interface.
+    Rules first: Calls LLM only when rules classifier is uncertain or ambiguous.
+    Falls back cleanly to rules-based analyser if LLM is unavailable, times out, or fails.
     """
 
-    def __init__(self, fallback: Optional[AnalysisInterface] = None):
+    def __init__(
+        self,
+        llm_service: Optional[Any] = None,
+        fallback: Optional[AnalysisInterface] = None,
+    ):
+        self.llm_service = llm_service
         self.fallback = fallback or RulesBasedAnalyser()
 
     def analyse(
         self, request: UserRequest, config: DomainConfig
     ) -> AnalysisResult:
-        # P2: Would call an LLM here
-        # For now, delegate to fallback
-        return self.fallback.analyse(request, config)
+        # 1. Rules first: evaluate deterministic classifier
+        base_result = self.fallback.analyse(request, config)
+
+        # If rules classifier had a clear, unambiguous category match,
+        # or if LLM service is not configured, avoid LLM call to save overhead cost
+        if (not base_result.is_ambiguous and base_result.category is not None) or not self.llm_service:
+            return base_result
+
+        # 2. Call LLM service when rules classifier is uncertain or ambiguous
+        try:
+            llm_intent = self.llm_service.analyze(request, config)
+            cat = llm_intent.task_category
+            if cat and cat in config.task_categories:
+                return AnalysisResult(
+                    category=cat,
+                    confidence=0.95,
+                    matched_keywords=base_result.matched_keywords + [f"llm:{llm_intent.task_type}"],
+                    is_ambiguous=llm_intent.requires_clarification,
+                    clarification_question=llm_intent.clarification_question or base_result.clarification_question,
+                    missing_inputs=llm_intent.missing_information or base_result.missing_inputs,
+                    alternative_categories=base_result.alternative_categories,
+                    llm_analysis=llm_intent,
+                    analysis_overhead_cost=llm_intent.overhead_cost,
+                    analysis_overhead_latency_s=llm_intent.overhead_latency_s,
+                )
+            elif llm_intent.requires_clarification:
+                return AnalysisResult(
+                    category=None,
+                    confidence=0.0,
+                    is_ambiguous=True,
+                    clarification_question=llm_intent.clarification_question or base_result.clarification_question,
+                    missing_inputs=llm_intent.missing_information,
+                    llm_analysis=llm_intent,
+                    analysis_overhead_cost=llm_intent.overhead_cost,
+                    analysis_overhead_latency_s=llm_intent.overhead_latency_s,
+                )
+            return base_result
+        except Exception:
+            # Deterministic fallback on provider timeout, malformed output, or 503
+            return base_result

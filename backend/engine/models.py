@@ -173,7 +173,30 @@ class UserRequest(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
-# ── Analysis result ────────────────────────────────────────────────────
+class ExtractedConstraints(BaseModel):
+    max_budget: Optional[float] = None
+    max_latency_ms: Optional[float] = None
+    required_colour_mode: Optional[str] = None
+    target_size: Optional[str] = None
+
+
+class LLMStructuredIntent(BaseModel):
+    """Structured output contract for LLM intent analysis."""
+    task_type: str
+    intended_use: str
+    task_category: Optional[str] = None
+    quality_requirement: str = "standard"
+    constraints: ExtractedConstraints = Field(default_factory=ExtractedConstraints)
+    missing_information: list[str] = Field(default_factory=list)
+    requires_clarification: bool = False
+    clarification_question: Optional[str] = None
+    extracted_facts: dict[str, Any] = Field(default_factory=dict)
+    inferred_preferences: dict[str, Any] = Field(default_factory=dict)
+    reasoning_summary: str = ""
+    overhead_cost: float = 0.001
+    overhead_latency_s: float = 0.15
+    data_origin: DataOrigin = DataOrigin.SIMULATED
+
 
 class AnalysisResult(BaseModel):
     """Result of analysing a request to determine its category."""
@@ -184,6 +207,9 @@ class AnalysisResult(BaseModel):
     clarification_question: Optional[str] = None
     missing_inputs: list[str] = Field(default_factory=list)
     alternative_categories: list[str] = Field(default_factory=list)
+    llm_analysis: Optional[LLMStructuredIntent] = None
+    analysis_overhead_cost: float = 0.0
+    analysis_overhead_latency_s: float = 0.0
 
 
 # ── Cost models ────────────────────────────────────────────────────────
