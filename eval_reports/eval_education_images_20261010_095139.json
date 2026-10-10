@@ -1,0 +1,163 @@
+{
+  "evaluation_metadata": {
+    "timestamp": "20261010_095139",
+    "seed": 42,
+    "workload_size": 65,
+    "domain": "education_images",
+    "disclaimer": "All costs, latencies, and quality metrics in this report are SIMULATED. The category mix is an assumption (the audit says 'most', not a specific number). Savings are computed from runs of the same workload under both policies."
+  },
+  "baseline": {
+    "policy": "baseline_always_max",
+    "total_requests": 65,
+    "completed": 36,
+    "failed": 1,
+    "moderation_blocked": 3,
+    "awaiting_clarification": 9,
+    "budget_exceeded": 0,
+    "total_cost": 1.48,
+    "total_estimated_cost": 1.48,
+    "cost_per_successful_request": 0.04,
+    "mean_latency_s": 5.0,
+    "p95_latency_s": 5.0,
+    "quality_gate_pass_rate": 1.0,
+    "failure_rate": 0.0154,
+    "routing_accuracy": 0.9434,
+    "strategy_distribution": {
+      "standard": 37,
+      "premium": 16
+    },
+    "effort_level_mix": {
+      "Reuse": 0,
+      "Quick": 0,
+      "Standard": 37,
+      "Print-quality": 16
+    },
+    "reuse_hit_rate": 0.0,
+    "total_retries": 0,
+    "all_values_simulated": true
+  },
+  "policies": [
+    {
+      "policy": "cheapest_meeting_quality",
+      "total_requests": 65,
+      "completed": 51,
+      "failed": 1,
+      "moderation_blocked": 3,
+      "awaiting_clarification": 9,
+      "budget_exceeded": 0,
+      "total_cost": 0.76,
+      "total_estimated_cost": 0.76,
+      "cost_per_successful_request": 0.0147,
+      "mean_latency_s": 2.471,
+      "p95_latency_s": 5.0,
+      "quality_gate_pass_rate": 1.0,
+      "failure_rate": 0.0154,
+      "routing_accuracy": 0.9434,
+      "strategy_distribution": {
+        "draft": 44,
+        "standard": 8,
+        "premium": 1
+      },
+      "effort_level_mix": {
+        "Reuse": 0,
+        "Quick": 44,
+        "Standard": 8,
+        "Print-quality": 1
+      },
+      "reuse_hit_rate": 0.0,
+      "total_retries": 0,
+      "all_values_simulated": true
+    },
+    {
+      "policy": "rule_based",
+      "total_requests": 65,
+      "completed": 43,
+      "failed": 1,
+      "moderation_blocked": 3,
+      "awaiting_clarification": 9,
+      "budget_exceeded": 0,
+      "total_cost": 0.65,
+      "total_estimated_cost": 0.65,
+      "cost_per_successful_request": 0.0149,
+      "mean_latency_s": 2.488,
+      "p95_latency_s": 5.0,
+      "quality_gate_pass_rate": 1.0,
+      "failure_rate": 0.0154,
+      "routing_accuracy": 0.9434,
+      "strategy_distribution": {
+        "draft": 37,
+        "standard": 7,
+        "premium": 9
+      },
+      "effort_level_mix": {
+        "Reuse": 0,
+        "Quick": 37,
+        "Standard": 7,
+        "Print-quality": 9
+      },
+      "reuse_hit_rate": 0.0,
+      "total_retries": 0,
+      "all_values_simulated": true
+    },
+    {
+      "policy": "weighted",
+      "total_requests": 65,
+      "completed": 51,
+      "failed": 1,
+      "moderation_blocked": 3,
+      "awaiting_clarification": 9,
+      "budget_exceeded": 0,
+      "total_cost": 0.76,
+      "total_estimated_cost": 0.76,
+      "cost_per_successful_request": 0.0147,
+      "mean_latency_s": 2.471,
+      "p95_latency_s": 5.0,
+      "quality_gate_pass_rate": 1.0,
+      "failure_rate": 0.0154,
+      "routing_accuracy": 0.9434,
+      "strategy_distribution": {
+        "draft": 44,
+        "standard": 8,
+        "premium": 1
+      },
+      "effort_level_mix": {
+        "Reuse": 0,
+        "Quick": 44,
+        "Standard": 8,
+        "Print-quality": 1
+      },
+      "reuse_hit_rate": 0.0,
+      "total_retries": 0,
+      "all_values_simulated": true
+    }
+  ],
+  "comparisons": [
+    {
+      "policy": "cheapest_meeting_quality",
+      "vs_baseline": "baseline_always_max",
+      "cost_saving_absolute": 0.72,
+      "cost_saving_percentage": 48.65,
+      "quality_pass_rate_diff": 0.0,
+      "latency_diff_s": -2.529,
+      "label": "simulated \u2014 same workload, same seed"
+    },
+    {
+      "policy": "rule_based",
+      "vs_baseline": "baseline_always_max",
+      "cost_saving_absolute": 0.83,
+      "cost_saving_percentage": 56.08,
+      "quality_pass_rate_diff": 0.0,
+      "latency_diff_s": -2.512,
+      "label": "simulated \u2014 same workload, same seed"
+    },
+    {
+      "policy": "weighted",
+      "vs_baseline": "baseline_always_max",
+      "cost_saving_absolute": 0.72,
+      "cost_saving_percentage": 48.65,
+      "quality_pass_rate_diff": 0.0,
+      "latency_diff_s": -2.529,
+      "label": "simulated \u2014 same workload, same seed"
+    }
+  ]
+}

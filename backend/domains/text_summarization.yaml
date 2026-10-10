@@ -1,0 +1,60 @@
+domain: text_summarization
+version: 1
+task_categories:
+  brief_summary:
+    keywords: [brief, short summary, quick summary, tldr, tl;dr, overview, gist]
+    required_inputs: [source_text]
+    quality_floor:
+      min_length: 20
+      max_length: 100
+    default_tier_hint: low
+  detailed_summary:
+    keywords: [detailed summary, comprehensive summary, full summary, in-depth, thorough]
+    required_inputs: [source_text]
+    quality_floor:
+      min_length: 50
+      max_length: 500
+    default_tier_hint: medium
+  executive_report:
+    keywords: [executive summary, report, formal report, executive report, board summary]
+    required_inputs: [source_text, audience]
+    quality_floor:
+      min_length: 100
+      max_length: 2000
+    default_tier_hint: high
+strategies:
+  small_model:
+    adapter: mock_text
+    params:
+      max_tokens: 200
+      model_tier: small
+    price_per_call: 0.005
+    source: placeholder
+    latency_s: 1
+  medium_model:
+    adapter: mock_text
+    params:
+      max_tokens: 800
+      model_tier: medium
+    price_per_call: 0.02
+    source: placeholder
+    latency_s: 3
+  large_model:
+    adapter: mock_text
+    params:
+      max_tokens: 2000
+      model_tier: large
+    price_per_call: 0.08
+    source: placeholder
+    latency_s: 8
+policy:
+  active: cheapest_meeting_quality
+  budgets:
+    per_request_max: 0.10
+    per_school_monthly: 50.0
+  latency_max_s: 30
+  approval_required_above_cost: 0.05
+  escalation:
+    allow_auto: false
+    max_retries: 1
+baseline_policy: baseline_always_max

@@ -1,0 +1,46 @@
+# Assumptions & Methodological Guardrails
+
+This document records all explicit assumptions, simulated data caveats, and architectural design choices made in the Adaptive AI Request Optimizer.
+
+## 1. Simulated Numbers & Pricing
+- **Assumption**: All cost figures ($0.0005 reuse, $0.002 template_outline, $0.01 draft, $0.04 standard, $0.12 premium) are **simulated placeholders** (`source: placeholder`, `is_simulated: true`).
+- **Guardrail**: No prices are invented or claimed to represent actual third-party vendor charges. Cost savings are strictly computed from running the exact same workload under both baseline and optimized policies.
+- **Requester Display**: Currency is hidden from requesters by default (`show_relative_cost: true`, `hide_currency_from_requester: true`), who instead see relative effort levels (e.g., "about 1/15 the cost of Print-quality"). District admins see simulated dollar amounts.
+
+## 2. Workload & Category Mix Distribution
+- **Assumption**: The default evaluation workload distribution uses:
+  - 70% Colouring worksheets (line-art outline, B&W)
+  - 15% Flashcards (4x6, simple colour)
+  - 10% Detailed illustrations (A4, standard colour)
+  - 5% Printed posters/banners (A1, high-DPI colour)
+  - 30% Repeat rate for previously generated subjects
+- **Basis**: The district audit established that "most requests were simple black-and-white outlines for children to colour, yet ran at maximum poster settings".
+- **Impact**: Attributed savings depend on this realistic district workload mix. A different real-world distribution would yield different aggregate numbers.
+
+## 3. Savings Attribution Decomposition
+- **Assumption**: Total cost savings decompose into three distinct levers:
+  1. `reuse_savings`: Reusing approved existing assets from the library at $0.0005 instead of re-generating.
+  2. `template_savings`: Using deterministic non-generative vector line art at $0.002 instead of invoking generative AI.
+  3. `lower_tier_savings`: Right-sizing generative parameters (draft/standard vs premium) to match the purpose quality floor.
+- **Invariant**: The engine mathematically guarantees `reuse_savings + template_savings + lower_tier_savings == total_savings`.
+
+## 4. Quality Floor & Proxy Checks
+- **Assumption**: Automated quality checks (output exists, valid format, resolution at DPI, colour mode, ink coverage [0.03, 0.25]) are **automated proxy checks**.
+- **Guardrail**: Every response, UI component, and evaluation report clearly displays the disclaimer:
+  *"These are automated proxy checks, not a judgement of whether the output is actually pedagogically suitable for its intended purpose."*
+- **Human In The Loop**: An optional 1-to-5 human rating widget allows requesters to evaluate pedagogical fitness after automated checks pass.
+
+## 5. Child Safety & Privacy
+- **Assumption**: Personal data filtering rejects prompts containing student emails, phone numbers, student ID numbers, or names in context (e.g. `student: John Doe`).
+- **Guardrail**: Personal data is rejected at intake, scrubbed from logs and database records, and strictly excluded from the reuse library.
+
+## 6. School Quotas & Approval Ceilings
+- **Assumption**: The district admin configures a monthly spend ceiling per school (default: $20.00/month).
+- **Enforcement**:
+  - Reaching 80% triggers a warning in the response (`Budget alert: 80% used`).
+  - Reaching 100% routes subsequent requests to `AWAITING_APPROVAL` status (not silently rejected or executed).
+  - Individual requests exceeding the single-request approval threshold ($0.10) also require approval or justification.
+
+## 7. Engine Isolation
+- **Rule**: The core engine (`backend/engine/`) has **zero imports** from domains, adapters, or API code.
+- **Enforcement**: Tested continuously via AST and import inspection in `test_engine_has_no_imports_from_domains_adapters_or_api`.

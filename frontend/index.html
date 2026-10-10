@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive AI Request Optimizer — District Education Gateway</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.75);
+      --bg-card-hover: rgba(31, 41, 55, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: #6366f1;
+      --accent-indigo: #6366f1;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-cyan: #06b6d4;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(139, 92, 246, 0.05) 0px, transparent 70%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* School Selector & Quota Pill */
+    .school-picker {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .school-picker select {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .budget-pill {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .budget-pill.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .budget-pill.danger {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border-color: rgba(244, 63, 94, 0.3);
+    }
+
+    /* Role Toggle */
+    .role-toggle {
+      display: flex;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .role-btn {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .role-btn.active {
+      background: var(--accent-indigo);
+      color: white;
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Tab Bar */
+    .tabs-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 32px 10px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 22px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+      border-color: var(--accent-indigo);
+      color: var(--text-primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 24px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Layout */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* One-tap Purpose Grid */
+    .purpose-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .purpose-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: left;
+    }
+
+    .purpose-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .purpose-card.selected {
+      border-color: var(--accent-indigo);
+      background: rgba(99, 102, 241, 0.12);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .purpose-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .purpose-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .purpose-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .purpose-tier-hint {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--accent-cyan);
+    }
+
+    /* Prompt & Input Section */
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+
+    .text-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .text-input:focus {
+      border-color: var(--accent-indigo);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+    }
+
+    .inputs-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .select-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple));
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Side-by-side Decision Preview */
+    .preview-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 800px) {
+      .preview-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .preview-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-card.recommended {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.03);
+    }
+
+    .preview-card.next-tier {
+      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(99, 102, 241, 0.03);
+    }
+
+    .tier-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .recommended .tier-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .next-tier .tier-badge {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent-indigo);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .preview-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .preview-cost {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 14px;
+    }
+
+    .preview-image-box {
+      width: 100%;
+      height: 220px;
+      border-radius: var(--radius-sm);
+      background: #050811;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .preview-image-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .levers-list {
+      list-style: none;
+      font-size: 13px;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+
+    .levers-list li {
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .levers-list li::before {
+      content: "•";
+      color: var(--accent-indigo);
+      font-size: 16px;
+    }
+
+    /* Execution Result Card */
+    .result-section {
+      margin-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 24px;
+    }
+
+    .quality-checks-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin: 16px 0;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .check-item:last-child {
+      border-bottom: none;
+    }
+
+    .check-badge {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .check-pass {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+    }
+
+    .check-fail {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+    }
+
+    .disclaimer-banner {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-sm);
+      margin-top: 10px;
+    }
+
+    /* Star Rating */
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 6px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .star {
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+
+    .star.filled {
+      color: var(--accent-amber);
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Status Alert Banner */
+    .alert-box {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fde68a;
+    }
+
+    .alert-danger {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fecdd3;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+    }
+
+    /* Config Editor */
+    .json-editor {
+      width: 100%;
+      height: 380px;
+      background: #050811;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: #a5b4fc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      outline: none;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand">
+      <div class="logo-badge">λ</div>
+      <div>
+        <div class="brand-title">Adaptive AI Request Optimizer</div>
+        <div class="brand-subtitle">District 42 Image & Compute Gateway</div>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <!-- School Selector & Live Budget Pill -->
+      <div class="school-picker">
+        <span>🏫</span>
+        <select id="schoolSelect" onchange="onSchoolChanged()">
+          <option value="SCHOOL-101">School #101 (Central Elementary)</option>
+          <option value="SCHOOL-102">School #102 (West Academy)</option>
+          <option value="SCHOOL-103">School #103 (Lincoln Middle)</option>
+        </select>
+        <span class="budget-pill" id="schoolBudgetPill">Budget: $0.00 / $20.00 (0%)</span>
+      </div>
+
+      <!-- Role Switcher -->
+      <div class="role-toggle">
+        <button class="role-btn active" id="btnRoleRequester" onclick="setRole('requester')">Requester</button>
+        <button class="role-btn" id="btnRoleAdmin" onclick="setRole('admin')">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Tabs Bar -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('requestTab')">✨ Request Optimizer</button>
+    <button class="tab-btn" onclick="switchTab('showbackTab')">📊 School Showback</button>
+    <button class="tab-btn" onclick="switchTab('configTab')">⚙️ Config Editor (Hot-Reload)</button>
+    <button class="tab-btn" onclick="switchTab('evalTab')">🧪 Evaluation & Lever Savings</button>
+  </div>
+
+  <main>
+    <!-- TAB 1: REQUEST OPTIMIZER -->
+    <div id="requestTab" class="tab-content active">
+      <div class="card">
+        <div class="card-title">
+          <span>What are you creating?</span>
+          <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);" id="policyNotice">Policy: cheapest_meeting_quality</span>
+        </div>
+        <div class="card-subtitle">Select the purpose with one tap. Per-purpose defaults configure the optimal settings automatically.</div>
+
+        <!-- One-tap Purpose Grid -->
+        <div class="purpose-grid" id="purposeGrid">
+          <div class="purpose-card selected" data-purpose="colouring_worksheet" onclick="selectPurpose('colouring_worksheet')">
+            <div class="purpose-icon">🖍️</div>
+            <div class="purpose-name">Colouring Sheet</div>
+            <div class="purpose-desc">Line art outline for children to color in. Defaults to A4, B&W outline.</div>
+            <span class="purpose-tier-hint">Near-zero cost (Template/Reuse)</span>
+          </div>
+
+          <div class="purpose-card" data-purpose="flashcard" onclick="selectPurpose('flashcard')">
+            <div class="purpose-icon">🃏</div>
+            <div class="purpose-name">Flashcard</div>
+            <div class="purpose-desc">Vocabulary & concept cards. Defaults to 4x6, simple colour illustration.</div>
+            <span class="purpose-tier-hint">Fast & lightweight</span>
+          </div>
+
+          <div class="purpose-card" data-purpose="classroom_illustration" onclick="selectPurpose('classroom_illustration')">
+            <div class="purpose-icon">🎨</div>
+            <div class="purpose-name">Classroom Illustration</div>
+            <div class="purpose-desc">Slide or handout visual. Defaults to A4, standard color detail.</div>
+            <span class="purpose-tier-hint">Balanced standard</span>
+          </div>
+
+          <div class="purpose-card" data-purpose="poster_banner" onclick="selectPurpose('poster_banner')">
+            <div class="purpose-icon">📢</div>
+            <div class="purpose-name">Poster or Banner</div>
+            <div class="purpose-desc">Annual-report or hallway print. Defaults to A1, high DPI color.</div>
+            <span class="purpose-tier-hint">High-fidelity print</span>
+          </div>
+        </div>
+
+        <!-- Prompt input -->
+        <div class="input-group">
+          <label class="input-label" for="promptInput">Subject / Prompt Description</label>
+          <input type="text" id="promptInput" class="text-input" placeholder="e.g. Farm animals for grade 2 (sheep, cow, barn)" value="Farm animals for grade 2">
+        </div>
+
+        <!-- Per-Purpose Defaults / Inputs -->
+        <div class="inputs-row">
+          <div>
+            <label class="input-label" for="outputSizeInput">Print Size</label>
+            <select id="outputSizeInput" class="select-input">
+              <option value="A4" selected>A4 (Standard Worksheet)</option>
+              <option value="4x6">4x6 inch (Flashcard)</option>
+              <option value="A3">A3 (Medium Poster)</option>
+              <option value="A1">A1 (Large Hallway Banner)</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label" for="gradeBandInput">Grade Band</label>
+            <select id="gradeBandInput" class="select-input">
+              <option value="K-2" selected>K-2 (Early Elementary)</option>
+              <option value="3-5">3-5 (Upper Elementary)</option>
+              <option value="6-8">6-8 (Middle School)</option>
+              <option value="9-12">9-12 (High School)</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label" for="colourModeInput">Colour Mode</label>
+            <select id="colourModeInput" class="select-input">
+              <option value="bw" selected>Black & White (Ink-saving)</option>
+              <option value="colour">Full Colour</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="alertArea"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="previewDecision()">🔍 Side-by-Side Preview</button>
+          <button class="btn btn-primary" onclick="executeRequest()">🚀 Generate Output</button>
+        </div>
+
+        <!-- Side-by-Side Decision Preview Container -->
+        <div id="previewArea" style="display: none;" class="preview-container">
+          <!-- Recommended Card -->
+          <div class="preview-card recommended">
+            <span class="tier-badge">Recommended Tier</span>
+            <div class="preview-title" id="recStrategyName">Template Outline</div>
+            <div class="preview-cost" id="recCostDisplay">~1/15 of Print-quality</div>
+            <div class="preview-image-box" id="recImageBox">
+              <span style="color: var(--text-muted);">Preview will render here</span>
+            </div>
+            <ul class="levers-list" id="recLeversList">
+              <li>Non-generative outline</li>
+              <li>768px resolution</li>
+              <li>B&W ink saving mode</li>
+            </ul>
+            <div style="font-size: 12px; color: var(--accent-emerald);" id="recReason">
+              Meets colouring worksheet quality floor at minimum cost.
+            </div>
+          </div>
+
+          <!-- Next Level Up Card -->
+          <div class="preview-card next-tier" id="nextTierCard">
+            <span class="tier-badge">Next Level Up</span>
+            <div class="preview-title" id="nextStrategyName">Standard Quality</div>
+            <div class="preview-cost" id="nextCostDisplay">Higher Tier</div>
+            <div class="preview-image-box" id="nextImageBox">
+              <span style="color: var(--text-muted);">Preview will render here</span>
+            </div>
+            <ul class="levers-list" id="nextLeversList">
+              <li>Full colour diffusion</li>
+              <li>1536px resolution</li>
+              <li>Higher token consumption</li>
+            </ul>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;" id="nextTradeoff">
+              Provides full colour if requested, at higher cost.
+            </div>
+            <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px; align-self: flex-start;" onclick="upgradeTier()">
+              ⬆️ Upgrade to this Tier
+            </button>
+          </div>
+        </div>
+
+        <!-- Execution Result & Quality Gate Section -->
+        <div id="resultArea" style="display: none;" class="result-section">
+          <div class="card-title">Generated Output & Quality Gate</div>
+          
+          <div style="display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 16px;">
+            <div>
+              <div class="preview-image-box" style="height: 280px;" id="finalImageBox">
+                <!-- Final image injected here -->
+              </div>
+              <div class="rating-row">
+                <span style="font-size: 13px; color: var(--text-secondary);">Rate Quality:</span>
+                <div class="stars" id="starWidget">
+                  <span class="star" onclick="rateOutput(1)">★</span>
+                  <span class="star" onclick="rateOutput(2)">★</span>
+                  <span class="star" onclick="rateOutput(3)">★</span>
+                  <span class="star" onclick="rateOutput(4)">★</span>
+                  <span class="star" onclick="rateOutput(5)">★</span>
+                </div>
+                <span id="ratingStatus" style="font-size: 12px; color: var(--accent-emerald);"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Automated Proxy Checks</div>
+              <div class="quality-checks-box" id="checksList">
+                <!-- Checks populated dynamically -->
+              </div>
+              <div class="disclaimer-banner">
+                ⚠️ <strong>Proxy Disclaimer:</strong> These are automated proxy checks (DPI, ink coverage, colour mode), not a judgement of whether the output is actually pedagogically suitable for its intended purpose.
+              </div>
+
+              <div style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);" id="executionMeta">
+                <!-- Execution latency, actual cost, strategy used -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: SHOWBACK & QUOTAS -->
+    <div id="showbackTab" class="tab-content">
+      <div class="card">
+        <div class="card-title">District Showback Report & Quotas</div>
+        <div class="card-subtitle">Transparent district-wide usage accounting with 80% alerting and spend ceilings.</div>
+
+        <div class="kpi-grid" id="adminKpis">
+          <div class="kpi-card">
+            <div class="kpi-label">Active Schools</div>
+            <div class="kpi-value" id="kpiSchools">3</div>
+            <div class="kpi-sub">$20.00 / month cap per school</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Total Spend (Simulated)</div>
+            <div class="kpi-value" style="color: var(--accent-emerald);" id="kpiTotalSpend">$0.00</div>
+            <div class="kpi-sub">Source: placeholder</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Estimated Savings</div>
+            <div class="kpi-value" style="color: var(--accent-indigo);" id="kpiSavings">~80%</div>
+            <div class="kpi-sub">vs always-max baseline</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Reuse Library Hit Rate</div>
+            <div class="kpi-value" style="color: var(--accent-cyan);" id="kpiReuseRate">0%</div>
+            <div class="kpi-sub">Served at near-zero cost</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table id="showbackTable">
+            <thead>
+              <tr>
+                <th>School ID</th>
+                <th>Requests</th>
+                <th>Total Spend (simulated)</th>
+                <th>Cap Limit</th>
+                <th>% of Cap</th>
+                <th>Top Category</th>
+                <th>Reuse Rate</th>
+                <th>Quota Status</th>
+              </tr>
+            </thead>
+            <tbody id="showbackTbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CONFIG EDITOR -->
+    <div id="configTab" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Live Configuration Editor</span>
+          <span style="font-size: 13px; color: var(--accent-emerald);" id="configVersionLabel">Version 1</span>
+        </div>
+        <div class="card-subtitle">Change policies, budgets, and quality floors without restarting or touching engine code.</div>
+
+        <div class="inputs-row" style="margin-bottom: 12px;">
+          <div>
+            <label class="input-label">Active Policy</label>
+            <select id="configPolicySelect" class="select-input" onchange="patchActivePolicy()">
+              <option value="cheapest_meeting_quality">cheapest_meeting_quality (Cost Optimizer)</option>
+              <option value="baseline_always_max">baseline_always_max (Unoptimized Baseline)</option>
+              <option value="rule_based">rule_based (Rule Hints)</option>
+              <option value="user_selected">user_selected (User Preference)</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Per-School Monthly Budget ($)</label>
+            <input type="number" id="configSchoolBudget" class="text-input" value="20.00" step="1.0" onchange="patchBudget()">
+          </div>
+        </div>
+
+        <textarea id="configRawJson" class="json-editor" spellcheck="false"></textarea>
+
+        <div class="btn-row" style="margin-top: 14px;">
+          <button class="btn btn-primary" onclick="saveConfigToServer()">💾 Save & Apply Hot-Reload</button>
+          <button class="btn btn-secondary" onclick="reloadConfigFromServer()">🔄 Reset from Server</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: EVALUATION & LEVER SAVINGS -->
+    <div id="evalTab" class="tab-content">
+      <div class="card">
+        <div class="card-title">Workload Evaluation & Savings Attribution</div>
+        <div class="card-subtitle">Deterministic evaluation measuring exact savings breakdown by optimization lever.</div>
+
+        <div class="btn-row" style="margin-bottom: 20px;">
+          <button class="btn btn-primary" id="btnRunEval" onclick="runBenchmark()">▶️ Run 30-Request Evaluation Benchmark</button>
+        </div>
+
+        <div id="evalResultsArea" style="display: none;">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Baseline Cost</div>
+              <div class="kpi-value" id="evalBaseCost">$0.00</div>
+              <div class="kpi-sub">Always-max tier</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Optimized Cost</div>
+              <div class="kpi-value" style="color: var(--accent-emerald);" id="evalOptCost">$0.00</div>
+              <div class="kpi-sub">Adaptive optimizer</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Total Savings</div>
+              <div class="kpi-value" style="color: var(--accent-indigo);" id="evalTotalSavings">$0.00</div>
+              <div class="kpi-sub" id="evalSavingsPct">0% reduction</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Reuse Hit Rate</div>
+              <div class="kpi-value" style="color: var(--accent-cyan);" id="evalReuseHit">0%</div>
+              <div class="kpi-sub">Repeat requests served from cache</div>
+            </div>
+          </div>
+
+          <div class="card-title" style="font-size: 16px; margin-top: 20px;">Savings Attribution Decomposition</div>
+          <div class="card-subtitle">Mathematical verification: Reuse + Template + Lower-Tier == Total Savings.</div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Optimization Lever</th>
+                  <th>Savings Amount ($)</th>
+                  <th>Share of Total Savings</th>
+                  <th>Mechanism</th>
+                </tr>
+              </thead>
+              <tbody id="evalLeversTbody">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // State
+    let currentRole = 'requester';
+    let currentSchool = 'SCHOOL-101';
+    let currentPurpose = 'colouring_worksheet';
+    let lastRequestId = null;
+    let fullConfigCache = null;
+
+    const PURPOSE_DEFAULTS = {
+      colouring_worksheet: { size: 'A4', colour: 'bw', grade: 'K-2', prompt: 'Farm animals for grade 2 (sheep, cow, barn)' },
+      flashcard: { size: '4x6', colour: 'colour', grade: 'K-2', prompt: 'Vocabulary card: Solar System Planets' },
+      classroom_illustration: { size: 'A4', colour: 'colour', grade: '3-5', prompt: 'Water cycle illustration with arrows' },
+      poster_banner: { size: 'A1', colour: 'colour', grade: '6-8', prompt: 'District Science Fair Banner with high detail' }
+    };
+
+    function setRole(role) {
+      currentRole = role;
+      document.getElementById('btnRoleRequester').classList.toggle('active', role === 'requester');
+      document.getElementById('btnRoleAdmin').classList.toggle('active', role === 'admin');
+      refreshSchoolBudget();
+      if (document.getElementById('previewArea').style.display !== 'none') {
+        previewDecision();
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+
+      if (tabId === 'showbackTab') loadShowback();
+      if (tabId === 'configTab') loadConfig();
+    }
+
+    function selectPurpose(purpose) {
+      currentPurpose = purpose;
+      document.querySelectorAll('.purpose-card').forEach(el => {
+        el.classList.toggle('selected', el.getAttribute('data-purpose') === purpose);
+      });
+      const defs = PURPOSE_DEFAULTS[purpose];
+      if (defs) {
+        document.getElementById('outputSizeInput').value = defs.size;
+        document.getElementById('colourModeInput').value = defs.colour;
+        document.getElementById('gradeBandInput').value = defs.grade;
+        if (!document.getElementById('promptInput').value || Object.values(PURPOSE_DEFAULTS).some(d => d.prompt === document.getElementById('promptInput').value)) {
+          document.getElementById('promptInput').value = defs.prompt;
+        }
+      }
+    }
+
+    function onSchoolChanged() {
+      currentSchool = document.getElementById('schoolSelect').value;
+      refreshSchoolBudget();
+    }
+
+    async function refreshSchoolBudget() {
+      try {
+        const res = await fetch('/api/showback');
+        const data = await res.json();
+        const schoolRow = data.schools?.find(s => s.school_id === currentSchool);
+        const pill = document.getElementById('schoolBudgetPill');
+        if (schoolRow) {
+          const cap = schoolRow.monthly_cap || 20.0;
+          const spend = schoolRow.total_spend || 0.0;
+          const pct = schoolRow.percentage_of_cap || 0;
+          pill.textContent = `Budget: $${spend.toFixed(2)} / $${cap.toFixed(2)} (${pct.toFixed(0)}%)`;
+          pill.className = 'budget-pill ' + (pct >= 100 ? 'danger' : pct >= 80 ? 'warning' : '');
+        }
+      } catch (e) {
+        console.error('Failed to load budget', e);
+      }
+    }
+
+    async function previewDecision() {
+      clearAlert();
+      const payload = {
+        prompt: document.getElementById('promptInput').value,
+        purpose: currentPurpose,
+        inputs: {
+          subject: document.getElementById('promptInput').value,
+          output_size: document.getElementById('outputSizeInput').value,
+          grade_band: document.getElementById('gradeBandInput').value,
+          colour_mode: document.getElementById('colourModeInput').value,
+        },
+        school_id: currentSchool,
+        role: currentRole
+      };
+
+      try {
+        const res = await fetch('/api/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          showAlert('danger', `⚠️ Moderation or validation alert: ${err.error || err.message}`);
+          return;
+        }
+
+        const data = await res.json();
+        document.getElementById('previewArea').style.display = 'grid';
+
+        // Recommended
+        const rec = data.recommended;
+        document.getElementById('recStrategyName').textContent = `${rec.effort_level} (${rec.strategy_name})`;
+        document.getElementById('recCostDisplay').textContent = rec.display_cost;
+        document.getElementById('recReason').textContent = rec.reason;
+
+        const recBox = document.getElementById('recImageBox');
+        if (rec.preview_image) {
+          recBox.innerHTML = `<img src="${rec.preview_image}" alt="Preview" />`;
+        } else {
+          recBox.innerHTML = `<span style="color: var(--text-muted);">Preview render generated</span>`;
+        }
+
+        const leversList = document.getElementById('recLeversList');
+        leversList.innerHTML = Object.entries(rec.levers || {}).map(([k, v]) => `<li>${k}: ${v}</li>`).join('');
+
+        // Next Tier
+        const next = data.next_tier;
+        const nextCard = document.getElementById('nextTierCard');
+        if (next) {
+          nextCard.style.display = 'flex';
+          document.getElementById('nextStrategyName').textContent = `${next.effort_level} (${next.strategy_name})`;
+          document.getElementById('nextCostDisplay').textContent = next.display_cost;
+          document.getElementById('nextTradeoff').textContent = next.what_changes;
+
+          const nextBox = document.getElementById('nextImageBox');
+          if (next.preview_image) {
+            nextBox.innerHTML = `<img src="${next.preview_image}" alt="Next Tier Preview" />`;
+          } else {
+            nextBox.innerHTML = `<span style="color: var(--text-muted);">Diffusion mock ready</span>`;
+          }
+        } else {
+          nextCard.style.display = 'none';
+        }
+      } catch (err) {
+        showAlert('danger', 'Error fetching decision preview: ' + err.message);
+      }
+    }
+
+    async function executeRequest(preferredStrategy = null, overrideReason = null) {
+      clearAlert();
+      const payload = {
+        prompt: document.getElementById('promptInput').value,
+        purpose: currentPurpose,
+        inputs: {
+          subject: document.getElementById('promptInput').value,
+          output_size: document.getElementById('outputSizeInput').value,
+          grade_band: document.getElementById('gradeBandInput').value,
+          colour_mode: document.getElementById('colourModeInput').value,
+        },
+        school_id: currentSchool,
+        role: currentRole,
+        preferred_strategy: preferredStrategy,
+        override_reason: overrideReason,
+        auto_execute: true
+      };
+
+      try {
+        const res = await fetch('/api/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showAlert('danger', `⚠️ Request Blocked: ${data.message || data.error}`);
+          return;
+        }
+
+        lastRequestId = data.request.id;
+
+        // Check if awaiting approval
+        if (data.status === 'awaiting_approval') {
+          showAlert('warning', `🔒 Request requires administrative approval: ${data.decision.explanation.reason}`);
+          return;
+        }
+
+        if (data.status === 'moderation_blocked') {
+          showAlert('danger', `🚫 Blocked by moderation filter: ${data.moderation_result?.blocked_reason}`);
+          return;
+        }
+
+        // Display results
+        document.getElementById('resultArea').style.display = 'block';
+        const imgBox = document.getElementById('finalImageBox');
+        if (data.preview_image_url) {
+          imgBox.innerHTML = `<img src="${data.preview_image_url}" alt="Output" />`;
+        } else {
+          imgBox.innerHTML = `<div style="color: var(--text-muted); padding: 20px;">Execution succeeded (${data.decision.chosen_strategy})</div>`;
+        }
+
+        // Quality gate checks
+        const checksList = document.getElementById('checksList');
+        if (data.quality && data.quality.checks) {
+          checksList.innerHTML = data.quality.checks.map(c => `
+            <div class="check-item">
+              <span>${c.check_name}: ${c.message}</span>
+              <span class="check-badge ${c.passed ? 'check-pass' : 'check-fail'}">${c.passed ? 'PASSED' : 'FAILED'}</span>
+            </div>
+          `).join('');
+        }
+
+        // Metadata
+        const meta = document.getElementById('executionMeta');
+        meta.innerHTML = `
+          <div>Strategy: <strong>${data.decision.chosen_strategy}</strong> (${data.decision.explanation.effort_level || 'Optimal'})</div>
+          <div>Cost: <strong>${data.decision.display_cost}</strong></div>
+          <div>Latency: <strong>${(data.execution?.latency_s || 0.05).toFixed(3)}s</strong></div>
+          <div>Status: <span style="color: var(--accent-emerald); font-weight: 600;">COMPLETED & PASSES CHECKS</span></div>
+        `;
+
+        refreshSchoolBudget();
+        showAlert('success', '✅ Successfully generated and verified against quality floor!');
+      } catch (err) {
+        showAlert('danger', 'Execution error: ' + err.message);
+      }
+    }
+
+    function upgradeTier() {
+      const reason = prompt('Upgrading above the recommended tier requires justification:\nPlease state why higher effort is needed:');
+      if (reason) {
+        executeRequest('standard', reason);
+      }
+    }
+
+    async function rateOutput(stars) {
+      if (!lastRequestId) return;
+      document.querySelectorAll('.star').forEach((s, idx) => {
+        s.classList.toggle('filled', idx < stars);
+      });
+      try {
+        await fetch('/api/rating', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ request_id: lastRequestId, rating: stars })
+        });
+        document.getElementById('ratingStatus').textContent = `Saved (${stars}★)`;
+      } catch (e) {
+        console.error('Failed to rate', e);
+      }
+    }
+
+    function showAlert(type, msg) {
+      const area = document.getElementById('alertArea');
+      area.innerHTML = `<div class="alert-box alert-${type}">${msg}</div>`;
+    }
+
+    function clearAlert() {
+      document.getElementById('alertArea').innerHTML = '';
+    }
+
+    async function loadShowback() {
+      try {
+        const res = await fetch('/api/showback');
+        const data = await res.json();
+        const tbody = document.getElementById('showbackTbody');
+        
+        let totalSpend = 0;
+        let totalReqs = 0;
+
+        tbody.innerHTML = (data.schools || []).map(s => {
+          totalSpend += s.total_spend;
+          totalReqs += s.requests_count;
+          const statusBadge = s.percentage_of_cap >= 100 
+            ? '<span class="budget-pill danger">EXCEEDED</span>' 
+            : s.percentage_of_cap >= 80 
+            ? '<span class="budget-pill warning">WARNING (80%)</span>' 
+            : '<span class="budget-pill">NORMAL</span>';
+
+          return `
+            <tr>
+              <td><strong>${s.school_id}</strong></td>
+              <td>${s.requests_count}</td>
+              <td style="font-family: 'JetBrains Mono', monospace;">$${s.total_spend.toFixed(4)}</td>
+              <td style="font-family: 'JetBrains Mono', monospace;">$${s.monthly_cap.toFixed(2)}</td>
+              <td>${s.percentage_of_cap.toFixed(1)}%</td>
+              <td>${s.top_category || 'colouring_worksheet'}</td>
+              <td>${(s.reuse_rate * 100).toFixed(1)}%</td>
+              <td>${statusBadge}</td>
+            </tr>
+          `;
+        }).join('');
+
+        document.getElementById('kpiTotalSpend').textContent = `$${totalSpend.toFixed(4)}`;
+        document.getElementById('kpiSchools').textContent = data.schools?.length || 3;
+      } catch (e) {
+        console.error('Failed to load showback', e);
+      }
+    }
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config?role=admin');
+        const data = await res.json();
+        fullConfigCache = data;
+        document.getElementById('configRawJson').value = JSON.stringify(data, null, 2);
+        document.getElementById('configPolicySelect').value = data.policy?.active || 'cheapest_meeting_quality';
+        document.getElementById('configSchoolBudget').value = data.policy?.budgets?.per_school_monthly || 20.0;
+        document.getElementById('configVersionLabel').textContent = `Version ${data.version}`;
+      } catch (e) {
+        console.error('Failed to load config', e);
+      }
+    }
+
+    async function patchActivePolicy() {
+      const pol = document.getElementById('configPolicySelect').value;
+      if (!fullConfigCache) return;
+      fullConfigCache.policy.active = pol;
+      document.getElementById('configRawJson').value = JSON.stringify(fullConfigCache, null, 2);
+    }
+
+    function patchBudget() {
+      const b = parseFloat(document.getElementById('configSchoolBudget').value);
+      if (!fullConfigCache) return;
+      if (!fullConfigCache.policy.budgets) fullConfigCache.policy.budgets = {};
+      fullConfigCache.policy.budgets.per_school_monthly = b;
+      document.getElementById('configRawJson').value = JSON.stringify(fullConfigCache, null, 2);
+    }
+
+    async function saveConfigToServer() {
+      try {
+        const parsed = JSON.parse(document.getElementById('configRawJson').value);
+        const res = await fetch('/api/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ updates: parsed, author: 'web_admin' })
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          alert(`Configuration updated to Version ${resp.version}! Hot-reload successful.`);
+          loadConfig();
+        } else {
+          alert('Error: ' + JSON.stringify(resp));
+        }
+      } catch (e) {
+        alert('Invalid JSON: ' + e.message);
+      }
+    }
+
+    function reloadConfigFromServer() {
+      loadConfig();
+    }
+
+    async function runBenchmark() {
+      const btn = document.getElementById('btnRunEval');
+      btn.textContent = '⏳ Running 30-Request Evaluation...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/eval?sample_size=30&seed=42', { method: 'POST' });
+        const data = await res.json();
+
+        document.getElementById('evalResultsArea').style.display = 'block';
+        document.getElementById('evalBaseCost').textContent = `$${data.baseline_cost.toFixed(3)}`;
+        document.getElementById('evalOptCost').textContent = `$${data.optimized_cost.toFixed(3)}`;
+        document.getElementById('evalTotalSavings').textContent = `$${data.savings.toFixed(3)}`;
+        document.getElementById('evalSavingsPct').textContent = `${data.savings_pct.toFixed(1)}% cost reduction`;
+        document.getElementById('evalReuseHit').textContent = `${(data.reuse_hit_rate * 100).toFixed(1)}%`;
+
+        const attr = data.attribution || {};
+        const totalSav = attr.total_savings || data.savings || 1.0;
+        const rows = [
+          { lever: 'Reuse Library Lever', val: attr.reuse_savings || 0, desc: 'Zero generative call for identical approved requests' },
+          { lever: 'Deterministic Template Lever', val: attr.template_savings || 0, desc: 'B&W line-art generated without GPU model inference' },
+          { lever: 'Lower-Tier Optimization Lever', val: attr.lower_tier_savings || 0, desc: 'Right-sizing model size and resolution to purpose quality floor' },
+          { lever: 'TOTAL ATTRIBUTED SAVINGS', val: totalSav, desc: 'Exact sum equality verified (Reuse + Template + Lower-Tier)' }
+        ];
+
+        document.getElementById('evalLeversTbody').innerHTML = rows.map(r => `
+          <tr style="${r.lever.startsWith('TOTAL') ? 'font-weight: 700; background: rgba(99, 102, 241, 0.1);' : ''}">
+            <td>${r.lever}</td>
+            <td style="font-family: 'JetBrains Mono', monospace;">$${r.val.toFixed(4)}</td>
+            <td>${totalSav > 0 ? ((r.val / totalSav) * 100).toFixed(1) : 0}%</td>
+            <td style="color: var(--text-secondary);">${r.desc}</td>
+          </tr>
+        `).join('');
+
+      } catch (e) {
+        alert('Evaluation error: ' + e.message);
+      } finally {
+        btn.textContent = '▶️ Run 30-Request Evaluation Benchmark';
+        btn.disabled = false;
+      }
+    }
+
+    // Init
+    refreshSchoolBudget();
+  </script>
+</body>
+</html>

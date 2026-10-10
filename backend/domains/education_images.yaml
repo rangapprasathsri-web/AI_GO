@@ -1,0 +1,151 @@
+domain: education_images
+version: 1
+task_categories:
+  colouring_worksheet:
+    keywords: [colour in, colouring, outline, coloring sheet, coloring, color in, color]
+    required_inputs: [subject, grade_band, output_size]
+    quality_floor:
+      min_dpi: 150
+      colour_mode: bw
+      line_coverage: [0.03, 0.25]
+    default_tier_hint: low
+    allowed_strategies: [reuse, template_outline, draft, standard]
+    defaults:
+      output_size: A4
+      colour_mode: bw
+      detail: outline
+      grade_band: K-2
+  flashcard:
+    keywords: [flashcard, flash card, vocabulary card, study card, revision card]
+    required_inputs: [subject, grade_band]
+    quality_floor:
+      min_dpi: 200
+      colour_mode: colour
+    default_tier_hint: medium
+    allowed_strategies: [reuse, draft, standard, premium]
+    defaults:
+      output_size: A6
+      colour_mode: colour
+      detail: medium
+      grade_band: 3-5
+  detailed_illustration:
+    keywords: [illustration, detailed, diagram, poster, educational poster, infographic]
+    required_inputs: [subject, grade_band]
+    quality_floor:
+      min_dpi: 250
+      min_resolution: 1000
+      colour_mode: colour
+    default_tier_hint: high
+    allowed_strategies: [reuse, standard, premium]
+    defaults:
+      output_size: A4
+      colour_mode: colour
+      detail: high
+      grade_band: 6-8
+  printed_banner:
+    keywords: [banner, printed banner, large print, display, wall display, annual report]
+    required_inputs: [subject, output_size]
+    quality_floor:
+      min_dpi: 300
+      min_resolution: 1500
+      colour_mode: colour
+    default_tier_hint: high
+    allowed_strategies: [premium]
+    defaults:
+      output_size: A1
+      colour_mode: colour
+      detail: maximum
+strategies:
+  reuse:
+    adapter: reuse_library
+    effort_level: Reuse
+    description: "Instantly reuses an approved existing asset with zero generative compute."
+    levers:
+      mode: reuse
+      colour_mode: auto
+      resolution: 768
+      steps: 0
+      variations: 1
+    params:
+      steps: 0
+      resolution: 768
+    price_per_call: 0.0005
+    source: placeholder
+    latency_s: 0.02
+  template_outline:
+    adapter: template_outline
+    effort_level: Quick
+    description: "Deterministic black-and-white line outline from templates without AI generation."
+    levers:
+      mode: template
+      colour_mode: bw
+      resolution: 768
+      steps: 0
+      variations: 1
+    params:
+      steps: 0
+      resolution: 768
+    price_per_call: 0.002
+    source: placeholder
+    latency_s: 0.05
+  draft:
+    adapter: mock_image
+    effort_level: Quick
+    description: "Fast black-and-white generation at 768px resolution for simple worksheets."
+    levers:
+      mode: generate
+      colour_mode: bw
+      resolution: 768
+      steps: 15
+      variations: 1
+    params:
+      steps: 15
+      resolution: 768
+    price_per_call: 0.01
+    source: placeholder
+    latency_s: 2
+  standard:
+    adapter: mock_image
+    effort_level: Standard
+    description: "Full colour balanced generation at 1024px resolution for classroom study."
+    levers:
+      mode: generate
+      colour_mode: colour
+      resolution: 1024
+      steps: 30
+      variations: 1
+    params:
+      steps: 30
+      resolution: 1024
+    price_per_call: 0.04
+    source: placeholder
+    latency_s: 5
+  premium:
+    adapter: mock_image
+    effort_level: Print-quality
+    description: "Full colour high-fidelity generation at 2048px resolution for large prints and banners."
+    levers:
+      mode: generate
+      colour_mode: colour
+      resolution: 2048
+      steps: 60
+      variations: 2
+    params:
+      steps: 60
+      resolution: 2048
+    price_per_call: 0.12
+    source: placeholder
+    latency_s: 12
+policy:
+  active: cheapest_meeting_quality
+  budgets:
+    per_request_max: 0.15
+    per_school_monthly: 20.0
+  latency_max_s: 30
+  approval_required_above_cost: 0.10
+  escalation:
+    allow_auto: false
+    max_retries: 1
+  show_relative_cost: true
+  hide_currency_from_requester: true
+baseline_policy: baseline_always_max

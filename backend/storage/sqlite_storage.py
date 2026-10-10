@@ -1,0 +1,630 @@
+"""
+SQLite storage implementation.
+
+Persists requests, decisions, executions, costs, and quality results.
+"""
+from __future__ import annotations
+
+import json
+import sqlite3
+from contextlib import contextmanager
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Generator, Optional
+
+from backend.engine.models import (
+    AnalysisResult,
+    CostEstimate,
+    CostRecord,
+    Decision,
+    DecisionExplanation,
+    ExecutionResult,
+    QualityGateResult,
+    RequestRecord,
+    RequestStatus,
+    UserRequest,
+)
+from backend.storage.base import StorageInterface
+
+
+class SQLiteStorage(StorageInterface):
+    """SQLite implementation of the storage interface."""
+
+    def __init__(self, db_path: str = "data/optimizer.db"):
+        self.db_path = db_path
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        self._init_db()
+
+    @contextmanager
+    def _get_conn(self) -> Generator[sqlite3.Connection, None, None]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode=WAL")
+        try:
+            yield conn
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+
+    def _init_db(self) -> None:
+        with self._get_conn() as conn:
+            conn.executescript("""
+                CREATE TABLE IF NOT EXISTS requests (
+                    id TEXT PRIMARY KEY,
+                    domain TEXT NOT NULL,
+                    prompt TEXT NOT NULL,
+                    inputs TEXT,
+                    school_id TEXT,
+                    requester_id TEXT,
+                    preferred_strategy TEXT,
+                    status TEXT NOT NULL,
+                    created_at TEXT,
+                    updated_at TEXT,
+                    metadata TEXT
+                );
+
+                CREATE TABLE IF NOT EXISTS analyses (
+                    request_id TEXT PRIMARY KEY,
+                    category TEXT,
+                    confidence REAL,
+                    matched_keywords TEXT,
+                    is_ambiguous INTEGER,
+                    clarification_question TEXT,
+                    missing_inputs TEXT,
+                    alternative_categories TEXT,
+                    FOREIGN KEY (request_id) REFERENCES requests(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS decisions (
+                    request_id TEXT PRIMARY KEY,
+                    category TEXT,
+                    chosen_strategy TEXT,
+                    cost_estimate TEXT,
+                    explanation TEXT,
+                    requires_approval INTEGER,
+                    policy_used TEXT,
+                    filtered_strategies TEXT,
+                    created_at TEXT,
+                    FOREIGN KEY (request_id) REFERENCES requests(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS executions (
+                    request_id TEXT PRIMARY KEY,
+                    strategy_name TEXT,
+                    success INTEGER,
+                    output_reference TEXT,
+                    actual_cost REAL,
+                    latency_s REAL,
+                    is_simulated INTEGER,
+                    error TEXT,
+                    metadata TEXT,
+                    FOREIGN KEY (request_id) REFERENCES requests(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS costs (
+                    request_id TEXT PRIMARY KEY,
+                    strategy_name TEXT,
+                    estimated_cost REAL,
+                    actual_cost REAL,
+                    currency TEXT,
+                    source TEXT,
+                    is_simulated INTEGER,
+                    attempts INTEGER,
+                    includes_retries INTEGER,
+                    breakdown TEXT,
+                    FOREIGN KEY (request_id) REFERENCES requests(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS quality_results (
+                    request_id TEXT PRIMARY KEY,
+                    passed INTEGER,
+                    checks TEXT,
+                    human_rating INTEGER,
+                    is_automated_proxy INTEGER,
+                    disclaimer TEXT,
+                    FOREIGN KEY (request_id) REFERENCES requests(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS config_versions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    domain TEXT NOT NULL,
+                    version INTEGER NOT NULL,
+                    config_data TEXT NOT NULL,
+                    author TEXT,
+                    saved_at TEXT
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_requests_school ON requests(school_id);
+                CREATE INDEX IF NOT EXISTS idx_requests_status ON requests(status);
+                CREATE INDEX IF NOT EXISTS idx_requests_domain ON requests(domain);
+            """)
+
+    def save_request(self, record: RequestRecord) -> None:
+        with self._get_conn() as conn:
+            req = record.request
+            conn.execute("""
+                INSERT OR REPLACE INTO requests
+                (id, domain, prompt, inputs, school_id, requester_id,
+                 preferred_strategy, status, created_at, updated_at, metadata)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                req.id, req.domain, req.prompt,
+                json.dumps(req.inputs), req.school_id, req.requester_id,
+                req.preferred_strategy, record.status.value,
+                req.created_at.isoformat(), record.updated_at.isoformat(),
+                json.dumps(req.metadata),
+            ))
+
+            if record.analysis:
+                a = record.analysis
+                conn.execute("""
+                    INSERT OR REPLACE INTO analyses
+                    (request_id, category, confidence, matched_keywords,
+                     is_ambiguous, clarification_question, missing_inputs,
+                     alternative_categories)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    req.id, a.category, a.confidence,
+                    json.dumps(a.matched_keywords), int(a.is_ambiguous),
+                    a.clarification_question, json.dumps(a.missing_inputs),
+                    json.dumps(a.alternative_categories),
+                ))
+
+            if record.decision:
+                d = record.decision
+                conn.execute("""
+                    INSERT OR REPLACE INTO decisions
+                    (request_id, category, chosen_strategy, cost_estimate,
+                     explanation, requires_approval, policy_used,
+                     filtered_strategies, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    req.id, d.category, d.chosen_strategy,
+                    json.dumps(d.cost_estimate.model_dump()),
+                    json.dumps(d.explanation.model_dump()),
+                    int(d.requires_approval), d.policy_used,
+                    json.dumps(d.filtered_strategies),
+                    d.created_at.isoformat(),
+                ))
+
+            if record.execution:
+                e = record.execution
+                conn.execute("""
+                    INSERT OR REPLACE INTO executions
+                    (request_id, strategy_name, success, output_reference,
+                     actual_cost, latency_s, is_simulated, error, metadata)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    req.id, e.strategy_name, int(e.success),
+                    e.output_reference, e.actual_cost, e.latency_s,
+                    int(e.is_simulated), e.error,
+                    json.dumps(e.metadata),
+                ))
+
+            if record.cost:
+                c = record.cost
+                conn.execute("""
+                    INSERT OR REPLACE INTO costs
+                    (request_id, strategy_name, estimated_cost, actual_cost,
+                     currency, source, is_simulated, attempts,
+                     includes_retries, breakdown)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    req.id, c.strategy_name, c.estimated_cost, c.actual_cost,
+                    c.currency, c.source, int(c.is_simulated), c.attempts,
+                    int(c.includes_retries), json.dumps(c.breakdown),
+                ))
+
+            if record.quality:
+                q = record.quality
+                conn.execute("""
+                    INSERT OR REPLACE INTO quality_results
+                    (request_id, passed, checks, human_rating,
+                     is_automated_proxy, disclaimer)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (
+                    req.id, int(q.passed),
+                    json.dumps([c.model_dump() for c in q.checks]),
+                    q.human_rating, int(q.is_automated_proxy), q.disclaimer,
+                ))
+
+    def get_request(self, request_id: str) -> Optional[RequestRecord]:
+        with self._get_conn() as conn:
+            row = conn.execute(
+                "SELECT * FROM requests WHERE id = ?", (request_id,)
+            ).fetchone()
+            if not row:
+                return None
+
+            request = UserRequest(
+                id=row["id"],
+                prompt=row["prompt"],
+                domain=row["domain"],
+                inputs=json.loads(row["inputs"] or "{}"),
+                school_id=row["school_id"],
+                requester_id=row["requester_id"],
+                preferred_strategy=row["preferred_strategy"],
+                metadata=json.loads(row["metadata"] or "{}"),
+            )
+
+            record = RequestRecord(
+                request=request,
+                status=RequestStatus(row["status"]),
+            )
+
+            # Load analysis
+            a_row = conn.execute(
+                "SELECT * FROM analyses WHERE request_id = ?", (request_id,)
+            ).fetchone()
+            if a_row:
+                record.analysis = AnalysisResult(
+                    category=a_row["category"],
+                    confidence=a_row["confidence"],
+                    matched_keywords=json.loads(a_row["matched_keywords"] or "[]"),
+                    is_ambiguous=bool(a_row["is_ambiguous"]),
+                    clarification_question=a_row["clarification_question"],
+                    missing_inputs=json.loads(a_row["missing_inputs"] or "[]"),
+                    alternative_categories=json.loads(a_row["alternative_categories"] or "[]"),
+                )
+
+            # Load decision
+            d_row = conn.execute(
+                "SELECT * FROM decisions WHERE request_id = ?", (request_id,)
+            ).fetchone()
+            if d_row:
+                cost_est_data = json.loads(d_row["cost_estimate"])
+                expl_data = json.loads(d_row["explanation"])
+                record.decision = Decision(
+                    request_id=request_id,
+                    category=d_row["category"],
+                    chosen_strategy=d_row["chosen_strategy"],
+                    cost_estimate=CostEstimate(**cost_est_data),
+                    explanation=DecisionExplanation(**expl_data),
+                    requires_approval=bool(d_row["requires_approval"]),
+                    policy_used=d_row["policy_used"],
+                    filtered_strategies=json.loads(d_row["filtered_strategies"] or "{}"),
+                )
+
+            # Load execution
+            e_row = conn.execute(
+                "SELECT * FROM executions WHERE request_id = ?", (request_id,)
+            ).fetchone()
+            if e_row:
+                record.execution = ExecutionResult(
+                    request_id=request_id,
+                    strategy_name=e_row["strategy_name"],
+                    success=bool(e_row["success"]),
+                    output_reference=e_row["output_reference"],
+                    actual_cost=e_row["actual_cost"],
+                    latency_s=e_row["latency_s"],
+                    is_simulated=bool(e_row["is_simulated"]),
+                    error=e_row["error"],
+                    metadata=json.loads(e_row["metadata"] or "{}"),
+                )
+
+            # Load cost
+            c_row = conn.execute(
+                "SELECT * FROM costs WHERE request_id = ?", (request_id,)
+            ).fetchone()
+            if c_row:
+                record.cost = CostRecord(
+                    strategy_name=c_row["strategy_name"],
+                    estimated_cost=c_row["estimated_cost"],
+                    actual_cost=c_row["actual_cost"],
+                    currency=c_row["currency"],
+                    source=c_row["source"],
+                    is_simulated=bool(c_row["is_simulated"]),
+                    attempts=c_row["attempts"],
+                    includes_retries=bool(c_row["includes_retries"]),
+                    breakdown=json.loads(c_row["breakdown"] or "{}"),
+                )
+
+            # Load quality
+            q_row = conn.execute(
+                "SELECT * FROM quality_results WHERE request_id = ?", (request_id,)
+            ).fetchone()
+            if q_row:
+                from backend.engine.models import QualityCheckResult
+                checks_data = json.loads(q_row["checks"] or "[]")
+                record.quality = QualityGateResult(
+                    passed=bool(q_row["passed"]),
+                    checks=[QualityCheckResult(**c) for c in checks_data],
+                    human_rating=q_row["human_rating"],
+                    is_automated_proxy=bool(q_row["is_automated_proxy"]),
+                    disclaimer=q_row["disclaimer"],
+                )
+
+            return record
+
+    def list_requests(
+        self,
+        school_id: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[RequestRecord]:
+        conditions = []
+        params: list[Any] = []
+
+        if school_id:
+            conditions.append("r.school_id = ?")
+            params.append(school_id)
+        if status:
+            conditions.append("r.status = ?")
+            params.append(status)
+
+        where = "WHERE " + " AND ".join(conditions) if conditions else ""
+
+        with self._get_conn() as conn:
+            rows = conn.execute(f"""
+                SELECT r.id FROM requests r {where}
+                ORDER BY r.created_at DESC
+                LIMIT ? OFFSET ?
+            """, params + [limit, offset]).fetchall()
+
+        records = []
+        for row in rows:
+            record = self.get_request(row["id"])
+            if record:
+                if category and record.analysis and record.analysis.category != category:
+                    continue
+                records.append(record)
+        return records
+
+    def get_school_spend(
+        self,
+        school_id: str,
+        month: Optional[str] = None,
+    ) -> float:
+        with self._get_conn() as conn:
+            if month:
+                row = conn.execute("""
+                    SELECT COALESCE(SUM(c.actual_cost), 0) as total
+                    FROM costs c
+                    JOIN requests r ON c.request_id = r.id
+                    WHERE r.school_id = ?
+                    AND r.created_at LIKE ?
+                """, (school_id, f"{month}%")).fetchone()
+            else:
+                row = conn.execute("""
+                    SELECT COALESCE(SUM(c.actual_cost), 0) as total
+                    FROM costs c
+                    JOIN requests r ON c.request_id = r.id
+                    WHERE r.school_id = ?
+                """, (school_id,)).fetchone()
+            return float(row["total"]) if row else 0.0
+
+    def get_analytics(
+        self,
+        filters: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        filters = filters or {}
+
+        with self._get_conn() as conn:
+            # Total requests
+            total = conn.execute("SELECT COUNT(*) as cnt FROM requests").fetchone()["cnt"]
+
+            # Total estimated vs actual cost
+            costs_row = conn.execute("""
+                SELECT
+                    COALESCE(SUM(estimated_cost), 0) as total_estimated,
+                    COALESCE(SUM(actual_cost), 0) as total_actual,
+                    COUNT(*) as cost_records
+                FROM costs
+            """).fetchone()
+
+            # Successful requests
+            successful = conn.execute(
+                "SELECT COUNT(*) as cnt FROM requests WHERE status = 'completed'"
+            ).fetchone()["cnt"]
+
+            # Average latency
+            avg_lat = conn.execute(
+                "SELECT AVG(latency_s) as avg_lat FROM executions WHERE success = 1"
+            ).fetchone()["avg_lat"] or 0.0
+
+            # Failure rate
+            total_executions = conn.execute(
+                "SELECT COUNT(*) as cnt FROM executions"
+            ).fetchone()["cnt"]
+            failed_executions = conn.execute(
+                "SELECT COUNT(*) as cnt FROM executions WHERE success = 0"
+            ).fetchone()["cnt"]
+
+            # Quality gate pass rate
+            total_quality = conn.execute(
+                "SELECT COUNT(*) as cnt FROM quality_results"
+            ).fetchone()["cnt"]
+            passed_quality = conn.execute(
+                "SELECT COUNT(*) as cnt FROM quality_results WHERE passed = 1"
+            ).fetchone()["cnt"]
+
+            # By strategy
+            by_strategy = conn.execute("""
+                SELECT strategy_name,
+                    COUNT(*) as count,
+                    SUM(actual_cost) as total_cost,
+                    AVG(actual_cost) as avg_cost
+                FROM costs
+                GROUP BY strategy_name
+            """).fetchall()
+
+            # By school
+            by_school = conn.execute("""
+                SELECT r.school_id,
+                    COUNT(*) as count,
+                    COALESCE(SUM(c.actual_cost), 0) as total_cost
+                FROM requests r
+                LEFT JOIN costs c ON r.id = c.request_id
+                WHERE r.school_id IS NOT NULL
+                GROUP BY r.school_id
+            """).fetchall()
+
+            return {
+                "total_requests": total,
+                "successful_requests": successful,
+                "total_estimated_cost": costs_row["total_estimated"],
+                "total_actual_cost": costs_row["total_actual"],
+                "cost_per_successful_request": (
+                    costs_row["total_actual"] / successful if successful > 0 else 0
+                ),
+                "average_latency_s": round(avg_lat, 3),
+                "failure_rate": (
+                    failed_executions / total_executions if total_executions > 0 else 0
+                ),
+                "quality_gate_pass_rate": (
+                    passed_quality / total_quality if total_quality > 0 else 0
+                ),
+                "by_strategy": [
+                    {
+                        "strategy": r["strategy_name"],
+                        "count": r["count"],
+                        "total_cost": r["total_cost"],
+                        "avg_cost": r["avg_cost"],
+                    }
+                    for r in by_strategy
+                ],
+                "by_school": [
+                    {
+                        "school_id": r["school_id"],
+                        "count": r["count"],
+                        "total_cost": r["total_cost"],
+                    }
+                    for r in by_school
+                ],
+                "all_values_simulated": True,
+            }
+
+    def save_config_version(
+        self, domain: str, version: int, config_data: dict[str, Any], author: str
+    ) -> None:
+        with self._get_conn() as conn:
+            conn.execute("""
+                INSERT INTO config_versions (domain, version, config_data, author, saved_at)
+                VALUES (?, ?, ?, ?, ?)
+            """, (domain, version, json.dumps(config_data), author, datetime.utcnow().isoformat()))
+
+    def get_config_versions(self, domain: str) -> list[dict[str, Any]]:
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT * FROM config_versions
+                WHERE domain = ?
+                ORDER BY version DESC
+            """, (domain,)).fetchall()
+            return [
+                {
+                    "id": r["id"],
+                    "domain": r["domain"],
+                    "version": r["version"],
+                    "config_data": json.loads(r["config_data"]),
+                    "author": r["author"],
+                    "saved_at": r["saved_at"],
+                }
+                for r in rows
+            ]
+
+    def set_human_rating(self, request_id: str, rating: int) -> bool:
+        """Store optional 1 to 5 human rating for a request result."""
+        if not (1 <= rating <= 5):
+            raise ValueError("Rating must be between 1 and 5")
+        with self._get_conn() as conn:
+            cur = conn.execute(
+                "UPDATE quality_results SET human_rating = ? WHERE request_id = ?",
+                (rating, request_id)
+            )
+            return cur.rowcount > 0
+
+    def get_showback_report(self) -> dict[str, Any]:
+        """
+        Generate showback report: spend, requests, reuse rate, and effort mix
+        by school and by purpose.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT
+                    r.school_id,
+                    d.category,
+                    d.chosen_strategy,
+                    COALESCE(c.actual_cost, 0.0) as actual_cost,
+                    e.metadata
+                FROM requests r
+                LEFT JOIN decisions d ON r.id = d.request_id
+                LEFT JOIN costs c ON r.id = c.request_id
+                LEFT JOIN executions e ON r.id = e.request_id
+            """).fetchall()
+
+            strategy_effort = {
+                "reuse": "Reuse",
+                "template_outline": "Quick",
+                "draft": "Quick",
+                "standard": "Standard",
+                "premium": "Print-quality",
+            }
+
+            by_school: dict[str, dict[str, Any]] = {}
+            by_purpose: dict[str, dict[str, Any]] = {}
+            total_spend = 0.0
+            total_requests = len(rows)
+            total_reuse = 0
+
+            for r in rows:
+                sid = r["school_id"] or "SCHOOL-001"
+                cat = r["category"] or "general"
+                strat = r["chosen_strategy"] or "standard"
+                cost = float(r["actual_cost"])
+                meta = json.loads(r["metadata"]) if r["metadata"] else {}
+                is_reuse = meta.get("reused", False) or strat == "reuse"
+                effort = strategy_effort.get(strat, "Standard")
+
+                total_spend += cost
+                if is_reuse:
+                    total_reuse += 1
+
+                # By School
+                if sid not in by_school:
+                    by_school[sid] = {
+                        "school_id": sid,
+                        "spend": 0.0,
+                        "requests": 0,
+                        "reuse_count": 0,
+                        "effort_mix": {"Reuse": 0, "Quick": 0, "Standard": 0, "Print-quality": 0},
+                    }
+                by_school[sid]["spend"] = round(by_school[sid]["spend"] + cost, 4)
+                by_school[sid]["requests"] += 1
+                if is_reuse:
+                    by_school[sid]["reuse_count"] += 1
+                by_school[sid]["effort_mix"][effort] = by_school[sid]["effort_mix"].get(effort, 0) + 1
+
+                # By Purpose
+                if cat not in by_purpose:
+                    by_purpose[cat] = {
+                        "category": cat,
+                        "spend": 0.0,
+                        "requests": 0,
+                        "reuse_count": 0,
+                        "effort_mix": {"Reuse": 0, "Quick": 0, "Standard": 0, "Print-quality": 0},
+                    }
+                by_purpose[cat]["spend"] = round(by_purpose[cat]["spend"] + cost, 4)
+                by_purpose[cat]["requests"] += 1
+                if is_reuse:
+                    by_purpose[cat]["reuse_count"] += 1
+                by_purpose[cat]["effort_mix"][effort] = by_purpose[cat]["effort_mix"].get(effort, 0) + 1
+
+            for s in by_school.values():
+                s["reuse_rate"] = round(s["reuse_count"] / s["requests"], 3) if s["requests"] > 0 else 0.0
+
+            for p in by_purpose.values():
+                p["reuse_rate"] = round(p["reuse_count"] / p["requests"], 3) if p["requests"] > 0 else 0.0
+
+            return {
+                "total_spend": round(total_spend, 4),
+                "total_requests": total_requests,
+                "overall_reuse_rate": round(total_reuse / total_requests, 3) if total_requests > 0 else 0.0,
+                "by_school": list(by_school.values()),
+                "by_purpose": list(by_purpose.values()),
+                "is_simulated": True,
+            }
