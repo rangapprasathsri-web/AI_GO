@@ -1,117 +1,108 @@
-# Build Report: Adaptive AI Request Optimizer
+# Build Report: Adaptive AI Image Resource Optimizer
 
-## 1. Executive Summary
-The Adaptive AI Request Optimizer platform has been implemented, hardened, and verified through a complete 3-phase delivery process and full cross-phase governance:
-
-- **Initial Baseline Suite**: 63 tests collected — 57 passed, 6 failed.
-- **Phase 1 Checkpoint**: 86 tests passed, 0 failed (`c6befcf`).
-- **Phase 2 Checkpoint**: 95 tests passed, 0 failed (`456a14f`).
-- **Phase 3 Checkpoint**: 102 tests passed, 0 failed (`9dcc41c`).
-- **Final Test Suite Status**: **104 tests collected — 104 passed, 0 failed (100% passing)** across all suites.
-- **Engine Isolation**: Strictly verified — zero imports from `domains/`, `adapters/`, or `api/` inside `backend/engine/`.
-- **Methodological Integrity**: Every metric carries an explicit `data_origin` (`simulated`, `estimated`, `provider_reported`, `billing_confirmed`). Pricing sources track official documentation with last-updated timestamps (`2026-10-01`). All savings numbers are computed directly from parallel runs on the exact same workload and seed.
+**Date**: 2026-10-10  
+**Status**: All P0 and P1 requirements complete and verified.  
+**Test Suite**: 124 passed, 0 failed (100% pass rate).  
+**Demo Script**: All 7 steps in Section 11 reproduce cleanly (`make demo`).
 
 ---
 
-## 2. Test Verification Matrix
+## 1. What Works
 
-| Test Module | Tests | Passed | Failed | Status | Description |
-|---|---|---|---|---|---|
-| `backend/tests/test_core.py` | 66 | 66 | 0 | 100% Passed | Engine policies, tie-breaks, quality gate, deterministic eval |
-| `backend/tests/test_gaps.py` | 12 | 12 | 0 | 100% Passed | Engine isolation AST check, reuse floor checks, quotas |
-| `backend/tests/test_api.py` | 10 | 10 | 0 | 100% Passed | FastAPI intake, preview, eval, showback, rollback, history |
-| `backend/tests/test_llm_intent.py` | 9 | 9 | 0 | 100% Passed | PII stripping, injection defense, golden dataset, overhead |
-| `backend/tests/test_provider_contracts.py` | 7 | 7 | 0 | 100% Passed | HTTPX mock transport, retries, 429/500 errors, timeouts |
-| **Total Test Suite** | **104** | **104** | **0** | **100% Passed** | **Zero failures across all modules** |
+### A. Core Decision Engine & Tier Selection
+- **Purpose Floors**: Mapped across all 6 official purposes: `coloring_sheet` (Economy), `educational_illustration` (Economy, suggested Standard), `presentation_graphic` (Standard), `social_media_artwork` (Economy, suggested Standard), `professional_print_artwork` (Maximum), `custom` (asks required inputs; defaults to conservative Standard on uncertainty, never Maximum).
+- **Dynamic Floor Raising**:
+  - Automatically raises to Standard if print use is flagged or if large print sizes (`A1`, `A0`, `POSTER`, `BANNER`) are specified.
+  - Automatically raises based on target resolution (e.g. $\ge 1500$ px raises to Maximum) or required detail (`high` raises to Standard, `maximum` raises to Maximum).
+- **Plain-Language Explanations**: Observable factors cited directly (e.g. `deciding_factor: large print size (A1)`), detailing why the tier was chosen.
+- **Override Safeguards**:
+  - Overriding below the purpose floor prompts an explicit warning dialog and requires explicit confirmation (logged with audit warning).
+  - Overriding above hard budget (`per_request_units_max: 120.0`) is strictly blocked.
+- **Config-Only Updates**: Changing a purpose's floor (e.g. raising Coloring Sheet to Standard) updates the system recommendation immediately with zero code changes.
 
----
+### B. Resource Estimation & Counterfactual Savings Math
+- **Formula Proxy**: Provider-independent module calculating relative compute units via:
+  $$\text{Units} = \text{round}(\text{steps} \times \text{megapixels} \times \text{model\_factor}, 2)$$
+- **Transparent Math**:
+  - Economy (768×768, 20 steps): **11.80 units** (~90.0% savings vs Maximum).
+  - Standard (1024×1024, 30 steps): **31.46 units** (~73.3% savings vs Maximum).
+  - Maximum (1536×1536, 50 steps): **117.96 units** (0.0% baseline).
+- **Guards**:
+  - If baseline is missing, zero, or negative, returns `status: "unavailable"` with reason; never crashes and never returns default 0% or 100%.
+  - If selected tier costs more than Maximum, returns honest negative savings without clamping to zero.
+- **Energy / Carbon Policy**: Strict adherence to Section 6.5. When `energy_model.enabled` is false, `energy_wh` and `carbon_co2_g` return `null` (never zero or fabricated numbers).
 
-## 3. Architecture Overview & Component Separation
+### C. Mock Generation Adapter & Demo Assets
+- **Honesty Watermarks**: Synthetic images generated via Pillow carry a prominent `DEMO PLACEHOLDER - NOT REAL MODEL OUTPUT` top banner and bottom watermark with tier name, resolution, and step count.
+- **Distinct Output Resolution**: Economy outputs at 768×768, Standard at 1024×1024, Maximum at 1536×1536.
+- **Asset Attribution**: Metadata flags `is_placeholder: true`, `placeholder_label: "DEMO PLACEHOLDER: illustrative placeholder asset, not real model output"`.
 
-```
-                       ┌─────────────────────────┐
-                       │   Requester / Admin     │
-                       └────────────┬────────────┘
-                                    │ HTTP REST
-                                    ▼
-                       ┌─────────────────────────┐
-                       │  FastAPI Web Gateway    │
-                       │   (backend/api/main.py) │
-                       └────────────┬────────────┘
-                                    │
-    ┌───────────────────────────────┴──────────────────────────────┐
-    │                                                              │
-    ▼                                                              ▼
-┌───────────────────────────────┐              ┌───────────────────────────────┐
-│     Governance & Storage      │              │       LLM Intent Service      │
-│ - SQLite Storage Repository   │              │   (backend/adapters/llm/)     │
-│ - Config Versioning & Rollback│              │ - Rules-first bypass cache    │
-│ - Per-school quotas ($20/mo)  │              │ - PII redaction & sanitization│
-│ - Prompt & Output Moderation  │              │ - Injection defense           │
-└───────────────────────────────┘              │ - Overhead accounting ($0.001)│
-                                               └───────────────┬───────────────┘
-                                                               │ Intent
-                                                               ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                    Configurable Decision Engine (Isolated)                   │
-│                         (backend/engine/)                                    │
-│  - Pipeline: Validate → Analyze → Filter Hard Constraints → Rank → Explain   │
-│  - Policies: Cheapest Meeting Quality, Quality First, Latency First,         │
-│              Rule Based, Baseline Always Max, Weighted, User Selected,        │
-│              Manual Approval, Manual Review                                  │
-│  - Automated Quality Gate Proxy Checks (Existence, DPI, Colour, Ink Ratio)   │
-└──────────────────────────────────────┬───────────────────────────────────────┘
-                                       │ Strategy Execution
-                                       ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            Adapter Layer                                     │
-│                         (backend/adapters/)                                  │
-│  - Reuse Library Adapter (similarity lookup, quality floor re-check)         │
-│  - Template Outline Adapter (deterministic B&W vector outline)               │
-│  - Mock Image & Text Multi-Tier Adapters (synthetic images with PIL)         │
-│  - OpenAI Image Adapter (DALL-E 3 / DALL-E 2 with HTTPX mock transport)      │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
+### D. REST API & Persistence
+- `POST /recommend`: Evaluates prompt, purpose, detail, print flags, budget; returns recommended tier, explanation, deciding factor, estimates, alternatives.
+- `POST /generate`: Validates override and budget, executes generation, computes savings, saves record to SQLite.
+- `GET /history` & `GET /history/{id}`: Returns run log with filter support.
+- `GET /history/export.csv`: One-click CSV export of generation records.
+- `GET /summary`: Cumulative savings across successful generations with data origin breakdown and running total string.
+- `GET /config` & `PUT /config`: Sanitized configuration retrieval (no secrets) and hot-reloading with validation and rollback.
+- `GET /health`: Health status and domain verification.
+
+### E. Frontend UI
+- Full web interface at `http://localhost:8000` with Outfit and JetBrains Mono typography, dark mode glassmorphism, responsive grid, and accessible controls.
+- Running Total widget: *"You have saved about X units across N images (estimated, not measured)"*.
+- Interactive quality tier selector with `[★ RECOMMENDED]` pre-selection.
+- Centerpiece Resource Comparison panel with Selected Effort, Maximum Baseline, Avoided Savings, and Side-by-side placeholder preview.
+- Below-floor confirmation checkbox modal and hard budget error notices.
 
 ---
 
-## 4. Implemented vs Simulated Components
+## 2. Test Verification Summary
 
-| Component | Status | Nature | Details |
-|---|---|---|---|
-| **Decision Engine Pipeline** | Fully Implemented | Real Code | Deterministic ranking, constraint filtering, and tie-breaks. |
-| **Config Versioning & Rollback** | Fully Implemented | Real Code | Version history in SQLite; live rollback with `POST /api/config/rollback`. |
-| **Automated Quality Gate** | Fully Implemented | Real Code | Real PIL image analysis (resolution at DPI, colour mode, ink coverage). |
-| **Input Sanitization & Moderation** | Fully Implemented | Real Code | Real regex-based PII blocking and prompt injection filtering. |
-| **Storage & Quota Tracking** | Fully Implemented | Real Code | SQLite repository tracking school spends, alerts at 80%, blocks at 100%. |
-| **LLM Intent Analysis** | Fully Implemented | Deterministic Mock | Realistic parser with schema validation, PII redaction, overhead tracking. |
-| **OpenAI Image Adapter** | Fully Implemented | Real + Mock Transport | Official API schema, pricing ($0.04 - $0.12); runs offline via HTTPX mock transport. |
-| **Mock Image Generation** | Fully Implemented | Deterministic Synthetic | PIL generates real PNG images engineered to pass/fail quality checks. |
-| **Provider Costs & Latencies** | Config-Driven | Simulated / Estimated | Tagged with `data_origin: simulated` or `data_origin: estimated`. |
-
----
-
-## 5. Demonstration Workflow (`python cli.py demo` or `make demo`)
-
-Running `make demo` executes the 5 essential scenarios:
-1. **Four Seed Requests**:
-   - Colouring sheet $\rightarrow$ `template_outline` (Quick tier, $0.002, B&W outline)
-   - Flashcard $\rightarrow$ `draft` (Quick tier, $0.010, colour)
-   - Illustration $\rightarrow$ `standard` (Standard tier, $0.040, high detail)
-   - Banner $\rightarrow$ `premium` (Print-quality, $0.120) $\rightarrow$ routes to `AWAITING_APPROVAL`.
-2. **Library Reuse Demonstration**:
-   - The same colouring sheet submitted again is served from the reuse library at $0.0005 (near-zero cost).
-3. **Config-Only Edit (Zero Code Change)**:
-   - Raising the colouring quality floor `min_dpi` to 500 automatically filters out draft/template and selects standard.
-4. **Second Domain Configuration**:
-   - `text_summarization.yaml` executes across model tiers on the unchanged decision engine.
-5. **Seeded Workload Evaluation & Split**:
-   - 30-request seeded evaluation comparing baseline vs optimized, outputting exact lever savings attribution ($\text{Reuse} + \text{Template} + \text{Lower Tier} == \text{Total}$) and the `data_origin_split`.
+Ran `make test` (`python -m pytest backend/tests/ -v`):
+- **Total Tests Passed**: **124**
+- **Failed**: **0**
+- **Validation Scenarios (Section 10)**:
+  1. `test_scenario_1_coloring_sheet_recommends_economy`: PASSED
+  2. `test_scenario_2_print_artwork_recommends_maximum`: PASSED
+  3. `test_scenario_3_override_works`: PASSED
+  4. `test_scenario_4_savings_calculate_correctly`: PASSED
+  5. `test_scenario_5_zero_or_invalid_baseline_unavailable`: PASSED
+  6. `test_scenario_6_resource_values_carry_origin_and_label`: PASSED
+  7. `test_scenario_7_demo_mode_works_without_credentials`: PASSED
+  8. `test_scenario_8_hard_budget_blocks_request`: PASSED
+- **Additional Edge Cases**:
+  - `test_floor_raised_by_large_print_size`: PASSED
+  - `test_floor_raised_by_required_detail`: PASSED
+  - `test_custom_purpose_asks_inputs_defaults_to_standard`: PASSED
+  - `test_below_floor_override_needs_confirmation`: PASSED
+  - `test_tier_above_maximum_gives_negative_savings`: PASSED
+  - `test_energy_model_returns_null_when_disabled`: PASSED
+  - `test_config_validation_rejects_bad_configs`: PASSED
+  - `test_cumulative_summary_counts_successes_only`: PASSED
+  - `test_estimation_is_deterministic`: PASSED
+  - `test_config_only_change_changes_recommendation`: PASSED
+  - `test_engine_has_no_provider_or_api_imports`: PASSED (AST verified)
+  - `test_no_secrets_in_config_response`: PASSED
 
 ---
 
-## 6. Known Limitations
-1. **PII Detection**: Pattern-based detection captures standard email, phone, student ID, and name-in-context patterns, but subtle unstructured disclosures require full NLP models.
-2. **Automated Quality Gate**: Measures automated technical proxies (DPI, resolution, colour mode, ink density) rather than subjective pedagogical visual appeal; human 1-5 star ratings supplement automated checks.
-3. **Reuse Similarity**: Employs token/tag Jaccard similarity and category indexing; production scale would benefit from vector embeddings.
-4. **Authentication**: Simple server-side role headers (`role: requester` vs `role: admin`) are used for role toggling; production deployment would integrate district SSO/OAuth2.
+## 3. Real vs. Estimated vs. Simulated Accounting
+
+| Component | Classification | Description / Origin Label |
+| :--- | :--- | :--- |
+| **Tier Selection & Policies** | **REAL** | Python decision engine evaluating floors, detail, resolution, and budget limits. |
+| **Override Validation** | **REAL** | Logic enforcing below-floor confirmations and hard budget blocks. |
+| **SQLite Persistence** | **REAL** | SQLite database (`data/optimizer.db`) storing generations, config versions, and summaries. |
+| **Configuration Engine** | **REAL** | Pydantic schema validation, version history tracking, and rollback. |
+| **FastAPI Endpoints** | **REAL** | Asynchronous HTTP endpoints with request validation and error handling. |
+| **Avoided Compute Savings** | **ESTIMATED** | Counterfactual savings vs Maximum tier baseline. The Maximum tier was **not run**; labelled `"estimated savings vs maximum tier (not run)"`. |
+| **Compute Units** | **SIMULATED** | Relative proxy formula (`steps * megapixels * model_factor`). Labelled `"simulated estimate, not measured energy"`. |
+| **Mock Generation Assets** | **SIMULATED** | Synthetic PIL-drawn images with visible `DEMO PLACEHOLDER` stamps. Differ in resolution (768×768 vs 1024×1024 vs 1536×1536). |
+| **Physical Energy & Carbon** | **NULL** | Explicitly returns `null` (not zero) when energy model is disabled. No electrical energy claimed. |
+
+---
+
+## 4. Known Limitations
+
+1. **Physical Watt-Hours Uncalibrated**: Physical energy numbers return `null` by design until a certified, peer-reviewed energy model for specific GPU hardware and batch configurations is supplied.
+2. **First-Order Proxy**: Relative compute units model linear scaling with steps and megapixels. Non-linear cross-attention memory bandwidth and batching overheads are not modeled in this first-order proxy.
+3. **Third-Party Live Providers**: In the absence of live provider API credentials, the system executes in demo mode using synthetic placeholder assets. Real provider adapters activate when valid API keys are configured.

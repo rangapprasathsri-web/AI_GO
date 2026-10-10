@@ -41,6 +41,7 @@ class PolicyName(str, Enum):
     BASELINE_ALWAYS_MAX = "baseline_always_max"
     RULE_BASED = "rule_based"
     CHEAPEST_MEETING_QUALITY = "cheapest_meeting_quality"
+    LOWEST_SUITABLE_TIER = "lowest_suitable_tier"
     QUALITY_FIRST_WITHIN_BUDGET = "quality_first_within_budget"
     LATENCY_FIRST_WITHIN_BUDGET = "latency_first_within_budget"
     WEIGHTED = "weighted"
@@ -110,12 +111,21 @@ class StrategyConfig(BaseModel):
 class BudgetConfig(BaseModel):
     per_request_max: float = 1.0
     per_school_monthly: float = 100.0
+    per_request_units_max: Optional[float] = None
+    session_units_max: Optional[float] = None
 
     @field_validator("per_request_max", "per_school_monthly")
     @classmethod
     def budget_non_negative(cls, v: float) -> float:
         if v < 0:
             raise ValueError("Budget values must be non-negative")
+        return v
+
+    @field_validator("per_request_units_max", "session_units_max")
+    @classmethod
+    def unit_budget_non_negative(cls, v: Optional[float]) -> Optional[float]:
+        if v is not None and v < 0:
+            raise ValueError("Unit budget values must be non-negative")
         return v
 
 
@@ -145,11 +155,16 @@ class DomainConfig(BaseModel):
     """Complete domain configuration."""
     domain: str
     version: int = 1
-    task_categories: dict[str, TaskCategory]
-    strategies: dict[str, StrategyConfig]
+    task_categories: dict[str, TaskCategory] = Field(default_factory=dict)
+    strategies: dict[str, StrategyConfig] = Field(default_factory=dict)
     policy: PolicyConfig
     baseline_policy: str = "baseline_always_max"
     config_path: Optional[str] = None
+    units: Optional[dict[str, Any]] = None
+    tiers: Optional[dict[str, Any]] = None
+    purposes: Optional[dict[str, Any]] = None
+    energy_model: Optional[dict[str, Any]] = None
+    raw_config: Optional[dict[str, Any]] = None
 
 
 # ── Request models ─────────────────────────────────────────────────────

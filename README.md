@@ -1,145 +1,123 @@
-# Adaptive AI Request Optimizer
+# AI Image Resource Optimizer
 
-A production-grade, configurable decision layer that sits between user requests and AI / compute services. For each request, it:
-1. **Identifies what the output is for** via one-tap purpose capture or intelligent intent classification.
-2. **Selects the most cost-effective compute strategy** (reuse library, deterministic non-generative templates, or right-sized models) that satisfies the purpose's quality floor.
-3. **Presents a transparent side-by-side preview** comparing the recommended strategy against the next tier up, with plain-language lever descriptions and relative costs.
-4. **Executes the request and verifies the output** using automated proxy quality gates (resolution at DPI, colour mode, ink coverage) plus optional 1–5 human rating.
-5. **Enforces district safety & quotas** including student PII detection, per-school monthly budgets with 80% alerts, and approval routing.
-6. **Enables hot-reloaded configuration edits** without restarting or modifying the core engine code.
+> "AI image generation uses the same computing power regardless of what the image is for, and the energy cost is invisible to the user. Build a generation system that matches computational effort to the purpose of the image and shows the user what was saved by not generating at maximum quality."
+
+The **Adaptive AI Image Resource Optimizer** is a production-grade, configurable decision layer that matches computational effort to the specific purpose of an image and makes the invisible resource cost and counterfactual savings visible to the requester.
+
+---
+
+## 🎯 What Success Looks Like
+
+1. **Purpose Intake**: The user provides a prompt and selects the purpose (Coloring sheet, Educational illustration, Presentation graphic, Social media artwork, Professional/print artwork, Custom).
+2. **Adaptive Recommendation**: The decision engine recommends the lowest quality tier (`Economy`, `Standard`, `Maximum`) that satisfies the purpose's quality requirements, explaining why in plain language with observable factors.
+3. **User Override with Guardrails**: The requester can override the tier within hard budget limits. Overriding below the purpose floor triggers an explicit confirmation warning dialog and is logged. Overriding above budget is blocked.
+4. **Transparent Compute Savings**: The system shows what was saved compared with generating at Maximum quality, in units and percent, with explicit origin labels (`simulated`, `provider-reported`, or `measured`).
+5. **Rigorous Honesty Disclosures**:
+   - Compute units are a relative proxy: `steps * megapixels * model_factor`. Real consumption depends on hardware, batching, and kernel efficiency.
+   - The counterfactual Maximum tier was **not run**; savings are estimated avoided compute.
+   - Demo images are clearly stamped with a visible `DEMO PLACEHOLDER` watermark and genuinely differ in resolution. They are never presented as real model outputs.
+   - Physical energy (Wh) and carbon (CO2) return `null` (not zero) unless an authoritative, cited energy model source is enabled in config.
 
 ---
 
 ## 🚀 Quick Start
 
 ### 1. Run the Test Suite
-All 83 comprehensive tests (unit tests, gap validations, API tests) pass offline with zero external dependencies:
+The entire test suite (124 tests including all 8 required validation scenarios, edge cases, contracts, and boundary isolation) passes with zero external credentials:
 ```bash
-python -m pytest backend/tests/ -v
-# or
 make test
+# or
+python -m pytest backend/tests/ -v
 ```
 
-### 2. Run the 4-Part Demonstration
-Demonstrates 4 distinct strategies for 4 purposes, reuse library hit, live config edit, and a second domain:
+### 2. Run the 7-Step Demo Script
+Reproduces the complete 7-step evaluation from Section 11 of the official problem statement:
 ```bash
-python cli.py demo
-# or
 make demo
+# or
+python cli.py demo
 ```
 
-### 3. Run the Evaluation Benchmark
-Runs a deterministic 50-request evaluation comparing baseline (always-premium) against adaptive optimization with savings attribution:
-```bash
-python cli.py eval --seed 42 --size 50
-# or
-make eval
-```
+The demo executes:
+1. **Coloring sheet**: Recommends Economy tier; shows 11.8 units vs 118.0 Maximum baseline (~90% savings).
+2. **Large print size (A1 Poster)**: Floor dynamically rises to Standard; explanation explicitly names the factor.
+3. **Professional/print artwork**: Maximum tier recommended; savings shown as 0%, which is the honest answer.
+4. **Override flow**: Below-floor override requires confirmation and is logged; over-budget override is blocked.
+5. **History & running total**: Cumulative savings summary with successes-only count and origin split.
+6. **Config-only change**: Changes recommendation dynamically without touching any engine code.
+7. **Honesty disclosures**: Transparently states relative proxy status, non-run baseline, and energy disclaimer.
 
-### 4. Run the Web Application
-Launches the FastAPI server and serves the modern glassmorphism web UI:
+### 3. Run the Web Application
 ```bash
-uvicorn backend.api.main:app --reload --host 0.0.0.0 --port 8000
-# or
 make serve
+# or
+python -m uvicorn backend.api.main:app --host 0.0.0.0 --port 8000
 ```
-Open your browser to `http://localhost:8000` to interact with:
-- **Requester Studio**: One-tap purpose capture, decision preview (recommended vs next level up), and real output generation.
-- **District Showback Dashboard**: School spend tracking, quota usage, reuse rate, and effort level mix.
-- **Config Hot-Reload Editor**: Live YAML/JSON configuration adjustments applied immediately.
-- **Evaluation & Benchmark Lab**: Real-time evaluation runner with savings attribution by lever.
+Open [http://localhost:8000](http://localhost:8000) in your browser:
+- **Optimizer View**: Interactive purpose cards, prompt input, dynamic print flags, real-time recommendation, tier selector with override confirmation, and image generation.
+- **Resource Comparison Centerpiece**: Selected effort vs Maximum baseline, avoided savings in units and %, origin badge, and side-by-side placeholder preview.
+- **Generation History**: Filterable run log with CSV export (`/history/export.csv`).
+- **Config Studio**: Live YAML/JSON configuration editor with validation and version rollback.
 
 ---
 
-## 🏛️ Architecture & "Who Decides" Separation
-
-The platform establishes clear, decoupled boundaries:
-- **Requester (Teacher/Staff)**: Stares the *purpose* (one-tap selection for colouring sheet, flashcard, illustration, or banner) and prompt. Overrides within approved bounds with an optional upgrade reason.
-- **System (Adaptive Optimizer Engine)**: Analyses purpose, matches against configured quality floors, filters strategies, ranks candidates by cost or policy, and explains the decision.
-- **District Administrator**: Sets policy (`cheapest_meeting_quality`, `baseline_always_max`, `rule_based`), school monthly budget caps ($20/month), approval thresholds ($0.10), and quality floors via versioned configuration.
-
-### Engine Isolation Guarantee
-The core engine (`backend/engine/`) has **strict architectural isolation**: it never imports from `domains/`, `adapters/`, or `api/`. This is verified automatically by AST checks in `backend/tests/test_gaps.py::test_engine_has_no_imports_from_domains_adapters_or_api`.
+## 🏛️ Architecture & Separation of Concerns
 
 ```
-Sakthi/
-├── backend/
-│   ├── engine/             # Core decision engine (isolated: no domain/adapter/api imports)
-│   │   ├── analysis.py     # Intent & purpose classification with one-tap fallback
-│   │   ├── config.py       # Pydantic configuration parsing & validation
-│   │   ├── cost.py         # Cost estimation, school budget check & cost comparisons
-│   │   ├── moderation.py   # Child safety & student PII detection
-│   │   ├── models.py       # Type-safe schemas and records
-│   │   ├── orchestrator.py # Decision making, pipeline orchestration, approvals
-│   │   ├── policy.py       # Decision policies (cheapest, baseline, rule-based, weighted)
-│   │   └── quality_gate.py # Automated proxy quality checks & disclaimer
-│   ├── adapters/           # Modular execution & compute adapters
-│   │   ├── base.py         # Abstract BaseAdapter interface
-│   │   ├── mock_image.py   # Generative image simulation (draft, standard, premium)
-│   │   ├── mock_text.py    # Text summarization simulation
-│   │   ├── registry.py     # Dynamic adapter registration
-│   │   ├── reuse_library.py# Token similarity asset cache & quality floor re-checks
-│   │   └── template_outline.py # Deterministic non-generative vector B&W line art
-│   ├── domains/            # External declarative YAML domain configurations
-│   │   ├── education_images.yaml
-│   │   └── text_summarization.yaml
-│   ├── eval/               # Evaluation runner & seeded workload generator
-│   │   ├── runner.py       # Attribution decomposition (reuse + template + tier == total)
-│   │   └── workload_generator.py # 70% colouring, 15% flashcard, 30% repeat rate
-│   ├── storage/            # SQLite persistence with WAL mode & versioning
-│   │   ├── base.py
-│   │   └── sqlite_storage.py
-│   ├── api/                # FastAPI application
-│   │   └── main.py         # REST endpoints for requests, preview, showback, config
-│   └── tests/              # Full test suite (83 tests)
-│       ├── test_core.py
-│       ├── test_gaps.py
-│       └── test_api.py
-├── frontend/
-│   └── index.html          # Modern web UI (Outfit typography, glassmorphism, responsive)
-├── cli.py                  # CLI commands (demo, eval, config-check, adaptability)
-├── GAP_REPORT.md           # Comprehensive gap analysis & verification mapping
-├── ASSUMPTIONS.md          # Methodological guardrails & simulated data caveats
-└── BUILD_REPORT.md         # Final test metrics & deliverables audit
+[ Web UI / Client ]
+       │
+       ▼
+[ FastAPI Endpoints ]  (/recommend, /generate, /history, /summary, /config)
+       │
+       ▼
+[ Resource Optimizer Service ] ──► [ Configuration Engine ]
+       │                               (tiers, purposes, budgets, energy_model)
+       ▼
+[ Resource Estimator Module ]
+       (units proxy formula, counterfactual savings, energy null policy)
+       │
+       ▼
+[ Generation Adapters ] (MockImageAdapter with DEMO PLACEHOLDER stamps)
+       │
+       ▼
+[ SQLite Storage ] (data/optimizer.db: generations, history, versioning)
 ```
 
----
-
-## 💡 Levers & Effort Levels
-
-Every strategy corresponds to a human-readable effort level with explicit optimization levers:
-
-| Effort Level | Strategy | Cost (Simulated) | Resolution | Colour Mode | Levers / Mechanism |
-|---|---|---|---|---|---|
-| **Reuse** | `reuse` | $0.0005 | Cached | Original | Serves approved existing asset with zero new generation tokens. |
-| **Quick** | `template_outline` | $0.0020 | 768px | B&W Outline | Deterministic non-generative line-art template. |
-| **Quick** | `draft` | $0.0100 | 768px | B&W / Colour | Low step count (15 steps), single variation. |
-| **Standard** | `standard` | $0.0400 | 1024px | Full Colour | Standard diffusion (30 steps), balanced detail. |
-| **Print-quality**| `premium` | $0.1200 | 2048px | High-DPI Colour| High step count (60 steps), 2 variations, print fidelity. |
+- **Strict Engine Boundary**: The core decision engine and estimation modules never import adapter, domain, or API code (enforced by AST tests).
+- **Domain Decoupling**: All tier definitions, quality floors, budgets, and formulas live in `backend/domains/image_resource_optimizer.yaml`.
 
 ---
 
-## 📊 Evaluation & Savings Attribution
+## 📊 Quality Tiers & Compute Units
 
-Evaluation results across 50 seeded requests with the district distribution (70% colouring, 15% flashcard, 10% illustration, 5% banner, 30% repeat rate):
-
-- **Baseline Policy (Always-Premium)**: $1.4800 (simulated)
-- **Adaptive Policy (Cheapest Meeting Quality)**: $0.7600 (simulated)
-- **Net District Savings**: **48.6% to 56.1% cost reduction**
-- **Routing Accuracy**: **94.3%**
-- **Quality Gate Pass Rate**: **100%** on completed requests
-
-### Savings Attribution by Lever
-The platform computes exact savings decomposition guaranteeing:
-$$\text{Reuse Savings} + \text{Template Savings} + \text{Lower Tier Savings} = \text{Total Savings}$$
-
-1. **Reuse Lever**: Serves repeat requests from the library at $0.0005 instead of re-generating.
-2. **Template Lever**: Generates B&W colouring worksheets via deterministic outlines at $0.002 instead of invoking AI models.
-3. **Lower Tier Lever**: Right-sizes image dimensions and inference steps for flashcards and illustrations.
+Under formula `steps * megapixels * model_factor`:
+| Quality Tier | Resolution | Steps | Model Factor | Compute Units | Savings vs Maximum |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Economy** | 768 × 768 | 20 | 1.0 | **11.80** | **~90.0%** avoided compute |
+| **Standard** | 1024 × 1024 | 30 | 1.0 | **31.46** | **~73.3%** avoided compute |
+| **Maximum** | 1536 × 1536 | 50 | 1.0 | **117.96** | **0.0%** (Baseline) |
 
 ---
 
-## 🛡️ Child Safety & Privacy Guarantees
-- **Intake Sanitization**: Prompts are scanned before decision-making for blocked inappropriate terms, student emails, student phone numbers, student ID numbers, and name-in-context patterns (`student: <Name>`).
-- **Reuse Library Privacy**: The reuse library sanitizes tags, prompts, and tokens, guaranteeing student personal data is never cached or leaked across schools.
-- **Proxy Disclaimer**: Automated checks verify technical dimensions and ink limits, explicitly communicating to educators that automated checks are proxies and not judgements of pedagogical appropriateness.
+## 📋 API Endpoints
+
+- `POST /recommend`: Evaluates prompt, purpose, print size, detail, and resolution; returns recommended tier, deciding factor, plain-language explanation, estimates, and alternatives.
+- `POST /generate`: Validates override choices and hard budgets, invokes generation adapter, generates image with placeholder mark, calculates counterfactual savings, and records to history.
+- `GET /history`: Returns generation history filtered by purpose, tier, or status.
+- `GET /history/{id}`: Returns record for a specific generation.
+- `GET /history/export.csv`: Exports generation history as CSV.
+- `GET /summary`: Cumulative savings across successful generations with data origin breakdown and running total string.
+- `GET /config`: Sanitized configuration (no secrets).
+- `PUT /config`: Validates and hot-reloads configuration with version tracking.
+- `GET /health`: Health status and domain verification.
+
+---
+
+## ⚠️ Assumptions & Limitations
+
+See [ASSUMPTIONS.md](file:///home/srirangapprasath/Documents/Sakthi/ASSUMPTIONS.md) for full records. Key notes:
+1. **Compute Units Formula**: Relative first-order proxy (`steps * megapixels * model_factor`). Not measured electrical energy.
+2. **Counterfactual Baseline**: The Maximum tier was not run; savings represent estimated avoided compute.
+3. **Physical Energy & Carbon**: Default to `null` (not zero) unless `energy_model.enabled` is true with an authoritative source.
+4. **Hard Budgets**: Budget violations are blocked or require adjustment; never silently exceeded.
+5. **Demo Placeholders**: Synthetic assets stamped with visible DEMO PLACEHOLDER banners, differing in resolution. Never presented as real model outputs.

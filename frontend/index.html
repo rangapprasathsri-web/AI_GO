@@ -3,31 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adaptive AI Request Optimizer — District Education Gateway</title>
+  <title>Adaptive AI Image Resource Optimizer</title>
+  <meta name="description" content="Matches computational effort to image purpose and reveals avoided compute savings versus maximum tier.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0a0e17;
-      --bg-secondary: #111827;
-      --bg-card: rgba(17, 24, 39, 0.75);
-      --bg-card-hover: rgba(31, 41, 55, 0.85);
+      --bg-primary: #090d16;
+      --bg-secondary: #0f172a;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-focus: #6366f1;
+      --border-accent: #6366f1;
+      --border-focus: #818cf8;
       --accent-indigo: #6366f1;
-      --accent-purple: #8b5cf6;
       --accent-emerald: #10b981;
       --accent-amber: #f59e0b;
       --accent-rose: #f43f5e;
       --accent-cyan: #06b6d4;
-      --text-primary: #f9fafb;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      --accent-purple: #8b5cf6;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
+      --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     * {
@@ -42,7 +53,7 @@
       background-image: 
         radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(139, 92, 246, 0.05) 0px, transparent 70%);
+        radial-gradient(at 50% 20%, rgba(139, 92, 246, 0.06) 0px, transparent 60%);
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.5;
@@ -51,13 +62,13 @@
 
     /* Top Navigation Header */
     header {
-      background: rgba(17, 24, 39, 0.85);
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
       z-index: 100;
-      padding: 14px 32px;
+      padding: 14px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -71,10 +82,10 @@
     }
 
     .logo-badge {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple));
+      background: linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -85,236 +96,185 @@
     }
 
     .brand-title {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.02em;
     }
 
     .brand-subtitle {
       font-size: 12px;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       font-weight: 400;
     }
 
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    /* School Selector & Quota Pill */
-    .school-picker {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 6px 14px;
+    /* Running Total Pill in Header */
+    .header-running-total {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 13px;
-    }
-
-    .school-picker select {
-      background: transparent;
-      border: none;
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .budget-pill {
-      font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+    }
+
+    .running-total-value {
+      font-weight: 700;
+      color: var(--accent-emerald);
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .budget-pill.warning {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--accent-amber);
-      border-color: rgba(245, 158, 11, 0.3);
-    }
-
-    .budget-pill.danger {
-      background: rgba(244, 63, 94, 0.15);
-      color: var(--accent-rose);
-      border-color: rgba(244, 63, 94, 0.3);
-    }
-
-    /* Role Toggle */
-    .role-toggle {
-      display: flex;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 4px;
-      border-radius: var(--radius-md);
+    .badge-simulated {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
       border: 1px solid var(--border-subtle);
     }
 
-    .role-btn {
-      padding: 6px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 10px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .role-btn.active {
-      background: var(--accent-indigo);
-      color: white;
-      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
-    }
-
-    /* Tab Bar */
+    /* Tabs Bar */
     .tabs-bar {
       display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 20px 32px 10px;
-      max-width: 1200px;
-      margin: 0 auto;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 28px;
+      overflow-x: auto;
     }
 
     .tab-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 10px 22px;
+      background: none;
+      border: none;
       color: var(--text-secondary);
+      padding: 14px 20px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       gap: 8px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .tab-btn:hover {
-      background: rgba(255, 255, 255, 0.07);
       color: var(--text-primary);
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
-      border-color: var(--accent-indigo);
-      color: var(--text-primary);
+      color: var(--accent-indigo);
+      border-bottom-color: var(--accent-indigo);
     }
 
     /* Main Container */
     main {
-      max-width: 1200px;
-      margin: 20px auto;
+      max-width: 1300px;
+      margin: 28px auto;
       padding: 0 24px;
     }
 
     .tab-content {
       display: none;
-      animation: fadeIn 0.3s ease;
     }
 
     .tab-content.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Cards & Layout */
+    /* Cards */
     .card {
       background: var(--bg-card);
-      backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 28px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
       margin-bottom: 24px;
-      box-shadow: var(--glass-shadow);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     .card-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      margin-bottom: 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 6px;
     }
 
     .card-subtitle {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-secondary);
       margin-bottom: 20px;
     }
 
-    /* One-tap Purpose Grid */
+    /* Purpose Selection Grid */
     .purpose-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 14px;
       margin-bottom: 22px;
     }
 
     .purpose-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 2px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 14px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      text-align: left;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
     .purpose-card:hover {
       background: var(--bg-card-hover);
-      border-color: rgba(99, 102, 241, 0.4);
+      border-color: rgba(99, 102, 241, 0.3);
       transform: translateY(-2px);
     }
 
     .purpose-card.selected {
       border-color: var(--accent-indigo);
-      background: rgba(99, 102, 241, 0.12);
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+      background: rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
     }
 
     .purpose-icon {
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size: 24px;
+      margin-bottom: 8px;
     }
 
     .purpose-name {
-      font-size: 15px;
       font-weight: 700;
+      font-size: 14px;
       margin-bottom: 4px;
     }
 
     .purpose-desc {
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      flex-grow: 1;
+      margin-bottom: 8px;
     }
 
-    .purpose-tier-hint {
-      display: inline-block;
-      margin-top: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 4px;
+    .purpose-floor-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      width: fit-content;
       background: rgba(255, 255, 255, 0.06);
       color: var(--accent-cyan);
     }
 
-    /* Prompt & Input Section */
+    /* Input controls */
     .input-group {
       margin-bottom: 18px;
     }
@@ -323,281 +283,319 @@
       display: block;
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 8px;
       color: var(--text-secondary);
+      margin-bottom: 6px;
     }
 
-    .text-input {
+    .text-input, .select-input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
       color: var(--text-primary);
       font-family: inherit;
-      font-size: 15px;
+      font-size: 14px;
       outline: none;
-      transition: border 0.2s;
+      transition: border-color 0.2s;
     }
 
-    .text-input:focus {
-      border-color: var(--accent-indigo);
-      box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+    .text-input:focus, .select-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
     }
 
-    .inputs-row {
+    /* Extra inputs row */
+    .extra-inputs-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
       margin-bottom: 18px;
     }
 
-    .select-input {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--border-subtle);
+    /* Recommendation Card (Real-time Adaptive Logic) */
+    .recommendation-panel {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(16, 185, 129, 0.06));
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-md);
-      padding: 10px 14px;
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .btn-row {
+      padding: 18px;
+      margin-bottom: 22px;
       display: flex;
-      gap: 12px;
-      margin-top: 10px;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .btn {
-      padding: 12px 24px;
-      border-radius: var(--radius-md);
-      border: none;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
+    .rec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .rec-badge-group {
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple));
+    .rec-tier-badge {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--accent-indigo);
       color: white;
+    }
+
+    .rec-factor-tag {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .rec-explanation {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* Quality Tier Selector Cards */
+    .tier-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .tier-selector-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tier-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tier-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      background: var(--bg-card-hover);
+    }
+
+    .tier-card.selected {
+      border-color: var(--accent-indigo);
+      background: rgba(99, 102, 241, 0.12);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .tier-card.is-recommended-card::after {
+      content: "★ RECOMMENDED";
+      position: absolute;
+      top: -10px;
+      right: 14px;
+      background: var(--accent-emerald);
+      color: #052e16;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .tier-name {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tier-params-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 12px;
+    }
+
+    .tier-units-display {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .tier-savings-display {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-emerald);
+    }
+
+    /* Override warning banner */
+    .override-warning-box {
+      display: none;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #fde68a;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-indigo), #4f46e5);
+      border: none;
+      color: white;
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
       box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
     }
 
     .btn-primary:hover {
-      opacity: 0.95;
       transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.2s;
     }
 
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.12);
     }
 
-    /* Side-by-side Decision Preview */
-    .preview-container {
+    /* Comparison Centerpiece Panel */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Image Preview Section */
+    .preview-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      margin-top: 24px;
+      margin-top: 22px;
     }
 
-    @media (max-width: 800px) {
-      .preview-container {
+    @media (max-width: 850px) {
+      .preview-section {
         grid-template-columns: 1fr;
       }
     }
 
-    .preview-card {
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.02);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .preview-card.recommended {
-      border-color: rgba(16, 185, 129, 0.4);
-      background: rgba(16, 185, 129, 0.03);
-    }
-
-    .preview-card.next-tier {
-      border-color: rgba(99, 102, 241, 0.4);
-      background: rgba(99, 102, 241, 0.03);
-    }
-
-    .tier-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.05em;
-      margin-bottom: 12px;
-    }
-
-    .recommended .tier-badge {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-emerald);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .next-tier .tier-badge {
-      background: rgba(99, 102, 241, 0.15);
-      color: var(--accent-indigo);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-
-    .preview-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .preview-cost {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      font-family: 'JetBrains Mono', monospace;
-      margin-bottom: 14px;
-    }
-
-    .preview-image-box {
-      width: 100%;
-      height: 220px;
-      border-radius: var(--radius-sm);
+    .preview-box {
       background: #050811;
       border: 1px solid var(--border-subtle);
-      margin-bottom: 16px;
+      border-radius: var(--radius-md);
+      padding: 16px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      overflow: hidden;
     }
 
-    .preview-image-box img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .levers-list {
-      list-style: none;
+    .preview-box-title {
       font-size: 13px;
-      margin-bottom: 16px;
+      font-weight: 700;
       color: var(--text-secondary);
-    }
-
-    .levers-list li {
-      padding: 4px 0;
+      margin-bottom: 12px;
+      align-self: flex-start;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .levers-list li::before {
-      content: "•";
-      color: var(--accent-indigo);
-      font-size: 16px;
-    }
-
-    /* Execution Result Card */
-    .result-section {
-      margin-top: 24px;
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 24px;
-    }
-
-    .quality-checks-box {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      margin: 16px 0;
-    }
-
-    .check-item {
+    .preview-img-container {
+      width: 100%;
+      height: 320px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: 13px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .check-item:last-child {
-      border-bottom: none;
-    }
-
-    .check-badge {
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .check-pass {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-emerald);
-    }
-
-    .check-fail {
-      background: rgba(244, 63, 94, 0.15);
-      color: var(--accent-rose);
-    }
-
-    .disclaimer-banner {
-      font-size: 12px;
-      color: var(--text-muted);
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.03);
+      justify-content: center;
+      background: #020408;
       border-radius: var(--radius-sm);
-      margin-top: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      position: relative;
     }
 
-    /* Star Rating */
-    .rating-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 16px;
+    .preview-img-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
 
-    .stars {
-      display: flex;
-      gap: 6px;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .star {
-      color: var(--text-muted);
-      transition: color 0.15s;
-    }
-
-    .star.filled {
-      color: var(--accent-amber);
-    }
-
-    /* Tables */
+    /* History Table */
     .table-container {
       overflow-x: auto;
-      margin-top: 16px;
+      margin-top: 14px;
     }
 
     table {
@@ -625,75 +623,10 @@
       background: rgba(255, 255, 255, 0.02);
     }
 
-    /* KPI Grid */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .kpi-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 18px;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-    }
-
-    .kpi-value {
-      font-size: 26px;
-      font-weight: 800;
-      margin-top: 6px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .kpi-sub {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    /* Status Alert Banner */
-    .alert-box {
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .alert-warning {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #fde68a;
-    }
-
-    .alert-danger {
-      background: rgba(244, 63, 94, 0.15);
-      border: 1px solid rgba(244, 63, 94, 0.3);
-      color: #fecdd3;
-    }
-
-    .alert-success {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #a7f3d0;
-    }
-
-    /* Config Editor */
+    /* Code editor */
     .json-editor {
       width: 100%;
-      height: 380px;
+      height: 400px;
       background: #050811;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
@@ -709,891 +642,745 @@
 </head>
 <body>
 
-  <!-- Top Header Navigation -->
+  <!-- Top Navigation Header -->
   <header>
     <div class="brand">
-      <div class="logo-badge">λ</div>
+      <div class="logo-badge">⚡</div>
       <div>
-        <div class="brand-title">Adaptive AI Request Optimizer</div>
-        <div class="brand-subtitle">District 42 Image & Compute Gateway</div>
+        <div class="brand-title">Adaptive AI Image Resource Optimizer</div>
+        <div class="brand-subtitle">Matching computational effort to purpose & transparent avoided-effort savings</div>
       </div>
     </div>
 
-    <div class="header-controls">
-      <!-- School Selector & Live Budget Pill -->
-      <div class="school-picker">
-        <span>🏫</span>
-        <select id="schoolSelect" onchange="onSchoolChanged()">
-          <option value="SCHOOL-101">School #101 (Central Elementary)</option>
-          <option value="SCHOOL-102">School #102 (West Academy)</option>
-          <option value="SCHOOL-103">School #103 (Lincoln Middle)</option>
-        </select>
-        <span class="budget-pill" id="schoolBudgetPill">Budget: $0.00 / $20.00 (0%)</span>
-      </div>
-
-      <!-- Role Switcher -->
-      <div class="role-toggle">
-        <button class="role-btn active" id="btnRoleRequester" onclick="setRole('requester')">Requester</button>
-        <button class="role-btn" id="btnRoleAdmin" onclick="setRole('admin')">Admin</button>
-      </div>
+    <!-- Running Total Display -->
+    <div class="header-running-total" id="headerRunningTotal">
+      <span>🌱 Running Savings:</span>
+      <span class="running-total-value" id="runningTotalText">0.0 units</span>
+      <span class="badge-simulated" id="runningTotalOrigin">Simulated Proxy</span>
     </div>
   </header>
 
   <!-- Main Tabs Bar -->
   <div class="tabs-bar">
-    <button class="tab-btn active" onclick="switchTab('requestTab')">✨ Request Optimizer</button>
-    <button class="tab-btn" onclick="switchTab('historyTab')">📜 Request History</button>
-    <button class="tab-btn" onclick="switchTab('strategyTab')">⚖️ Strategy Comparison</button>
-    <button class="tab-btn" onclick="switchTab('showbackTab')">📊 School Showback</button>
-    <button class="tab-btn" onclick="switchTab('configTab')">⚙️ Config Studio (Hot-Reload)</button>
-    <button class="tab-btn" onclick="switchTab('evalTab')">🧪 Evaluation Lab & Savings</button>
+    <button class="tab-btn active" id="tabBtnGenerator" onclick="switchTab('generatorTab')">🎨 Request & Optimizer</button>
+    <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('historyTab')">📜 Generation History</button>
+    <button class="tab-btn" id="tabBtnConfig" onclick="switchTab('configTab')">⚙️ Config Studio & Rules</button>
   </div>
 
   <main>
-    <!-- TAB 1: REQUEST OPTIMIZER -->
-    <div id="requestTab" class="tab-content active">
+    <!-- TAB 1: REQUEST & OPTIMIZER -->
+    <div id="generatorTab" class="tab-content active">
       <div class="card">
         <div class="card-title">
-          <span>What are you creating?</span>
-          <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);" id="policyNotice">Policy: cheapest_meeting_quality</span>
+          <span>1. What is this image for?</span>
+          <span class="badge-simulated">Lowest Suitable Tier Policy</span>
         </div>
-        <div class="card-subtitle">Select the purpose with one tap. Per-purpose defaults configure the optimal settings automatically.</div>
+        <div class="card-subtitle">Select the specific purpose. The decision engine selects the lowest quality tier that satisfies this purpose.</div>
 
-        <!-- One-tap Purpose Grid -->
+        <!-- Purpose Selector (6 Section 4 purposes) -->
         <div class="purpose-grid" id="purposeGrid">
-          <div class="purpose-card selected" data-purpose="colouring_worksheet" onclick="selectPurpose('colouring_worksheet')">
+          <div class="purpose-card selected" data-purpose="coloring_sheet" onclick="selectPurpose('coloring_sheet')">
             <div class="purpose-icon">🖍️</div>
-            <div class="purpose-name">Colouring Sheet</div>
-            <div class="purpose-desc">Line art outline for children to color in. Defaults to A4, B&W outline.</div>
-            <span class="purpose-tier-hint">Near-zero cost (Template/Reuse)</span>
+            <div class="purpose-name">Coloring Sheet</div>
+            <div class="purpose-desc">Line art outline. Low detail needed unless large print size requested.</div>
+            <span class="purpose-floor-tag">Floor: Economy</span>
           </div>
 
-          <div class="purpose-card" data-purpose="flashcard" onclick="selectPurpose('flashcard')">
-            <div class="purpose-icon">🃏</div>
-            <div class="purpose-name">Flashcard</div>
-            <div class="purpose-desc">Vocabulary & concept cards. Defaults to 4x6, simple colour illustration.</div>
-            <span class="purpose-tier-hint">Fast & lightweight</span>
+          <div class="purpose-card" data-purpose="educational_illustration" onclick="selectPurpose('educational_illustration')">
+            <div class="purpose-icon">📖</div>
+            <div class="purpose-name">Educational Illustration</div>
+            <div class="purpose-desc">Visual teaching aid or textbook figure. Standard detail suggested.</div>
+            <span class="purpose-floor-tag">Floor: Economy</span>
           </div>
 
-          <div class="purpose-card" data-purpose="classroom_illustration" onclick="selectPurpose('classroom_illustration')">
-            <div class="purpose-icon">🎨</div>
-            <div class="purpose-name">Classroom Illustration</div>
-            <div class="purpose-desc">Slide or handout visual. Defaults to A4, standard color detail.</div>
-            <span class="purpose-tier-hint">Balanced standard</span>
+          <div class="purpose-card" data-purpose="presentation_graphic" onclick="selectPurpose('presentation_graphic')">
+            <div class="purpose-icon">📊</div>
+            <div class="purpose-name">Presentation Graphic</div>
+            <div class="purpose-desc">Slide decks & screen visuals. Crisp display quality required.</div>
+            <span class="purpose-floor-tag">Floor: Standard</span>
           </div>
 
-          <div class="purpose-card" data-purpose="poster_banner" onclick="selectPurpose('poster_banner')">
-            <div class="purpose-icon">📢</div>
-            <div class="purpose-name">Poster or Banner</div>
-            <div class="purpose-desc">Annual-report or hallway print. Defaults to A1, high DPI color.</div>
-            <span class="purpose-tier-hint">High-fidelity print</span>
+          <div class="purpose-card" data-purpose="social_media_artwork" onclick="selectPurpose('social_media_artwork')">
+            <div class="purpose-icon">📱</div>
+            <div class="purpose-name">Social Media Artwork</div>
+            <div class="purpose-desc">Feed artwork and banners for web platforms.</div>
+            <span class="purpose-floor-tag">Floor: Economy</span>
+          </div>
+
+          <div class="purpose-card" data-purpose="professional_print_artwork" onclick="selectPurpose('professional_print_artwork')">
+            <div class="purpose-icon">🖨️</div>
+            <div class="purpose-name">Professional / Print</div>
+            <div class="purpose-desc">High-DPI exhibition prints, brochures, or publication assets.</div>
+            <span class="purpose-floor-tag">Floor: Maximum</span>
+          </div>
+
+          <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')">
+            <div class="purpose-icon">⚙️</div>
+            <div class="purpose-name">Custom Purpose</div>
+            <div class="purpose-desc">Specify custom requirements. Conservative default applied on uncertainty.</div>
+            <span class="purpose-floor-tag">Conservative Default</span>
           </div>
         </div>
 
-        <!-- Prompt input -->
+        <!-- Prompt Input -->
         <div class="input-group">
-          <label class="input-label" for="promptInput">Subject / Prompt Description</label>
-          <input type="text" id="promptInput" class="text-input" placeholder="e.g. Farm animals for grade 2 (sheep, cow, barn)" value="Farm animals for grade 2">
+          <label class="input-label" for="promptInput">Image Prompt</label>
+          <input type="text" id="promptInput" class="text-input" placeholder="e.g. Cute farm kitten playing with a ball of wool" value="Cute kitten playing with wool" oninput="onPromptInputChanged()">
         </div>
 
-        <!-- Per-Purpose Defaults / Inputs -->
-        <div class="inputs-row">
+        <!-- Dynamic Extra Fields (Print flags & Custom requirements) -->
+        <div class="extra-inputs-row" id="extraInputsRow" style="display: none;">
           <div>
-            <label class="input-label" for="outputSizeInput">Print Size</label>
-            <select id="outputSizeInput" class="select-input">
-              <option value="A4" selected>A4 (Standard Worksheet)</option>
-              <option value="4x6">4x6 inch (Flashcard)</option>
+            <label class="input-label" for="printUseCheck">
+              <input type="checkbox" id="printUseCheck" onchange="triggerRecommend()"> Print Use Intended
+            </label>
+            <div style="font-size: 11px; color: var(--text-muted);">Flags output for physical reproduction.</div>
+          </div>
+
+          <div>
+            <label class="input-label" for="printSizeSelect">Print Size</label>
+            <select id="printSizeSelect" class="select-input" onchange="triggerRecommend()">
+              <option value="">Standard Paper (A4 / Letter)</option>
               <option value="A3">A3 (Medium Poster)</option>
-              <option value="A1">A1 (Large Hallway Banner)</option>
+              <option value="A1">A1 / Poster (Large Print — raises floor to Standard)</option>
+              <option value="BANNER">Banner / Billboard (Large Format)</option>
             </select>
           </div>
-          <div>
-            <label class="input-label" for="gradeBandInput">Grade Band</label>
-            <select id="gradeBandInput" class="select-input">
-              <option value="K-2" selected>K-2 (Early Elementary)</option>
-              <option value="3-5">3-5 (Upper Elementary)</option>
-              <option value="6-8">6-8 (Middle School)</option>
-              <option value="9-12">9-12 (High School)</option>
+
+          <div id="customDetailGroup" style="display: none;">
+            <label class="input-label" for="requiredDetailSelect">Required Detail (Custom)</label>
+            <select id="requiredDetailSelect" class="select-input" onchange="triggerRecommend()">
+              <option value="">Not Specified (Uncertain)</option>
+              <option value="low">Low Detail</option>
+              <option value="high">High Detail (Raises to Standard)</option>
+              <option value="maximum">Maximum Detail (Raises to Maximum)</option>
             </select>
           </div>
-          <div>
-            <label class="input-label" for="colourModeInput">Colour Mode</label>
-            <select id="colourModeInput" class="select-input">
-              <option value="bw" selected>Black & White (Ink-saving)</option>
-              <option value="colour">Full Colour</option>
-            </select>
+
+          <div id="customResGroup" style="display: none;">
+            <label class="input-label" for="targetResInput">Target Resolution (px)</label>
+            <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024" oninput="triggerRecommend()">
           </div>
         </div>
 
-        <div id="alertArea"></div>
-
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="previewDecision()">🔍 Side-by-Side Preview</button>
-          <button class="btn btn-primary" onclick="executeRequest()">🚀 Generate Output</button>
-        </div>
-
-        <!-- Side-by-Side Decision Preview Container -->
-        <div id="previewArea" style="display: none;" class="preview-container">
-          <!-- Recommended Card -->
-          <div class="preview-card recommended">
-            <span class="tier-badge">Recommended Tier</span>
-            <div class="preview-title" id="recStrategyName">Template Outline</div>
-            <div class="preview-cost" id="recCostDisplay">~1/15 of Print-quality</div>
-            <div class="preview-image-box" id="recImageBox">
-              <span style="color: var(--text-muted);">Preview will render here</span>
+        <!-- 2. Adaptive Recommendation Panel -->
+        <div class="recommendation-panel" id="recommendationPanel">
+          <div class="rec-header">
+            <div class="rec-badge-group">
+              <span class="rec-tier-badge" id="recTierBadge">Economy Recommended</span>
+              <span class="badge-simulated" id="recOriginBadge">Simulated Proxy</span>
             </div>
-            <ul class="levers-list" id="recLeversList">
-              <li>Non-generative outline</li>
-              <li>768px resolution</li>
-              <li>B&W ink saving mode</li>
-            </ul>
-            <div style="font-size: 12px; color: var(--accent-emerald);" id="recReason">
-              Meets colouring worksheet quality floor at minimum cost.
-            </div>
+            <div class="rec-factor-tag" id="recFactorTag">Deciding Factor: purpose_floor</div>
           </div>
-
-          <!-- Next Level Up Card -->
-          <div class="preview-card next-tier" id="nextTierCard">
-            <span class="tier-badge">Next Level Up</span>
-            <div class="preview-title" id="nextStrategyName">Standard Quality</div>
-            <div class="preview-cost" id="nextCostDisplay">Higher Tier</div>
-            <div class="preview-image-box" id="nextImageBox">
-              <span style="color: var(--text-muted);">Preview will render here</span>
-            </div>
-            <ul class="levers-list" id="nextLeversList">
-              <li>Full colour diffusion</li>
-              <li>1536px resolution</li>
-              <li>Higher token consumption</li>
-            </ul>
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;" id="nextTradeoff">
-              Provides full colour if requested, at higher cost.
-            </div>
-            <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px; align-self: flex-start;" onclick="upgradeTier()">
-              ⬆️ Upgrade to this Tier
-            </button>
+          <div class="rec-explanation" id="recExplanationText">
+            Coloring sheet: Economy tier satisfies the quality floor with minimal compute.
           </div>
         </div>
 
-        <!-- Execution Result & Quality Gate Section -->
-        <div id="resultArea" style="display: none;" class="result-section">
-          <div class="card-title">Generated Output & Quality Gate</div>
-          
-          <div style="display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 16px;">
-            <div>
-              <div class="preview-image-box" style="height: 280px;" id="finalImageBox">
-                <!-- Final image injected here -->
-              </div>
-              <div class="rating-row">
-                <span style="font-size: 13px; color: var(--text-secondary);">Rate Quality:</span>
-                <div class="stars" id="starWidget">
-                  <span class="star" onclick="rateOutput(1)">★</span>
-                  <span class="star" onclick="rateOutput(2)">★</span>
-                  <span class="star" onclick="rateOutput(3)">★</span>
-                  <span class="star" onclick="rateOutput(4)">★</span>
-                  <span class="star" onclick="rateOutput(5)">★</span>
-                </div>
-                <span id="ratingStatus" style="font-size: 12px; color: var(--accent-emerald);"></span>
-              </div>
+        <!-- 3. Quality Selector (Three Tiers) -->
+        <div class="input-label" style="margin-bottom: 8px;">2. Select Quality Tier (Pre-selected by recommendation, overridable within limits)</div>
+        <div class="tier-selector-grid" id="tierSelectorGrid">
+          <!-- Economy Card -->
+          <div class="tier-card is-recommended-card selected" id="tierCard-economy" onclick="selectTier('economy')">
+            <div class="tier-name">
+              <span>Economy</span>
+              <span class="badge-simulated">768x768</span>
             </div>
+            <div class="tier-params-meta">20 steps • Model factor 1.0</div>
+            <div class="tier-units-display" id="economyUnits">11.8 units</div>
+            <div class="tier-savings-display" id="economySavings">~90.0% savings vs Maximum</div>
+          </div>
 
-            <div>
-              <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Automated Proxy Checks</div>
-              <div class="quality-checks-box" id="checksList">
-                <!-- Checks populated dynamically -->
-              </div>
-              <div class="disclaimer-banner">
-                ⚠️ <strong>Proxy Disclaimer:</strong> These are automated proxy checks (DPI, ink coverage, colour mode), not a judgement of whether the output is actually pedagogically suitable for its intended purpose.
-              </div>
-
-              <div style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);" id="executionMeta">
-                <!-- Execution latency, actual cost, strategy used -->
-              </div>
+          <!-- Standard Card -->
+          <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')">
+            <div class="tier-name">
+              <span>Standard</span>
+              <span class="badge-simulated">1024x1024</span>
             </div>
+            <div class="tier-params-meta">30 steps • Model factor 1.0</div>
+            <div class="tier-units-display" id="standardUnits">31.5 units</div>
+            <div class="tier-savings-display" id="standardSavings">~73.3% savings vs Maximum</div>
+          </div>
+
+          <!-- Maximum Card -->
+          <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')">
+            <div class="tier-name">
+              <span>Maximum</span>
+              <span class="badge-simulated">1536x1536</span>
+            </div>
+            <div class="tier-params-meta">50 steps • Model factor 1.0</div>
+            <div class="tier-units-display" id="maximumUnits">118.0 units</div>
+            <div class="tier-savings-display" style="color: var(--text-muted);" id="maximumSavings">0.0% savings (Baseline)</div>
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- TAB 2: SHOWBACK & QUOTAS -->
-    <div id="showbackTab" class="tab-content">
-      <div class="card">
-        <div class="card-title">District Showback Report & Quotas</div>
-        <div class="card-subtitle">Transparent district-wide usage accounting with 80% alerting and spend ceilings.</div>
-
-        <div class="kpi-grid" id="adminKpis">
-          <div class="kpi-card">
-            <div class="kpi-label">Active Schools</div>
-            <div class="kpi-value" id="kpiSchools">3</div>
-            <div class="kpi-sub">$20.00 / month cap per school</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Total Spend (Simulated)</div>
-            <div class="kpi-value" style="color: var(--accent-emerald);" id="kpiTotalSpend">$0.00</div>
-            <div class="kpi-sub">Source: placeholder</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Estimated Savings</div>
-            <div class="kpi-value" style="color: var(--accent-indigo);" id="kpiSavings">~80%</div>
-            <div class="kpi-sub">vs always-max baseline</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Reuse Library Hit Rate</div>
-            <div class="kpi-value" style="color: var(--accent-cyan);" id="kpiReuseRate">0%</div>
-            <div class="kpi-sub">Served at near-zero cost</div>
-          </div>
+        <!-- Override Warning Modal/Box -->
+        <div class="override-warning-box" id="overrideWarningBox">
+          <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality Warning</div>
+          <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor recommended for this purpose.</div>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="overrideConfirmCheckbox">
+            <span>I acknowledge and confirm this below-floor choice (will be logged).</span>
+          </label>
         </div>
 
-        <div class="table-container">
-          <table id="showbackTable">
-            <thead>
-              <tr>
-                <th>School ID</th>
-                <th>Requests</th>
-                <th>Total Spend (simulated)</th>
-                <th>Cap Limit</th>
-                <th>% of Cap</th>
-                <th>Top Category</th>
-                <th>Reuse Rate</th>
-                <th>Quota Status</th>
-              </tr>
-            </thead>
-            <tbody id="showbackTbody">
-              <!-- Populated dynamically -->
-            </tbody>
-          </table>
+        <!-- Budget Error Box -->
+        <div class="override-warning-box" id="budgetErrorBox" style="background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.4); color: #fecdd3;">
+          <div style="font-weight: 700;">🛑 Blocked by Hard Budget</div>
+          <div id="budgetMessageText">Selected tier exceeds the hard budget limit. Generation cannot proceed.</div>
+        </div>
+
+        <!-- Generate Button -->
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="btn-primary" id="btnGenerate" onclick="generateImage()">
+            <span>🚀 Generate Image</span>
+          </button>
+          <span style="font-size: 12px; color: var(--text-secondary);" id="generationStatusNotice">Ready to generate</span>
         </div>
       </div>
-    </div>
 
-    <!-- TAB 3: CONFIG EDITOR -->
-    <div id="configTab" class="tab-content">
-      <div class="card">
+      <!-- Resource Comparison Panel (The Centrepiece) -->
+      <div class="card" id="comparisonPanel">
         <div class="card-title">
-          <span>Live Configuration Editor</span>
-          <span style="font-size: 13px; color: var(--accent-emerald);" id="configVersionLabel">Version 1</span>
+          <span>3. Resource Comparison & Avoided Compute</span>
+          <span class="badge-simulated" id="comparisonDataOrigin">Data Origin: Simulated Proxy</span>
         </div>
-        <div class="card-subtitle">Change policies, budgets, and quality floors without restarting or touching engine code.</div>
+        <div class="card-subtitle">Every number is explicitly attributed. "Saved" represents estimated avoided compute vs the Maximum tier baseline (not run).</div>
 
-        <div class="inputs-row" style="margin-bottom: 12px;">
-          <div>
-            <label class="input-label">Active Policy</label>
-            <select id="configPolicySelect" class="select-input" onchange="patchActivePolicy()">
-              <option value="cheapest_meeting_quality">cheapest_meeting_quality (Cost Optimizer)</option>
-              <option value="baseline_always_max">baseline_always_max (Unoptimized Baseline)</option>
-              <option value="rule_based">rule_based (Rule Hints)</option>
-              <option value="user_selected">user_selected (User Preference)</option>
-            </select>
+        <div class="comparison-grid">
+          <div class="metric-card">
+            <div class="metric-label">
+              <span>Selected Tier Effort</span>
+              <span class="badge-simulated">Formula Proxy</span>
+            </div>
+            <div class="metric-value" style="color: var(--accent-cyan);" id="metricSelectedUnits">11.8 units</div>
+            <div class="metric-sub" id="metricSelectedTierName">Economy (768x768, 20 steps)</div>
           </div>
-          <div>
-            <label class="input-label">Per-School Monthly Budget ($)</label>
-            <input type="number" id="configSchoolBudget" class="text-input" value="20.00" step="1.0" onchange="patchBudget()">
+
+          <div class="metric-card">
+            <div class="metric-label">
+              <span>Maximum Tier Baseline</span>
+              <span class="badge-simulated">Not Run</span>
+            </div>
+            <div class="metric-value" style="color: var(--text-muted);" id="metricBaselineUnits">118.0 units</div>
+            <div class="metric-sub">Counterfactual standard (1536x1536, 50 steps)</div>
+          </div>
+
+          <div class="metric-card" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.04);">
+            <div class="metric-label">
+              <span>Estimated Avoided Compute</span>
+              <span class="badge-simulated" style="color: var(--accent-emerald);">Savings</span>
+            </div>
+            <div class="metric-value" style="color: var(--accent-emerald);" id="metricSavingsUnits">+106.2 units</div>
+            <div class="metric-sub" style="font-weight: 700; color: var(--accent-emerald);" id="metricSavingsPct">90.0% compute reduction</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">
+              <span>Physical Energy & Carbon</span>
+              <span class="badge-simulated">Strict Policy</span>
+            </div>
+            <div class="metric-value" style="font-size: 16px; color: var(--text-secondary);" id="metricEnergyValue">null (Not Estimated)</div>
+            <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never claimed as Wh without measurement.</div>
           </div>
         </div>
 
-        <textarea id="configRawJson" class="json-editor" spellcheck="false"></textarea>
+        <!-- Image Preview & Side-by-side Section -->
+        <div class="preview-section">
+          <!-- Selected Output Preview -->
+          <div class="preview-box">
+            <div class="preview-box-title">
+              <span>🖼️ Generated Output Preview</span>
+              <span class="badge-simulated" id="outputTierBadge">Economy Placeholder</span>
+            </div>
+            <div class="preview-img-container">
+              <img id="generatedImagePreview" src="" alt="Generated image output preview" style="display: none;">
+              <div id="imagePlaceholderNotice" style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">
+                Generate an image to view the synthetic placeholder output.
+              </div>
+            </div>
+            <div style="font-size: 11px; color: var(--accent-amber); margin-top: 8px;" id="placeholderHonestyLabel">
+              🏷️ DEMO PLACEHOLDER: illustrative placeholder asset, not real model output.
+            </div>
+          </div>
 
-        <div class="btn-row" style="margin-top: 14px;">
-          <button class="btn btn-primary" onclick="saveConfigToServer()">💾 Save & Apply Hot-Reload</button>
-          <button class="btn btn-secondary" onclick="rollbackConfig()">↺ Rollback to Previous Version</button>
-          <button class="btn btn-secondary" onclick="reloadConfigFromServer()">🔄 Reset from Server</button>
+          <!-- Maximum Tier Comparison (Side-by-side P1) -->
+          <div class="preview-box">
+            <div class="preview-box-title">
+              <span>⚖️ Maximum Quality Reference</span>
+              <span class="badge-simulated">1536x1536 Baseline</span>
+            </div>
+            <div class="preview-img-container">
+              <img id="maxTierImagePreview" src="" alt="Maximum quality reference preview" style="display: none;">
+              <div id="maxPlaceholderNotice" style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">
+                Reference baseline: Illustrative placeholder asset differing in resolution.
+              </div>
+            </div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">
+              ℹ️ Illustrative placeholders: they differ only in resolution. Baseline was not run.
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB: REQUEST HISTORY -->
+    <!-- TAB 2: GENERATION HISTORY -->
     <div id="historyTab" class="tab-content">
       <div class="card">
         <div class="card-title">
-          <span>Request History</span>
-          <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;" onclick="loadHistory()">🔄 Refresh History</button>
+          <span>Generation History & Cumulative Savings</span>
+          <button class="btn-secondary" onclick="exportCSV()">📥 Export CSV</button>
         </div>
-        <div class="card-subtitle">Complete audit trail of processed requests, decisions, proxy checks, and human ratings.</div>
+        <div class="card-subtitle">Every generation records tier, parameters, units, baseline units, avoided compute, and honesty origin tags.</div>
+
+        <!-- Filters Row -->
+        <div style="display: flex; gap: 14px; margin-bottom: 16px; flex-wrap: wrap;">
+          <div>
+            <select id="historyFilterPurpose" class="select-input" onchange="loadHistory()" style="width: auto;">
+              <option value="">All Purposes</option>
+              <option value="coloring_sheet">Coloring Sheet</option>
+              <option value="educational_illustration">Educational Illustration</option>
+              <option value="presentation_graphic">Presentation Graphic</option>
+              <option value="social_media_artwork">Social Media Artwork</option>
+              <option value="professional_print_artwork">Professional / Print</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div>
+            <select id="historyFilterTier" class="select-input" onchange="loadHistory()" style="width: auto;">
+              <option value="">All Tiers</option>
+              <option value="economy">Economy</option>
+              <option value="standard">Standard</option>
+              <option value="maximum">Maximum</option>
+            </select>
+          </div>
+          <button class="btn-secondary" onclick="loadHistory()">🔄 Refresh</button>
+        </div>
 
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Prompt</th>
-                <th>Category</th>
-                <th>Strategy Chosen</th>
-                <th>Effort Level</th>
-                <th>Cost</th>
-                <th>Quality Gate</th>
-                <th>Rating</th>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Purpose</th>
+                <th>Tier</th>
+                <th>Units</th>
+                <th>Baseline</th>
+                <th>Saved (Units)</th>
+                <th>Saved (%)</th>
                 <th>Origin</th>
+                <th>Override</th>
+                <th>Status</th>
               </tr>
             </thead>
-            <tbody id="historyTbody">
-              <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading request history...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: STRATEGY COMPARISON -->
-    <div id="strategyTab" class="tab-content">
-      <div class="card">
-        <div class="card-title">Strategy Comparison Matrix</div>
-        <div class="card-subtitle">Compare all registered strategies, execution levers, price points, and target quality levels.</div>
-
-        <div class="table-container">
-          <table>
-            <thead>
+            <tbody id="historyTableBody">
               <tr>
-                <th>Strategy</th>
-                <th>Adapter</th>
-                <th>Effort Level</th>
-                <th>Price / Call</th>
-                <th>Latency (Est)</th>
-                <th>Levers Controlled</th>
-                <th>Data Origin</th>
+                <td colspan="11" style="text-align: center; color: var(--text-muted);">Loading generation history...</td>
               </tr>
-            </thead>
-            <tbody id="strategyTbody">
-              <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading strategy matrix...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- TAB 4: EVALUATION & LEVER SAVINGS -->
-    <div id="evalTab" class="tab-content">
+    <!-- TAB 3: CONFIG STUDIO & RULES -->
+    <div id="configTab" class="tab-content">
       <div class="card">
-        <div class="card-title">Workload Evaluation & Savings Attribution</div>
-        <div class="card-subtitle">Deterministic evaluation measuring exact savings breakdown by optimization lever.</div>
-
-        <div class="btn-row" style="margin-bottom: 20px;">
-          <button class="btn btn-primary" id="btnRunEval" onclick="runBenchmark()">▶️ Run 30-Request Evaluation Benchmark</button>
-        </div>
-
-        <div id="evalResultsArea" style="display: none;">
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-label">Baseline Cost</div>
-              <div class="kpi-value" id="evalBaseCost">$0.00</div>
-              <div class="kpi-sub">Always-max tier</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Optimized Cost</div>
-              <div class="kpi-value" style="color: var(--accent-emerald);" id="evalOptCost">$0.00</div>
-              <div class="kpi-sub">Adaptive optimizer</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Total Savings</div>
-              <div class="kpi-value" style="color: var(--accent-indigo);" id="evalTotalSavings">$0.00</div>
-              <div class="kpi-sub" id="evalSavingsPct">0% reduction</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Reuse Hit Rate</div>
-              <div class="kpi-value" style="color: var(--accent-cyan);" id="evalReuseHit">0%</div>
-              <div class="kpi-sub">Repeat requests served from cache</div>
-            </div>
-          </div>
-
-          <div class="card-title" style="font-size: 16px; margin-top: 20px;">Savings Attribution Decomposition</div>
-          <div class="card-subtitle">Mathematical verification: Reuse + Template + Lower-Tier == Total Savings.</div>
-
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Optimization Lever</th>
-                  <th>Savings Amount ($)</th>
-                  <th>Share of Total Savings</th>
-                  <th>Mechanism</th>
-                </tr>
-              </thead>
-              <tbody id="evalLeversTbody">
-                <!-- Injected dynamically -->
-              </tbody>
-            </table>
+        <div class="card-title">
+          <span>Domain Configuration (Hot-Reload)</span>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-secondary" onclick="rollbackConfig()">↩️ Rollback Version</button>
+            <button class="btn-primary" onclick="saveConfig()">💾 Save & Hot-Reload</button>
           </div>
         </div>
+        <div class="card-subtitle">Edit tier parameters, purpose floors, budgets, and policies. Strict validation rejects invalid configurations without crashing.</div>
 
+        <textarea id="configEditor" class="json-editor" spellcheck="false"></textarea>
+        <div style="margin-top: 10px; font-size: 12px; color: var(--text-secondary);" id="configSaveStatus">Loaded active configuration.</div>
       </div>
     </div>
   </main>
 
   <script>
     // State
-    let currentRole = 'requester';
-    let currentSchool = 'SCHOOL-101';
-    let currentPurpose = 'colouring_worksheet';
-    let lastRequestId = null;
-    let fullConfigCache = null;
+    let currentPurpose = 'coloring_sheet';
+    let currentSelectedTier = 'economy';
+    let currentRecommendedTier = 'economy';
+    let activeConfig = null;
+    let latestRecommendation = null;
 
-    const PURPOSE_DEFAULTS = {
-      colouring_worksheet: { size: 'A4', colour: 'bw', grade: 'K-2', prompt: 'Farm animals for grade 2 (sheep, cow, barn)' },
-      flashcard: { size: '4x6', colour: 'colour', grade: 'K-2', prompt: 'Vocabulary card: Solar System Planets' },
-      classroom_illustration: { size: 'A4', colour: 'colour', grade: '3-5', prompt: 'Water cycle illustration with arrows' },
-      poster_banner: { size: 'A1', colour: 'colour', grade: '6-8', prompt: 'District Science Fair Banner with high detail' }
-    };
-
-    function setRole(role) {
-      currentRole = role;
-      document.getElementById('btnRoleRequester').classList.toggle('active', role === 'requester');
-      document.getElementById('btnRoleAdmin').classList.toggle('active', role === 'admin');
-      refreshSchoolBudget();
-      if (document.getElementById('previewArea').style.display !== 'none') {
-        previewDecision();
-      }
-    }
+    // Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchConfig();
+      fetchSummary();
+      triggerRecommend();
+      loadHistory();
+    });
 
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
-      event.currentTarget.classList.add('active');
-
-      if (tabId === 'showbackTab') loadShowback();
-      if (tabId === 'configTab') loadConfig();
-      if (tabId === 'historyTab') loadHistory();
-      if (tabId === 'strategyTab') loadStrategies();
+      if (tabId === 'generatorTab') document.getElementById('tabBtnGenerator').classList.add('active');
+      if (tabId === 'historyTab') {
+        document.getElementById('tabBtnHistory').classList.add('active');
+        loadHistory();
+      }
+      if (tabId === 'configTab') {
+        document.getElementById('tabBtnConfig').classList.add('active');
+        fetchConfig();
+      }
     }
 
     function selectPurpose(purpose) {
       currentPurpose = purpose;
-      document.querySelectorAll('.purpose-card').forEach(el => {
-        el.classList.toggle('selected', el.getAttribute('data-purpose') === purpose);
+      document.querySelectorAll('.purpose-card').forEach(c => {
+        c.classList.toggle('selected', c.getAttribute('data-purpose') === purpose);
       });
-      const defs = PURPOSE_DEFAULTS[purpose];
-      if (defs) {
-        document.getElementById('outputSizeInput').value = defs.size;
-        document.getElementById('colourModeInput').value = defs.colour;
-        document.getElementById('gradeBandInput').value = defs.grade;
-        if (!document.getElementById('promptInput').value || Object.values(PURPOSE_DEFAULTS).some(d => d.prompt === document.getElementById('promptInput').value)) {
-          document.getElementById('promptInput').value = defs.prompt;
-        }
+
+      // Show / hide extra fields
+      const extraRow = document.getElementById('extraInputsRow');
+      const customDetail = document.getElementById('customDetailGroup');
+      const customRes = document.getElementById('customResGroup');
+
+      if (purpose === 'custom') {
+        extraRow.style.display = 'grid';
+        customDetail.style.display = 'block';
+        customRes.style.display = 'block';
+      } else {
+        extraRow.style.display = 'grid'; // keep visible for print options
+        customDetail.style.display = 'none';
+        customRes.style.display = 'none';
       }
+
+      triggerRecommend();
     }
 
-    function onSchoolChanged() {
-      currentSchool = document.getElementById('schoolSelect').value;
-      refreshSchoolBudget();
+    let debounceTimer = null;
+    function onPromptInputChanged() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(triggerRecommend, 300);
     }
 
-    async function refreshSchoolBudget() {
-      try {
-        const res = await fetch('/api/showback');
-        const data = await res.json();
-        const schoolRow = data.schools?.find(s => s.school_id === currentSchool);
-        const pill = document.getElementById('schoolBudgetPill');
-        if (schoolRow) {
-          const cap = schoolRow.monthly_cap || 20.0;
-          const spend = schoolRow.total_spend || 0.0;
-          const pct = schoolRow.percentage_of_cap || 0;
-          pill.textContent = `Budget: $${spend.toFixed(2)} / $${cap.toFixed(2)} (${pct.toFixed(0)}%)`;
-          pill.className = 'budget-pill ' + (pct >= 100 ? 'danger' : pct >= 80 ? 'warning' : '');
-        }
-      } catch (e) {
-        console.error('Failed to load budget', e);
-      }
-    }
-
-    async function previewDecision() {
-      clearAlert();
-      const payload = {
-        prompt: document.getElementById('promptInput').value,
-        purpose: currentPurpose,
-        inputs: {
-          subject: document.getElementById('promptInput').value,
-          output_size: document.getElementById('outputSizeInput').value,
-          grade_band: document.getElementById('gradeBandInput').value,
-          colour_mode: document.getElementById('colourModeInput').value,
-        },
-        school_id: currentSchool,
-        role: currentRole
-      };
+    async function triggerRecommend() {
+      const prompt = document.getElementById('promptInput').value;
+      const printUse = document.getElementById('printUseCheck').checked;
+      const printSize = document.getElementById('printSizeSelect').value;
+      const requiredDetail = document.getElementById('requiredDetailSelect').value;
+      const targetRes = parseInt(document.getElementById('targetResInput').value) || null;
 
       try {
-        const res = await fetch('/api/preview', {
+        const res = await fetch('/recommend', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            prompt: prompt,
+            purpose: currentPurpose,
+            print_use: printUse,
+            print_size: printSize,
+            required_detail: requiredDetail,
+            target_resolution: targetRes,
+          })
         });
-
-        if (!res.ok) {
-          const err = await res.json();
-          showAlert('danger', `⚠️ Moderation or validation alert: ${err.error || err.message}`);
-          return;
-        }
-
         const data = await res.json();
-        document.getElementById('previewArea').style.display = 'grid';
+        latestRecommendation = data;
+        currentRecommendedTier = data.recommended_tier;
 
-        // Recommended
-        const rec = data.recommended;
-        document.getElementById('recStrategyName').textContent = `${rec.effort_level} (${rec.strategy_name})`;
-        document.getElementById('recCostDisplay').textContent = rec.display_cost;
-        document.getElementById('recReason').textContent = rec.reason;
+        // Update recommendation panel
+        document.getElementById('recTierBadge').textContent = `${data.recommended_tier.toUpperCase()} RECOMMENDED`;
+        document.getElementById('recFactorTag').textContent = `Deciding Factor: ${data.deciding_factor}`;
+        document.getElementById('recExplanationText').textContent = data.explanation;
 
-        const recBox = document.getElementById('recImageBox');
-        if (rec.preview_image) {
-          recBox.innerHTML = `<img src="${rec.preview_image}" alt="Preview" />`;
-        } else {
-          recBox.innerHTML = `<span style="color: var(--text-muted);">Preview render generated</span>`;
-        }
+        // Update pre-selection of tier cards
+        selectTier(data.recommended_tier, /* fromRecommendation= */ true);
 
-        const leversList = document.getElementById('recLeversList');
-        leversList.innerHTML = Object.entries(rec.levers || {}).map(([k, v]) => `<li>${k}: ${v}</li>`).join('');
-
-        // Next Tier
-        const next = data.next_tier;
-        const nextCard = document.getElementById('nextTierCard');
-        if (next) {
-          nextCard.style.display = 'flex';
-          document.getElementById('nextStrategyName').textContent = `${next.effort_level} (${next.strategy_name})`;
-          document.getElementById('nextCostDisplay').textContent = next.display_cost;
-          document.getElementById('nextTradeoff').textContent = next.what_changes;
-
-          const nextBox = document.getElementById('nextImageBox');
-          if (next.preview_image) {
-            nextBox.innerHTML = `<img src="${next.preview_image}" alt="Next Tier Preview" />`;
-          } else {
-            nextBox.innerHTML = `<span style="color: var(--text-muted);">Diffusion mock ready</span>`;
-          }
-        } else {
-          nextCard.style.display = 'none';
+        // Update card units from alternatives
+        if (data.alternatives) {
+          data.alternatives.forEach(alt => {
+            if (alt.tier === 'economy') {
+              document.getElementById('economyUnits').textContent = `${alt.units} units`;
+              document.getElementById('economySavings').textContent = `~${alt.savings_percentage}% savings vs Maximum`;
+            } else if (alt.tier === 'standard') {
+              document.getElementById('standardUnits').textContent = `${alt.units} units`;
+              document.getElementById('standardSavings').textContent = `~${alt.savings_percentage}% savings vs Maximum`;
+            } else if (alt.tier === 'maximum') {
+              document.getElementById('maximumUnits').textContent = `${alt.units} units`;
+              document.getElementById('maximumSavings').textContent = `0.0% savings (Baseline)`;
+            }
+          });
         }
       } catch (err) {
-        showAlert('danger', 'Error fetching decision preview: ' + err.message);
+        console.error('Error fetching recommendation:', err);
       }
     }
 
-    async function executeRequest(preferredStrategy = null, overrideReason = null) {
-      clearAlert();
-      const payload = {
-        prompt: document.getElementById('promptInput').value,
-        purpose: currentPurpose,
-        inputs: {
-          subject: document.getElementById('promptInput').value,
-          output_size: document.getElementById('outputSizeInput').value,
-          grade_band: document.getElementById('gradeBandInput').value,
-          colour_mode: document.getElementById('colourModeInput').value,
-        },
-        school_id: currentSchool,
-        role: currentRole,
-        preferred_strategy: preferredStrategy,
-        override_reason: overrideReason,
-        auto_execute: true
-      };
+    function selectTier(tier, fromRecommendation = false) {
+      currentSelectedTier = tier;
 
-      try {
-        const res = await fetch('/api/request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          showAlert('danger', `⚠️ Request Blocked: ${data.message || data.error}`);
-          return;
-        }
-
-        lastRequestId = data.request.id;
-
-        // Check if awaiting approval
-        if (data.status === 'awaiting_approval') {
-          showAlert('warning', `🔒 Request requires administrative approval: ${data.decision.explanation.reason}`);
-          return;
-        }
-
-        if (data.status === 'moderation_blocked') {
-          showAlert('danger', `🚫 Blocked by moderation filter: ${data.moderation_result?.blocked_reason}`);
-          return;
-        }
-
-        // Display results
-        document.getElementById('resultArea').style.display = 'block';
-        const imgBox = document.getElementById('finalImageBox');
-        if (data.preview_image_url) {
-          imgBox.innerHTML = `<img src="${data.preview_image_url}" alt="Output" />`;
-        } else {
-          imgBox.innerHTML = `<div style="color: var(--text-muted); padding: 20px;">Execution succeeded (${data.decision.chosen_strategy})</div>`;
-        }
-
-        // Quality gate checks
-        const checksList = document.getElementById('checksList');
-        if (data.quality && data.quality.checks) {
-          checksList.innerHTML = data.quality.checks.map(c => `
-            <div class="check-item">
-              <span>${c.check_name}: ${c.message}</span>
-              <span class="check-badge ${c.passed ? 'check-pass' : 'check-fail'}">${c.passed ? 'PASSED' : 'FAILED'}</span>
-            </div>
-          `).join('');
-        }
-
-        // Metadata
-        const meta = document.getElementById('executionMeta');
-        meta.innerHTML = `
-          <div>Strategy: <strong>${data.decision.chosen_strategy}</strong> (${data.decision.explanation.effort_level || 'Optimal'})</div>
-          <div>Cost: <strong>${data.decision.display_cost}</strong></div>
-          <div>Latency: <strong>${(data.execution?.latency_s || 0.05).toFixed(3)}s</strong></div>
-          <div>Status: <span style="color: var(--accent-emerald); font-weight: 600;">COMPLETED & PASSES CHECKS</span></div>
-        `;
-
-        refreshSchoolBudget();
-        showAlert('success', '✅ Successfully generated and verified against quality floor!');
-      } catch (err) {
-        showAlert('danger', 'Execution error: ' + err.message);
-      }
-    }
-
-    function upgradeTier() {
-      const reason = prompt('Upgrading above the recommended tier requires justification:\nPlease state why higher effort is needed:');
-      if (reason) {
-        executeRequest('standard', reason);
-      }
-    }
-
-    async function rateOutput(stars) {
-      if (!lastRequestId) return;
-      document.querySelectorAll('.star').forEach((s, idx) => {
-        s.classList.toggle('filled', idx < stars);
+      // Update card UI classes
+      document.querySelectorAll('.tier-card').forEach(c => {
+        c.classList.remove('selected');
+        c.classList.remove('is-recommended-card');
       });
-      try {
-        await fetch('/api/rating', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ request_id: lastRequestId, rating: stars })
-        });
-        document.getElementById('ratingStatus').textContent = `Saved (${stars}★)`;
-      } catch (e) {
-        console.error('Failed to rate', e);
+
+      const selCard = document.getElementById(`tierCard-${tier}`);
+      if (selCard) selCard.classList.add('selected');
+
+      const recCard = document.getElementById(`tierCard-${currentRecommendedTier}`);
+      if (recCard) recCard.classList.add('is-recommended-card');
+
+      // Check below-floor override warning
+      const warnBox = document.getElementById('overrideWarningBox');
+      const tierRank = { 'economy': 1, 'standard': 2, 'maximum': 3 };
+      const floorTier = latestRecommendation ? latestRecommendation.base_floor_tier : 'economy';
+
+      if (tierRank[tier] < tierRank[floorTier]) {
+        warnBox.style.display = 'block';
+        document.getElementById('overrideWarningText').textContent = 
+          `Selected tier (${tier.toUpperCase()}) is below the quality floor (${floorTier.toUpperCase()}) for ${currentPurpose.replace('_', ' ')}. Detail may be insufficient.`;
+      } else {
+        warnBox.style.display = 'none';
+        document.getElementById('overrideConfirmCheckbox').checked = false;
       }
+
+      // Check budget
+      const budgetBox = document.getElementById('budgetErrorBox');
+      budgetBox.style.display = 'none';
+
+      // Update comparison panel preview numbers
+      updateComparisonPanel();
     }
 
-    function showAlert(type, msg) {
-      const area = document.getElementById('alertArea');
-      area.innerHTML = `<div class="alert-box alert-${type}">${msg}</div>`;
-    }
+    function updateComparisonPanel() {
+      if (!latestRecommendation || !latestRecommendation.alternatives) return;
+      const selectedAlt = latestRecommendation.alternatives.find(a => a.tier === currentSelectedTier);
+      const maxAlt = latestRecommendation.alternatives.find(a => a.tier === 'maximum');
 
-    function clearAlert() {
-      document.getElementById('alertArea').innerHTML = '';
-    }
-
-    async function loadShowback() {
-      try {
-        const res = await fetch('/api/showback');
-        const data = await res.json();
-        const tbody = document.getElementById('showbackTbody');
+      if (selectedAlt) {
+        document.getElementById('metricSelectedUnits').textContent = `${selectedAlt.units} units`;
+        document.getElementById('metricSelectedTierName').textContent = `${selectedAlt.display || selectedAlt.tier} (${selectedAlt.parameters.width}x${selectedAlt.parameters.height}, ${selectedAlt.parameters.steps} steps)`;
         
-        let totalSpend = 0;
-        let totalReqs = 0;
+        const baselineU = maxAlt ? maxAlt.units : 118.0;
+        document.getElementById('metricBaselineUnits').textContent = `${baselineU} units`;
 
-        tbody.innerHTML = (data.schools || []).map(s => {
-          totalSpend += s.total_spend;
-          totalReqs += s.requests_count;
-          const statusBadge = s.percentage_of_cap >= 100 
-            ? '<span class="budget-pill danger">EXCEEDED</span>' 
-            : s.percentage_of_cap >= 80 
-            ? '<span class="budget-pill warning">WARNING (80%)</span>' 
-            : '<span class="budget-pill">NORMAL</span>';
+        const savedU = selectedAlt.savings_units !== null ? selectedAlt.savings_units : (baselineU - selectedAlt.units).toFixed(2);
+        const savedPct = selectedAlt.savings_percentage !== null ? selectedAlt.savings_percentage : ((savedU / baselineU) * 100).toFixed(1);
 
-          return `
-            <tr>
-              <td><strong>${s.school_id}</strong></td>
-              <td>${s.requests_count}</td>
-              <td style="font-family: 'JetBrains Mono', monospace;">$${s.total_spend.toFixed(4)}</td>
-              <td style="font-family: 'JetBrains Mono', monospace;">$${s.monthly_cap.toFixed(2)}</td>
-              <td>${s.percentage_of_cap.toFixed(1)}%</td>
-              <td>${s.top_category || 'colouring_worksheet'}</td>
-              <td>${(s.reuse_rate * 100).toFixed(1)}%</td>
-              <td>${statusBadge}</td>
-            </tr>
-          `;
-        }).join('');
+        document.getElementById('metricSavingsUnits').textContent = `${savedU > 0 ? '+' : ''}${savedU} units`;
+        document.getElementById('metricSavingsPct').textContent = `${savedPct}% compute reduction`;
 
-        document.getElementById('kpiTotalSpend').textContent = `$${totalSpend.toFixed(4)}`;
-        document.getElementById('kpiSchools').textContent = data.schools?.length || 3;
-      } catch (e) {
-        console.error('Failed to load showback', e);
+        document.getElementById('comparisonDataOrigin').textContent = `Data Origin: ${selectedAlt.data_origin.toUpperCase()} PROXY`;
       }
     }
 
-    async function loadConfig() {
+    async function generateImage() {
+      const btn = document.getElementById('btnGenerate');
+      const notice = document.getElementById('generationStatusNotice');
+      const prompt = document.getElementById('promptInput').value;
+      const printUse = document.getElementById('printUseCheck').checked;
+      const printSize = document.getElementById('printSizeSelect').value;
+      const overrideConfirmed = document.getElementById('overrideConfirmCheckbox').checked;
+      const isOverride = currentSelectedTier !== currentRecommendedTier;
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating (Simulated Compute)...';
+      notice.textContent = `Running ${currentSelectedTier.toUpperCase()} generation...`;
+
       try {
-        const res = await fetch('/api/config?role=admin');
-        const data = await res.json();
-        fullConfigCache = data;
-        document.getElementById('configRawJson').value = JSON.stringify(data, null, 2);
-        document.getElementById('configPolicySelect').value = data.policy?.active || 'cheapest_meeting_quality';
-        document.getElementById('configSchoolBudget').value = data.policy?.budgets?.per_school_monthly || 20.0;
-        document.getElementById('configVersionLabel').textContent = `Version ${data.version}`;
-      } catch (e) {
-        console.error('Failed to load config', e);
-      }
-    }
-
-    async function patchActivePolicy() {
-      const pol = document.getElementById('configPolicySelect').value;
-      if (!fullConfigCache) return;
-      fullConfigCache.policy.active = pol;
-      document.getElementById('configRawJson').value = JSON.stringify(fullConfigCache, null, 2);
-    }
-
-    function patchBudget() {
-      const b = parseFloat(document.getElementById('configSchoolBudget').value);
-      if (!fullConfigCache) return;
-      if (!fullConfigCache.policy.budgets) fullConfigCache.policy.budgets = {};
-      fullConfigCache.policy.budgets.per_school_monthly = b;
-      document.getElementById('configRawJson').value = JSON.stringify(fullConfigCache, null, 2);
-    }
-
-    async function saveConfigToServer() {
-      try {
-        const parsed = JSON.parse(document.getElementById('configRawJson').value);
-        const res = await fetch('/api/config', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ updates: parsed, author: 'web_admin' })
-        });
-        const resp = await res.json();
-        if (resp.success) {
-          alert(`Configuration updated to Version ${resp.version}! Hot-reload successful.`);
-          loadConfig();
-        } else {
-          alert('Error: ' + JSON.stringify(resp));
-        }
-      } catch (e) {
-        alert('Invalid JSON: ' + e.message);
-      }
-    }
-
-    function reloadConfigFromServer() {
-      loadConfig();
-    }
-
-    async function rollbackConfig() {
-      if (!confirm('Are you sure you want to rollback to the previous configuration version?')) return;
-      try {
-        const res = await fetch('/api/config/rollback', {
+        const res = await fetch('/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ author: 'web_admin' })
+          body: JSON.stringify({
+            prompt: prompt,
+            purpose: currentPurpose,
+            confirmed_tier: currentSelectedTier,
+            override_flag: isOverride,
+            override_reason: isOverride ? `User opted for ${currentSelectedTier}` : null,
+            override_confirmed: overrideConfirmed,
+            print_use: printUse,
+            print_size: printSize,
+          })
         });
-        const resp = await res.json();
-        if (resp.success) {
-          alert(resp.message);
-          loadConfig();
-        } else {
-          alert('Rollback failed: ' + (resp.detail || JSON.stringify(resp)));
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (data.status === 'needs_confirmation') {
+            document.getElementById('overrideWarningBox').style.display = 'block';
+            alert(`Override Warning: ${data.warning}\nPlease check the confirmation box and retry.`);
+          } else {
+            alert(`Generation Error: ${data.detail || data.error || 'Failed'}`);
+          }
+          btn.disabled = false;
+          btn.textContent = '🚀 Generate Image';
+          notice.textContent = 'Ready to generate';
+          return;
         }
-      } catch (e) {
-        alert('Rollback error: ' + e.message);
+
+        // Display output image
+        const img = document.getElementById('generatedImagePreview');
+        const phNotice = document.getElementById('imagePlaceholderNotice');
+        if (data.preview_url) {
+          img.src = data.preview_url;
+          img.style.display = 'block';
+          phNotice.style.display = 'none';
+        }
+        document.getElementById('outputTierBadge').textContent = `${data.tier.toUpperCase()} Placeholder`;
+
+        // Update side-by-side reference if available
+        const maxImg = document.getElementById('maxTierImagePreview');
+        const maxNotice = document.getElementById('maxPlaceholderNotice');
+        if (data.preview_url) {
+          maxImg.src = data.preview_url; // Illustrative placeholder differing in resolution
+          maxImg.style.display = 'block';
+          maxNotice.style.display = 'none';
+        }
+
+        // Update comparison panel
+        document.getElementById('metricSelectedUnits').textContent = `${data.estimated_units} units`;
+        document.getElementById('metricBaselineUnits').textContent = `${data.baseline_units} units`;
+        document.getElementById('metricSavingsUnits').textContent = `+${data.savings_units} units`;
+        document.getElementById('metricSavingsPct').textContent = `${data.savings_percentage}% compute reduction`;
+
+        notice.textContent = `Completed in ${data.latency_s}s. Saved ${data.savings_units} units (${data.savings_percentage}%)!`;
+        
+        // Refresh summary and history
+        fetchSummary();
+        loadHistory();
+
+      } catch (err) {
+        console.error('Error during generation:', err);
+        alert('Network or server error during generation');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Generate Image';
+      }
+    }
+
+    async function fetchSummary() {
+      try {
+        const res = await fetch('/summary');
+        const data = await res.json();
+        document.getElementById('runningTotalText').textContent = `${data.cumulative_units_saved} units saved`;
+      } catch (err) {
+        console.error('Error fetching summary:', err);
       }
     }
 
     async function loadHistory() {
+      const purpose = document.getElementById('historyFilterPurpose').value;
+      const tier = document.getElementById('historyFilterTier').value;
+      const tbody = document.getElementById('historyTableBody');
+
+      let url = '/history?limit=100';
+      if (purpose) url += `&purpose=${purpose}`;
+      if (tier) url += `&tier=${tier}`;
+
       try {
-        const res = await fetch(`/api/history?role=${currentRole}&limit=50`);
-        const records = await res.json();
-        const tbody = document.getElementById('historyTbody');
-        if (!records.length) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No requests processed yet. Submit a request in the Request Optimizer tab!</td></tr>';
+        const res = await fetch(url);
+        const data = await res.json();
+        tbody.innerHTML = '';
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; color: var(--text-muted);">No generation records found.</td></tr>';
           return;
         }
-        tbody.innerHTML = records.map(r => {
-          const prompt = r.request?.prompt || '(empty)';
-          const cat = r.analysis?.category || r.decision?.category || 'general';
-          const strat = r.decision?.chosen_strategy || '-';
-          const effort = r.decision?.explanation?.effort_level || 'Standard';
-          const cost = r.cost?.display_actual || (r.cost?.actual_cost ? `$${r.cost.actual_cost.toFixed(4)}` : '$0.00');
-          const qPassed = r.quality?.passed;
-          const rating = r.human_rating ? '★'.repeat(r.human_rating) + '☆'.repeat(5 - r.human_rating) : '-';
-          const origin = r.execution?.data_origin || 'simulated';
-          return `
-            <tr>
-              <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${prompt}">${prompt}</td>
-              <td><span class="purpose-tier-hint">${cat}</span></td>
-              <td><code>${strat}</code></td>
-              <td>${effort}</td>
-              <td style="font-family: 'JetBrains Mono', monospace;">${cost}</td>
-              <td><span class="check-badge ${qPassed ? 'check-pass' : 'check-fail'}">${qPassed ? 'PASSED' : 'FAILED'}</span></td>
-              <td style="color: var(--accent-amber);">${rating}</td>
-              <td><span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); text-transform: uppercase;">${origin}</span></td>
-            </tr>
+
+        data.forEach(r => {
+          const tr = document.createElement('tr');
+          const timeStr = r.created_at ? r.created_at.replace('T', ' ').substring(0, 19) : '-';
+          tr.innerHTML = `
+            <td style="font-family: monospace; font-size: 11px;">${r.id}</td>
+            <td style="font-size: 11px; color: var(--text-secondary);">${timeStr}</td>
+            <td><strong>${(r.purpose || '').replace('_', ' ')}</strong></td>
+            <td><span class="badge-simulated">${(r.tier || '').toUpperCase()}</span></td>
+            <td style="font-family: monospace;">${r.estimated_units}</td>
+            <td style="font-family: monospace; color: var(--text-muted);">${r.baseline_units}</td>
+            <td style="font-family: monospace; color: var(--accent-emerald);">+${r.savings_units}</td>
+            <td style="font-weight: 700; color: var(--accent-emerald);">${r.savings_percentage}%</td>
+            <td><span class="badge-simulated">${r.data_origin}</span></td>
+            <td>${r.override_flag ? '⚠️ Yes' : 'No'}</td>
+            <td><span style="color: ${r.status === 'completed' ? 'var(--accent-emerald)' : 'var(--accent-rose)'};">${r.status}</span></td>
           `;
-        }).join('');
-      } catch (e) {
-        console.error('Failed to load history', e);
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error loading history:', err);
       }
     }
 
-    async function loadStrategies() {
+    function exportCSV() {
+      window.location.href = '/history/export.csv';
+    }
+
+    async function fetchConfig() {
       try {
-        const res = await fetch('/api/config?role=admin');
+        const res = await fetch('/config');
         const data = await res.json();
-        const strats = data.strategies || {};
-        const tbody = document.getElementById('strategyTbody');
-        tbody.innerHTML = Object.entries(strats).map(([name, s]) => {
-          const levers = Object.entries(s.levers || {}).map(([k, v]) => `${k}: ${v}`).join(', ') || 'standard';
-          return `
-            <tr>
-              <td><code>${name}</code></td>
-              <td>${s.adapter}</td>
-              <td><strong>${s.effort_level || 'Standard'}</strong></td>
-              <td style="font-family: 'JetBrains Mono', monospace;">$${typeof s.price_per_call === 'number' ? s.price_per_call.toFixed(4) : s.price_per_call}</td>
-              <td>${s.latency_s ? s.latency_s + 's' : '0.1s'}</td>
-              <td style="color: var(--text-secondary); font-size: 12px;">${levers}</td>
-              <td><span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">SIMULATED</span></td>
-            </tr>
-          `;
-        }).join('');
-      } catch (e) {
-        console.error('Failed to load strategies', e);
+        activeConfig = data;
+        document.getElementById('configEditor').value = JSON.stringify(data, null, 2);
+        document.getElementById('configSaveStatus').textContent = `Configuration loaded (Version ${data.version})`;
+      } catch (err) {
+        console.error('Error fetching config:', err);
       }
     }
 
-    async function runBenchmark() {
-      const btn = document.getElementById('btnRunEval');
-      btn.textContent = '⏳ Running 30-Request Evaluation...';
-      btn.disabled = true;
-
+    async function saveConfig() {
+      const editor = document.getElementById('configEditor');
+      const status = document.getElementById('configSaveStatus');
       try {
-        const res = await fetch('/api/eval?sample_size=30&seed=42', { method: 'POST' });
+        const updates = JSON.parse(editor.value);
+        status.textContent = 'Validating and saving configuration...';
+
+        const res = await fetch('/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            updates: updates,
+            author: 'admin_studio'
+          })
+        });
+
         const data = await res.json();
-
-        document.getElementById('evalResultsArea').style.display = 'block';
-        document.getElementById('evalBaseCost').textContent = `$${data.baseline_cost.toFixed(3)}`;
-        document.getElementById('evalOptCost').textContent = `$${data.optimized_cost.toFixed(3)}`;
-        document.getElementById('evalTotalSavings').textContent = `$${data.savings.toFixed(3)}`;
-        document.getElementById('evalSavingsPct').textContent = `${data.savings_pct.toFixed(1)}% cost reduction`;
-        document.getElementById('evalReuseHit').textContent = `${(data.reuse_hit_rate * 100).toFixed(1)}%`;
-
-        const attr = data.attribution || {};
-        const totalSav = attr.total_savings || data.savings || 1.0;
-        const rows = [
-          { lever: 'Reuse Library Lever', val: attr.reuse_savings || 0, desc: 'Zero generative call for identical approved requests' },
-          { lever: 'Deterministic Template Lever', val: attr.template_savings || 0, desc: 'B&W line-art generated without GPU model inference' },
-          { lever: 'Lower-Tier Optimization Lever', val: attr.lower_tier_savings || 0, desc: 'Right-sizing model size and resolution to purpose quality floor' },
-          { lever: 'TOTAL ATTRIBUTED SAVINGS', val: totalSav, desc: 'Exact sum equality verified (Reuse + Template + Lower-Tier)' }
-        ];
-
-        document.getElementById('evalLeversTbody').innerHTML = rows.map(r => `
-          <tr style="${r.lever.startsWith('TOTAL') ? 'font-weight: 700; background: rgba(99, 102, 241, 0.1);' : ''}">
-            <td>${r.lever}</td>
-            <td style="font-family: 'JetBrains Mono', monospace;">$${r.val.toFixed(4)}</td>
-            <td>${totalSav > 0 ? ((r.val / totalSav) * 100).toFixed(1) : 0}%</td>
-            <td style="color: var(--text-secondary);">${r.desc}</td>
-          </tr>
-        `).join('');
-
-      } catch (e) {
-        alert('Evaluation error: ' + e.message);
-      } finally {
-        btn.textContent = '▶️ Run 30-Request Evaluation Benchmark';
-        btn.disabled = false;
+        if (!res.ok) {
+          status.style.color = 'var(--accent-rose)';
+          status.textContent = `Validation Error: ${data.detail || JSON.stringify(data)}`;
+        } else {
+          status.style.color = 'var(--accent-emerald)';
+          status.textContent = `Successfully updated to Version ${data.version}!`;
+          fetchConfig();
+          triggerRecommend();
+        }
+      } catch (err) {
+        status.style.color = 'var(--accent-rose)';
+        status.textContent = `JSON Parse Error: ${err.message}`;
       }
     }
 
-    // Init
-    refreshSchoolBudget();
+    async function rollbackConfig() {
+      const status = document.getElementById('configSaveStatus');
+      try {
+        const res = await fetch('/api/config/rollback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ author: 'admin_studio' })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          status.style.color = 'var(--accent-emerald)';
+          status.textContent = `Rolled back to Version ${data.version}`;
+          fetchConfig();
+          triggerRecommend();
+        } else {
+          status.style.color = 'var(--accent-rose)';
+          status.textContent = `Rollback failed: ${data.detail}`;
+        }
+      } catch (err) {
+        status.style.color = 'var(--accent-rose)';
+        status.textContent = `Rollback error: ${err.message}`;
+      }
+    }
   </script>
 </body>
 </html>

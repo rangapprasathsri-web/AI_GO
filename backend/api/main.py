@@ -20,7 +20,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Header, Query
+from fastapi import FastAPI, HTTPException, Header, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -31,16 +31,19 @@ from backend.adapters.mock_text import MockTextAdapter
 from backend.adapters.registry import AdapterRegistry
 from backend.adapters.reuse_library import ReuseLibraryAdapter
 from backend.adapters.template_outline import TemplateOutlineAdapter
-from backend.engine.config import load_config_from_file, update_config
+from backend.engine.config import load_config_from_file, update_config, validate_config, ConfigValidationError
 from backend.engine.moderation import ModerationHook
 from backend.engine.models import (
     DomainConfig,
     PolicyName,
     RequestRecord,
     RequestStatus,
+    StrategyConfig,
     UserRequest,
 )
 from backend.engine.orchestrator import Orchestrator
+from backend.engine.resource import ResourceEstimator, compute_tier_units, compute_savings
+from backend.engine.resource_optimizer import ResourceOptimizerService
 from backend.eval.runner import EvaluationRunner
 from backend.eval.workload_generator import generate_workload, get_labelled_routing_dataset
 from backend.storage.sqlite_storage import SQLiteStorage
@@ -72,12 +75,24 @@ REGISTRY.register(REUSE_LIB)
 DEFAULT_CONFIG_PATH = "backend/domains/education_images.yaml"
 CURRENT_CONFIG = load_config_from_file(DEFAULT_CONFIG_PATH)
 
+RESOURCE_CONFIG_PATH = "backend/domains/image_resource_optimizer.yaml"
+RESOURCE_CONFIG = load_config_from_file(RESOURCE_CONFIG_PATH)
+RESOURCE_OPTIMIZER = ResourceOptimizerService(config=RESOURCE_CONFIG)
+
 # Seed initial config version in storage if not present
 if not STORAGE.get_config_versions(CURRENT_CONFIG.domain):
     STORAGE.save_config_version(
         domain=CURRENT_CONFIG.domain,
         version=CURRENT_CONFIG.version,
         config_data=CURRENT_CONFIG.model_dump(),
+        author="system_init",
+    )
+
+if not STORAGE.get_config_versions(RESOURCE_CONFIG.domain):
+    STORAGE.save_config_version(
+        domain=RESOURCE_CONFIG.domain,
+        version=RESOURCE_CONFIG.version,
+        config_data=RESOURCE_CONFIG.model_dump(),
         author="system_init",
     )
 
@@ -118,6 +133,40 @@ class RatingSubmission(BaseModel):
 class ConfigUpdateRequest(BaseModel):
     updates: Dict[str, Any]
     author: str = "admin"
+    domain: Optional[str] = None
+
+
+class RecommendRequest(BaseModel):
+    prompt: str = ""
+    purpose: str = "coloring_sheet"
+    required_detail: Optional[str] = None
+    target_resolution: Optional[int] = None
+    print_use: bool = False
+    print_size: Optional[str] = None
+    latency_max_s: Optional[float] = None
+    budget_units: Optional[float] = None
+
+
+class GenerateRequest(BaseModel):
+    prompt: str = ""
+    purpose: str = "coloring_sheet"
+    confirmed_tier: str = "economy"
+    override_flag: bool = False
+    override_reason: Optional[str] = None
+    override_confirmed: bool = False
+    required_detail: Optional[str] = None
+    target_resolution: Optional[int] = None
+    print_use: bool = False
+    print_size: Optional[str] = None
+    budget_units: Optional[float] = None
+
+
+def sanitize_config(cfg_dict: dict[str, Any]) -> dict[str, Any]:
+    """Sanitize configuration to ensure no credentials or secrets are exposed."""
+    clean = dict(cfg_dict)
+    for key in ["secret", "api_key", "password", "token", "credentials"]:
+        clean.pop(key, None)
+    return clean
 
 
 # ── Helper Functions ──────────────────────────────────────────────────
@@ -171,46 +220,80 @@ def serialize_record(record: RequestRecord, role: str) -> Dict[str, Any]:
 
 # ── Endpoints ─────────────────────────────────────────────────────────
 
+@app.get("/health")
 @app.get("/api/health")
 def health_check():
     return {
         "status": "healthy",
-        "service": "Adaptive AI Request Optimizer",
+        "service": "Adaptive AI Image Resource Optimizer",
         "active_domain": CURRENT_CONFIG.domain,
-        "version": CURRENT_CONFIG.version,
+        "resource_domain": RESOURCE_CONFIG.domain,
+        "version": RESOURCE_CONFIG.version,
     }
 
 
+@app.get("/config")
 @app.get("/api/config")
-def get_config(role: str = Query(default="requester")):
-    """Get active domain configuration."""
-    cfg = CURRENT_CONFIG.model_dump()
-    if role == "requester":
-        # Requester view hides internal adapter pricing structures if configured
-        if CURRENT_CONFIG.policy.hide_currency_from_requester:
+def get_config(domain: Optional[str] = None, role: str = Query(default="requester")):
+    """Get active domain configuration (sanitized, no secrets)."""
+    if domain == "education_images":
+        cfg = CURRENT_CONFIG.model_dump()
+        if role == "requester" and CURRENT_CONFIG.policy.hide_currency_from_requester:
             for s in cfg.get("strategies", {}).values():
                 s["price_per_call"] = "(hidden)"
-    return cfg
+        return sanitize_config(cfg)
+    # Default to RESOURCE_CONFIG which carries strategies, task_categories, tiers, and purposes
+    return sanitize_config(RESOURCE_CONFIG.model_dump())
 
 
+@app.put("/config")
 @app.put("/api/config")
 def update_domain_config(req: ConfigUpdateRequest):
     """Admin updates configuration dynamically without restart."""
-    global CURRENT_CONFIG, ORCHESTRATOR
+    global CURRENT_CONFIG, ORCHESTRATOR, RESOURCE_CONFIG, RESOURCE_OPTIMIZER
+    is_legacy = (req.domain == "education_images") or (
+        "tiers" not in req.updates and "purposes" not in req.updates and "task_categories" in req.updates
+    ) or (
+        "policy" in req.updates and "approval_required_above_cost" in req.updates["policy"]
+    )
+    if is_legacy:
+        try:
+            updated = update_config(CURRENT_CONFIG, req.updates)
+            CURRENT_CONFIG = updated
+            ORCHESTRATOR = create_orchestrator(CURRENT_CONFIG)
+            STORAGE.save_config_version(
+                domain=CURRENT_CONFIG.domain,
+                version=CURRENT_CONFIG.version,
+                config_data=CURRENT_CONFIG.model_dump(),
+                author=req.author,
+            )
+            return {
+                "success": True,
+                "version": CURRENT_CONFIG.version,
+                "message": f"Configuration successfully updated to version {CURRENT_CONFIG.version}",
+                "config": sanitize_config(CURRENT_CONFIG.model_dump()),
+            }
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
     try:
-        updated = update_config(CURRENT_CONFIG, req.updates)
-        CURRENT_CONFIG = updated
-        ORCHESTRATOR = create_orchestrator(CURRENT_CONFIG)
+        updated = update_config(RESOURCE_CONFIG, req.updates)
+        val_errors, _ = validate_config(updated)
+        if val_errors:
+            raise ConfigValidationError(val_errors)
+        RESOURCE_CONFIG = updated
+        RESOURCE_OPTIMIZER = ResourceOptimizerService(config=RESOURCE_CONFIG)
         STORAGE.save_config_version(
-            domain=CURRENT_CONFIG.domain,
-            version=CURRENT_CONFIG.version,
-            config_data=CURRENT_CONFIG.model_dump(),
+            domain=RESOURCE_CONFIG.domain,
+            version=RESOURCE_CONFIG.version,
+            config_data=RESOURCE_CONFIG.model_dump(),
             author=req.author,
         )
         return {
             "success": True,
-            "version": CURRENT_CONFIG.version,
-            "message": f"Configuration successfully updated to version {CURRENT_CONFIG.version}",
+            "version": RESOURCE_CONFIG.version,
+            "message": f"Configuration successfully updated to version {RESOURCE_CONFIG.version}",
+            "config": sanitize_config(RESOURCE_CONFIG.model_dump()),
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -272,13 +355,289 @@ def rollback_configuration(req: RollbackRequest):
     }
 
 
+@app.post("/recommend")
+@app.post("/api/recommend")
+def recommend_tier(req: RecommendRequest):
+    """
+    Recommend lowest suitable tier meeting requirements.
+    Explains the deciding factor in plain language and provides counterfactual estimates.
+    """
+    purpose_key = req.purpose.lower().replace(" ", "_") if req.purpose else "coloring_sheet"
+    requires_clarification = False
+    missing_inputs = []
+
+    if purpose_key == "custom":
+        if not req.required_detail and not req.target_resolution and not req.print_use and not req.print_size:
+            requires_clarification = True
+            missing_inputs = ["required_detail", "target_resolution", "print_use"]
+
+    rec = RESOURCE_OPTIMIZER.recommend(
+        prompt=req.prompt,
+        purpose=req.purpose,
+        print_use=req.print_use,
+        print_size=req.print_size,
+        required_detail=req.required_detail,
+        target_resolution=req.target_resolution,
+        budget_units=req.budget_units,
+        latency_max_s=req.latency_max_s,
+    )
+
+    if requires_clarification:
+        rec["status"] = "needs_clarification"
+        rec["requires_clarification"] = True
+        rec["missing_inputs"] = missing_inputs
+    else:
+        rec["requires_clarification"] = False
+        rec["missing_inputs"] = []
+
+    return rec
+
+
+@app.post("/generate")
+@app.post("/api/generate")
+def generate_image_tier(req: GenerateRequest):
+    """
+    Generate image at confirmed tier, enforce hard budget,
+    and compute counterfactual savings versus maximum tier.
+    """
+    global RESOURCE_CONFIG
+    import uuid
+
+    user_req = UserRequest(
+        prompt=req.prompt or f"Image for {req.purpose}",
+        domain=RESOURCE_CONFIG.domain,
+        inputs={"_category": req.purpose, "print_size": req.print_size},
+    )
+    mod_check = MODERATION.check_prompt(user_req)
+    if not mod_check.passed:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "moderation_blocked",
+                "message": mod_check.blocked_reason,
+                "flagged_terms": mod_check.flagged_terms,
+            },
+        )
+
+    rec_result = RESOURCE_OPTIMIZER.recommend(
+        prompt=req.prompt,
+        purpose=req.purpose,
+        print_use=req.print_use,
+        print_size=req.print_size,
+        required_detail=req.required_detail,
+        target_resolution=req.target_resolution,
+        budget_units=req.budget_units,
+    )
+    rec_tier = rec_result["recommended_tier"]
+
+    val = RESOURCE_OPTIMIZER.validate_override(
+        recommended_tier=rec_tier,
+        override_tier=req.confirmed_tier,
+        purpose=req.purpose,
+        override_confirmed=req.override_confirmed,
+        budget_units=req.budget_units,
+    )
+
+    if not val["allowed"]:
+        if val["status"] == "blocked_by_budget":
+            raise HTTPException(status_code=400, detail=val["error"])
+        elif val["status"] == "needs_confirmation":
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "below_floor_confirmation_required",
+                    "status": "needs_confirmation",
+                    "warning": val["warning"],
+                    "requires_confirmation": True,
+                    "recommended_tier": rec_tier,
+                    "confirmed_tier": req.confirmed_tier,
+                },
+            )
+        else:
+            raise HTTPException(status_code=400, detail=val.get("error", "Override not allowed"))
+
+    tier_info = RESOURCE_CONFIG.tiers.get(req.confirmed_tier.lower())
+    if not tier_info:
+        raise HTTPException(status_code=400, detail=f"Unknown tier: {req.confirmed_tier}")
+
+    strat_params = dict(tier_info.get("params", {}))
+    strat_params["model_factor"] = tier_info.get("model_factor", 1.0)
+    strategy = StrategyConfig(
+        name=req.confirmed_tier.lower(),
+        adapter="mock_image",
+        params=strat_params,
+        price_per_call=tier_info.get("price_per_call", 0.0),
+        effort_level=tier_info.get("display", req.confirmed_tier.title()),
+    )
+
+    start_t = time.time()
+    mock_adapter = REGISTRY.get("mock_image")
+    exec_result = mock_adapter.execute(strategy, user_req)
+    latency_s = round(time.time() - start_t, 3)
+
+    width = strat_params.get("width", 768)
+    height = strat_params.get("height", 768)
+    steps = strat_params.get("steps", 20)
+    model_factor = tier_info.get("model_factor", 1.0)
+    units = compute_tier_units(width, height, steps, model_factor)
+
+    max_tier = RESOURCE_CONFIG.tiers.get("maximum", {})
+    max_params = max_tier.get("params", {"width": 1536, "height": 1536, "steps": 50})
+    max_factor = max_tier.get("model_factor", 1.0)
+    baseline_units = compute_tier_units(
+        max_params.get("width", 1536),
+        max_params.get("height", 1536),
+        max_params.get("steps", 50),
+        max_factor,
+    )
+    savings = compute_savings(units, baseline_units)
+
+    if not exec_result.success:
+        savings_units = 0.0
+        savings_pct = 0.0
+        gen_status = "failed"
+    else:
+        savings_units = savings["savings_units"]
+        savings_pct = savings["savings_percentage"]
+        gen_status = "completed"
+
+    gen_id = f"gen-{uuid.uuid4().hex[:10]}"
+    preview_url = image_to_base64(exec_result.output_data) if exec_result.output_data else None
+
+    energy_cfg = RESOURCE_CONFIG.energy_model or {}
+    if energy_cfg.get("enabled") and energy_cfg.get("source"):
+        wh_rate = energy_cfg.get("wh_per_unit", 0.05) or 0.05
+        energy_wh = round(units * wh_rate, 4)
+        carbon_g = round(energy_wh * 0.4, 4)
+        energy_label = f"modelled estimate from {energy_cfg.get('source')}"
+    else:
+        energy_wh = None
+        carbon_g = None
+        energy_label = "not estimated (energy model disabled)"
+
+    is_override = req.confirmed_tier.lower() != rec_tier.lower() or req.override_flag
+
+    gen_record = {
+        "id": gen_id,
+        "prompt": req.prompt,
+        "purpose": req.purpose,
+        "tier": req.confirmed_tier.lower(),
+        "parameters": strat_params,
+        "estimated_units": units,
+        "baseline_units": baseline_units,
+        "savings_units": savings_units,
+        "savings_percentage": savings_pct,
+        "savings_label": "estimated savings vs maximum tier (not run)",
+        "data_origin": "simulated",
+        "label": "simulated estimate, not measured energy",
+        "formula": "steps * megapixels * model_factor",
+        "provider_reported_usage": None,
+        "energy_wh": energy_wh,
+        "carbon_co2_g": carbon_g,
+        "energy_label": energy_label,
+        "latency_s": latency_s,
+        "status": gen_status,
+        "override_flag": is_override,
+        "override_reason": req.override_reason if is_override else None,
+        "config_version": RESOURCE_CONFIG.version,
+        "is_placeholder": True,
+        "placeholder_label": "DEMO PLACEHOLDER: illustrative placeholder asset, not real model output",
+        "preview_url": preview_url,
+        "created_at": datetime.utcnow().isoformat(),
+        "explanation": rec_result.get("explanation"),
+        "deciding_factor": rec_result.get("deciding_factor"),
+    }
+
+    STORAGE.save_generation(gen_record)
+    return gen_record
+
+
+@app.get("/history")
+def get_resource_history(
+    purpose: Optional[str] = None,
+    tier: Optional[str] = None,
+    status: Optional[str] = None,
+    limit: int = Query(default=100, ge=1, le=500),
+):
+    """Retrieve history of image generations with units and savings."""
+    return STORAGE.list_generations(purpose=purpose, tier=tier, status=status, limit=limit)
+
+
+@app.get("/history/{gen_id}")
+@app.get("/api/history/{gen_id}")
+def get_resource_generation_by_id(gen_id: str):
+    """Retrieve a single generation or request by ID."""
+    record = STORAGE.get_generation(gen_id)
+    if record:
+        return record
+    req_record = STORAGE.get_request(gen_id)
+    if req_record:
+        return serialize_record(req_record, role="admin")
+    raise HTTPException(status_code=404, detail=f"Generation '{gen_id}' not found")
+
+
+@app.get("/summary")
+@app.get("/api/summary")
+def get_resource_summary():
+    """Retrieve cumulative savings summary with data_origin split."""
+    summary = STORAGE.get_generation_summary()
+    summary["energy_wh"] = None
+    summary["carbon_co2_g"] = None
+    summary["energy_label"] = "not estimated (energy model disabled)"
+    return summary
+
+
+@app.get("/history/export.csv")
+@app.get("/api/history/export")
+def export_history_csv():
+    """Export generation history as CSV."""
+    import csv
+    records = STORAGE.list_generations(limit=1000)
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "id", "timestamp", "purpose", "tier", "estimated_units",
+        "baseline_units", "savings_units", "savings_percentage",
+        "data_origin", "status", "override_flag", "override_reason"
+    ])
+    for r in records:
+        writer.writerow([
+            r.get("id"),
+            r.get("created_at"),
+            r.get("purpose"),
+            r.get("tier"),
+            r.get("estimated_units"),
+            r.get("baseline_units"),
+            r.get("savings_units"),
+            r.get("savings_percentage"),
+            r.get("data_origin"),
+            r.get("status"),
+            r.get("override_flag"),
+            r.get("override_reason") or "",
+        ])
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=generation_history.csv"}
+    )
+
+
 @app.get("/api/history")
 def get_request_history(
     school_id: Optional[str] = None,
+    purpose: Optional[str] = None,
+    tier: Optional[str] = None,
+    status: Optional[str] = None,
+    domain: Optional[str] = None,
     limit: int = Query(default=50, ge=1, le=200),
     role: str = Query(default="requester"),
 ):
-    """Retrieve history of past requests."""
+    """Retrieve history of past requests or resource generations."""
+    if domain == "image_resource_optimizer" or purpose or tier:
+        return STORAGE.list_generations(purpose=purpose, tier=tier, status=status, limit=limit)
+    gen_list = STORAGE.list_generations(limit=limit)
+    if gen_list and not school_id:
+        return gen_list
     records = STORAGE.list_requests(school_id=school_id, limit=limit)
     return [serialize_record(r, role) for r in records]
 

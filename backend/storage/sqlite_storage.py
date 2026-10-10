@@ -137,9 +137,35 @@ class SQLiteStorage(StorageInterface):
                     saved_at TEXT
                 );
 
+                CREATE TABLE IF NOT EXISTS resource_generations (
+                    id TEXT PRIMARY KEY,
+                    prompt TEXT NOT NULL,
+                    purpose TEXT NOT NULL,
+                    tier TEXT NOT NULL,
+                    parameters TEXT,
+                    estimated_units REAL,
+                    baseline_units REAL,
+                    savings_units REAL,
+                    savings_percentage REAL,
+                    savings_label TEXT,
+                    data_origin TEXT,
+                    provider_reported_usage TEXT,
+                    latency_s REAL,
+                    status TEXT NOT NULL,
+                    override_flag INTEGER,
+                    override_reason TEXT,
+                    config_version INTEGER,
+                    is_placeholder INTEGER,
+                    placeholder_label TEXT,
+                    preview_url TEXT,
+                    created_at TEXT
+                );
+
                 CREATE INDEX IF NOT EXISTS idx_requests_school ON requests(school_id);
                 CREATE INDEX IF NOT EXISTS idx_requests_status ON requests(status);
                 CREATE INDEX IF NOT EXISTS idx_requests_domain ON requests(domain);
+                CREATE INDEX IF NOT EXISTS idx_generations_status ON resource_generations(status);
+                CREATE INDEX IF NOT EXISTS idx_generations_purpose ON resource_generations(purpose);
             """)
 
     def save_request(self, record: RequestRecord) -> None:
@@ -627,4 +653,143 @@ class SQLiteStorage(StorageInterface):
                 "by_school": list(by_school.values()),
                 "by_purpose": list(by_purpose.values()),
                 "is_simulated": True,
+            }
+
+    def save_generation(self, gen: dict[str, Any]) -> None:
+        with self._get_conn() as conn:
+            conn.execute("""
+                INSERT OR REPLACE INTO resource_generations
+                (id, prompt, purpose, tier, parameters, estimated_units,
+                 baseline_units, savings_units, savings_percentage, savings_label,
+                 data_origin, provider_reported_usage, latency_s, status,
+                 override_flag, override_reason, config_version, is_placeholder,
+                 placeholder_label, preview_url, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                gen.get("id"),
+                gen.get("prompt", ""),
+                gen.get("purpose", ""),
+                gen.get("tier", ""),
+                json.dumps(gen.get("parameters", {})),
+                gen.get("estimated_units", 0.0),
+                gen.get("baseline_units", 0.0),
+                gen.get("savings_units", 0.0),
+                gen.get("savings_percentage", 0.0),
+                gen.get("savings_label", ""),
+                gen.get("data_origin", "simulated"),
+                json.dumps(gen.get("provider_reported_usage")) if gen.get("provider_reported_usage") is not None else None,
+                gen.get("latency_s", 0.0),
+                gen.get("status", "completed"),
+                1 if gen.get("override_flag") else 0,
+                gen.get("override_reason"),
+                gen.get("config_version", 1),
+                1 if gen.get("is_placeholder", True) else 0,
+                gen.get("placeholder_label", ""),
+                gen.get("preview_url") or gen.get("preview_image_url"),
+                gen.get("created_at") or datetime.utcnow().isoformat(),
+            ))
+
+    def get_generation(self, gen_id: str) -> Optional[dict[str, Any]]:
+        with self._get_conn() as conn:
+            row = conn.execute("SELECT * FROM resource_generations WHERE id = ?", (gen_id,)).fetchone()
+            if not row:
+                return None
+            return self._row_to_generation(row)
+
+    def list_generations(
+        self,
+        purpose: Optional[str] = None,
+        tier: Optional[str] = None,
+        status: Optional[str] = None,
+        limit: int = 100,
+    ) -> list[dict[str, Any]]:
+        query = "SELECT * FROM resource_generations WHERE 1=1"
+        params: list[Any] = []
+        if purpose:
+            query += " AND purpose = ?"
+            params.append(purpose)
+        if tier:
+            query += " AND tier = ?"
+            params.append(tier)
+        if status:
+            query += " AND status = ?"
+            params.append(status)
+        query += " ORDER BY created_at DESC LIMIT ?"
+        params.append(limit)
+
+        with self._get_conn() as conn:
+            rows = conn.execute(query, params).fetchall()
+            return [self._row_to_generation(r) for r in rows]
+
+    def _row_to_generation(self, row: sqlite3.Row) -> dict[str, Any]:
+        return {
+            "id": row["id"],
+            "prompt": row["prompt"],
+            "purpose": row["purpose"],
+            "tier": row["tier"],
+            "parameters": json.loads(row["parameters"] or "{}"),
+            "estimated_units": row["estimated_units"],
+            "baseline_units": row["baseline_units"],
+            "savings_units": row["savings_units"],
+            "savings_percentage": row["savings_percentage"],
+            "savings_label": row["savings_label"],
+            "data_origin": row["data_origin"],
+            "provider_reported_usage": json.loads(row["provider_reported_usage"]) if row["provider_reported_usage"] else None,
+            "latency_s": row["latency_s"],
+            "status": row["status"],
+            "override_flag": bool(row["override_flag"]),
+            "override_reason": row["override_reason"],
+            "config_version": row["config_version"],
+            "is_placeholder": bool(row["is_placeholder"]),
+            "placeholder_label": row["placeholder_label"],
+            "preview_url": row["preview_url"],
+            "created_at": row["created_at"],
+        }
+
+    def get_generation_summary(self) -> dict[str, Any]:
+        with self._get_conn() as conn:
+            rows = conn.execute("SELECT * FROM resource_generations").fetchall()
+            total_requests = len(rows)
+            success_count = 0
+            failed_count = 0
+            cumulative_units_saved = 0.0
+            cumulative_units_spent = 0.0
+
+            origin_split: dict[str, dict[str, Any]] = {
+                "simulated": {"units_saved": 0.0, "units_spent": 0.0, "count": 0},
+                "provider_reported": {"units_saved": 0.0, "units_spent": 0.0, "count": 0},
+                "measured": {"units_saved": 0.0, "units_spent": 0.0, "count": 0},
+            }
+
+            for r in rows:
+                status = r["status"]
+                origin = r["data_origin"] or "simulated"
+                if origin not in origin_split:
+                    origin_split[origin] = {"units_saved": 0.0, "units_spent": 0.0, "count": 0}
+
+                units = float(r["estimated_units"] or 0.0)
+                savings = float(r["savings_units"] or 0.0)
+
+                cumulative_units_spent += units
+                origin_split[origin]["units_spent"] = round(origin_split[origin]["units_spent"] + units, 2)
+                origin_split[origin]["count"] += 1
+
+                if status == "completed":
+                    success_count += 1
+                    if savings > 0:
+                        cumulative_units_saved += savings
+                        origin_split[origin]["units_saved"] = round(origin_split[origin]["units_saved"] + savings, 2)
+                else:
+                    failed_count += 1
+
+            saved_rounded = round(cumulative_units_saved, 1)
+            return {
+                "total_requests": total_requests,
+                "successful_generations": success_count,
+                "failed_generations": failed_count,
+                "cumulative_units_saved": saved_rounded,
+                "cumulative_units_spent": round(cumulative_units_spent, 1),
+                "data_origin_split": origin_split,
+                "running_total_label": f"You have saved about {saved_rounded} units across {success_count} images (estimated, not measured)",
+                "counterfactual_note": "Baseline compute at Maximum tier was not run; savings are estimated avoided compute.",
             }

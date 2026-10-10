@@ -63,3 +63,13 @@ This document records all explicit assumptions, simulated data caveats, and arch
 - **Safety Margin**: A configurable safety margin (default 0%, up to 15%) is applied when upstream pricing fluctuates or is uncertain.
 - **Contract Testing**: All provider adapters support HTTPX mock transports, guaranteeing that the automated test suite never incurs paid API charges or requires live external credentials.
 
+## 11. Official Problem Statement: Resource Units & Counterfactual Savings
+- **Core Unit Proxy**: Units are calculated via the documented first-order formula:
+  $$\text{Units} = \text{Steps} \times \left(\frac{\text{Width} \times \text{Height}}{10^6}\right) \times \text{Model Factor}$$
+  This is a defensible relative proxy for computational effort; real energy consumption depends on specific GPU hardware, batching, and kernel optimizations.
+- **Counterfactual Avoidance**: "Saved" means estimated avoided compute versus running the same prompt at Maximum tier, which did not happen. It is always labeled as `"estimated savings vs maximum tier (not run)"`.
+- **Honest Non-Clamping**: If a user overrides above Maximum or bad config sets selected above Maximum, savings are negative, not clamped to zero.
+- **Failures Add Spent Units, Zero Savings**: If a generation fails, spent units are added to consumption, but zero savings are credited.
+- **Energy & Carbon Prohibition**: Energy in Wh and CO2 return `null` (never zero or fabricated values) when `energy_model.enabled` is false.
+- **Hard Resource Unit Budgets**: Budgets are enforced in compute units (`per_request_units_max: 120`, `session_units_max: 2000`). Requests exceeding the hard budget are blocked or require user adjustment.
+

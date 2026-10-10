@@ -119,6 +119,36 @@ def _parse_config_dict(data: dict[str, Any]) -> DomainConfig:
                 **sd,
             )
 
+    # Parse tiers into strategies if provided (for image_resource_optimizer domain)
+    tiers_dict = data.get("tiers") or {}
+    for tier_name, tier_info in tiers_dict.items():
+        if isinstance(tier_info, dict) and tier_name not in strategies:
+            params = dict(tier_info.get("params", {}))
+            params["model_factor"] = tier_info.get("model_factor", 1.0)
+            strategies[tier_name] = StrategyConfig(
+                name=tier_name,
+                adapter="mock_image",
+                params=params,
+                price_per_call=tier_info.get("price_per_call", 0.0),
+                effort_level=tier_info.get("display", tier_name.title()),
+                description=f"{tier_info.get('display', tier_name.title())} tier",
+                levers={"width": params.get("width"), "height": params.get("height"), "steps": params.get("steps")},
+            )
+
+    # Parse purposes into task_categories if provided
+    purposes_dict = data.get("purposes") or {}
+    for purp_name, purp_info in purposes_dict.items():
+        if isinstance(purp_info, dict) and purp_name not in task_categories:
+            min_t = purp_info.get("min_tier", "economy")
+            task_categories[purp_name] = TaskCategory(
+                name=purp_name,
+                keywords=[purp_name.replace("_", " "), purp_info.get("label", purp_name).lower()],
+                required_inputs=purp_info.get("requires_inputs", []),
+                default_tier_hint=purp_info.get("suggested_tier") or min_t,
+                allowed_strategies=list(tiers_dict.keys()) or None,
+                defaults={"min_tier": min_t, "label": purp_info.get("label", purp_name), "notes": purp_info.get("notes", "")},
+            )
+
     # Parse policy
     policy_data = data.get("policy", {})
     budgets_data = policy_data.get("budgets", {})
@@ -147,6 +177,11 @@ def _parse_config_dict(data: dict[str, Any]) -> DomainConfig:
         strategies=strategies,
         policy=policy,
         baseline_policy=data.get("baseline_policy", "baseline_always_max"),
+        units=data.get("units"),
+        tiers=data.get("tiers"),
+        purposes=data.get("purposes"),
+        energy_model=data.get("energy_model"),
+        raw_config=data,
     )
 
 
@@ -169,6 +204,60 @@ def validate_config(config: DomainConfig) -> list[str]:
         errors.append("per_request_max budget is negative")
     if config.policy.budgets.per_school_monthly < 0:
         errors.append("per_school_monthly budget is negative")
+    if config.policy.budgets.per_request_units_max is not None and config.policy.budgets.per_request_units_max < 0:
+        errors.append("per_request_units_max budget is negative")
+    if config.policy.budgets.session_units_max is not None and config.policy.budgets.session_units_max < 0:
+        errors.append("session_units_max budget is negative")
+
+    # Section 4 Validation: Validate purposes
+    if config.purposes:
+        for p_name, p_data in config.purposes.items():
+            if isinstance(p_data, dict):
+                min_t = p_data.get("min_tier")
+                if not min_t:
+                    errors.append(f"Purpose '{p_name}' has no min_tier defined")
+                elif config.tiers and min_t not in config.tiers:
+                    errors.append(f"Purpose '{p_name}' references undefined min_tier '{min_t}'")
+
+    # Section 4 Validation: Validate tiers
+    if config.tiers:
+        for t_name, t_data in config.tiers.items():
+            if isinstance(t_data, dict):
+                params = t_data.get("params", {})
+                for param in ["width", "height", "steps"]:
+                    val = params.get(param)
+                    if val is None or val <= 0:
+                        errors.append(f"Tier '{t_name}' has missing or non-positive parameter '{param}': {val}")
+                if t_data.get("model_factor", 1.0) <= 0:
+                    errors.append(f"Tier '{t_name}' has non-positive model_factor: {t_data.get('model_factor')}")
+
+    # Section 4 Validation: Energy model
+    if config.energy_model and config.energy_model.get("enabled"):
+        if not config.energy_model.get("source"):
+            errors.append("Enabled energy model has no source specified")
+
+    # Section 4 Validation: Warn when Maximum tier is not the highest-unit tier
+    if config.tiers and "maximum" in config.tiers:
+        from backend.engine.resource import compute_tier_units
+        max_params = config.tiers["maximum"].get("params", {})
+        max_factor = config.tiers["maximum"].get("model_factor", 1.0)
+        max_u = compute_tier_units(
+            max_params.get("width", 0),
+            max_params.get("height", 0),
+            max_params.get("steps", 0),
+            max_factor,
+        )
+        for other_name, other_data in config.tiers.items():
+            if other_name != "maximum" and isinstance(other_data, dict):
+                op = other_data.get("params", {})
+                ou = compute_tier_units(
+                    op.get("width", 0),
+                    op.get("height", 0),
+                    op.get("steps", 0),
+                    other_data.get("model_factor", 1.0),
+                )
+                if ou > max_u:
+                    warnings.append(f"WARNING: Maximum tier is not the highest-unit tier ({other_name} has {ou} > {max_u})")
 
     # Check that each task category's quality floor can be met by at least one strategy
     for cat_name, category in config.task_categories.items():
@@ -186,18 +275,6 @@ def validate_config(config: DomainConfig) -> list[str]:
     valid_policies = [p.value for p in PolicyName]
     if config.baseline_policy not in valid_policies:
         errors.append(f"Unknown baseline_policy: {config.baseline_policy}")
-
-    # Check strategy adapters are referenced consistently
-    adapter_names = set()
-    for strat in config.strategies.values():
-        adapter_names.add(strat.adapter)
-
-    # Check task category default_tier_hint references a valid strategy
-    for cat_name, category in config.task_categories.items():
-        if category.default_tier_hint and category.default_tier_hint not in config.strategies:
-            # tier hint may refer to a tier level (low, medium, high) not a strategy name
-            # so we just warn
-            pass
 
     return errors + warnings
 

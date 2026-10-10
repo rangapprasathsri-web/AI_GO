@@ -101,7 +101,8 @@ class MockImageAdapter(BaseAdapter):
             )
 
         try:
-            resolution = strategy.params.get("resolution", 512)
+            width = strategy.params.get("width") or strategy.params.get("resolution", 512)
+            height = strategy.params.get("height") or strategy.params.get("resolution", 512)
             steps = strategy.params.get("steps", 15)
 
             # Use request ID as seed for determinism
@@ -110,17 +111,19 @@ class MockImageAdapter(BaseAdapter):
 
             # Determine image characteristics from category
             category = request.inputs.get("_category", "")
-            is_bw = category in ("colouring_worksheet",)
-            needs_colour = category in ("flashcard", "detailed_illustration", "printed_banner")
+            is_bw = category in ("colouring_worksheet", "coloring_sheet")
+            needs_colour = category in ("flashcard", "detailed_illustration", "printed_banner", "educational_illustration", "presentation_graphic", "social_media_artwork", "professional_print_artwork")
 
             # Generate the synthetic image
             img = self._generate_image(
-                resolution=resolution,
+                width=width,
+                height=height,
                 is_bw=is_bw,
                 needs_colour=needs_colour,
                 detail_level=steps,
                 rng=rng,
                 category=category,
+                strategy_name=strategy.name,
             )
 
             # Simulate latency based on strategy
@@ -136,15 +139,20 @@ class MockImageAdapter(BaseAdapter):
                 request_id=request.id,
                 strategy_name=strategy.name,
                 success=True,
-                output_reference=f"mock://images/{request.id}.png",
+                output_reference=f"mock://placeholders/{strategy.name}_{request.id}.png",
                 output_data={"image": img, "image_bytes": image_bytes},
                 actual_cost=strategy.price_per_call,
                 latency_s=simulated_latency,
                 is_simulated=True,
                 metadata={
-                    "resolution": resolution,
+                    "resolution": max(width, height),
+                    "width": width,
+                    "height": height,
                     "steps": steps,
                     "is_bw": is_bw,
+                    "is_placeholder": True,
+                    "placeholder_label": "DEMO PLACEHOLDER: illustrative placeholder asset, not real model output",
+                    "data_origin": "simulated",
                     "generation_time_s": actual_time,
                     "simulated_latency_s": simulated_latency,
                 },
@@ -163,29 +171,55 @@ class MockImageAdapter(BaseAdapter):
 
     def _generate_image(
         self,
-        resolution: int,
+        width: int,
+        height: int,
         is_bw: bool,
         needs_colour: bool,
         detail_level: int,
         rng: np.random.RandomState,
         category: str,
+        strategy_name: str = "",
     ) -> Image.Image:
         """
         Generate a synthetic image with characteristics matching the strategy.
-        
-        For BW images: creates line drawings with controlled ink coverage.
-        For colour images: creates colourful patterns with clear colour channels.
+        Always stamped with a prominent DEMO PLACEHOLDER mark.
         """
         if is_bw:
-            return self._generate_bw_image(resolution, detail_level, rng, category)
-        elif needs_colour:
-            return self._generate_colour_image(resolution, detail_level, rng, category)
+            img = self._generate_bw_image(width, height, detail_level, rng, category)
         else:
-            return self._generate_colour_image(resolution, detail_level, rng, category)
+            img = self._generate_colour_image(width, height, detail_level, rng, category)
+
+        # Apply prominent DEMO PLACEHOLDER banner
+        return self._stamp_demo_placeholder(img, strategy_name, width, height, detail_level)
+
+    def _stamp_demo_placeholder(
+        self,
+        img: Image.Image,
+        strategy_name: str,
+        width: int,
+        height: int,
+        steps: int,
+    ) -> Image.Image:
+        """Stamp an unambiguous DEMO PLACEHOLDER label across the image."""
+        draw = ImageDraw.Draw(img)
+        banner_h = max(32, height // 16)
+
+        # Top banner (dark charcoal with bright orange accent)
+        draw.rectangle([0, 0, width, banner_h], fill=(24, 24, 27))
+        banner_text = f"DEMO PLACEHOLDER - NOT REAL MODEL OUTPUT [{strategy_name.upper()}] ({width}x{height}, {steps} steps)"
+        draw.text((12, banner_h // 4), banner_text, fill=(251, 146, 60))
+
+        # Bottom banner (subtle watermark)
+        draw.rectangle([0, height - banner_h, width, height], fill=(24, 24, 27))
+        footer_text = f"Simulated placeholder asset | Computational proxy demonstration"
+        draw.text((12, height - banner_h + (banner_h // 4)), footer_text, fill=(156, 163, 175))
+
+        return img
 
     def _generate_bw_image(
         self,
-        resolution: int,
+        width: int,
+        height: int,
         detail_level: int,
         rng: np.random.RandomState,
         category: str,
@@ -194,21 +228,19 @@ class MockImageAdapter(BaseAdapter):
         Generate a black-and-white outline image.
         Ink coverage is controlled to be within typical colouring sheet range (3-25%).
         """
-        # Create white background
-        img = Image.new("L", (resolution, resolution), 255)
+        img = Image.new("L", (width, height), 255)
         draw = ImageDraw.Draw(img)
 
-        # Draw random geometric outlines (simulating a colouring page)
+        resolution = min(width, height)
         num_shapes = max(8, detail_level // 2)
 
         for _ in range(num_shapes):
             shape_type = rng.choice(["circle", "rectangle", "line"])
-            x1 = int(rng.randint(0, resolution))
-            y1 = int(rng.randint(0, resolution))
-            x2 = int(rng.randint(0, resolution))
-            y2 = int(rng.randint(0, resolution))
+            x1 = int(rng.randint(0, width))
+            y1 = int(rng.randint(0, height))
+            x2 = int(rng.randint(0, width))
+            y2 = int(rng.randint(0, height))
 
-            # Ensure x1 < x2, y1 < y2 for shapes
             if x1 > x2:
                 x1, x2 = x2, x1
             if y1 > y2:
@@ -223,20 +255,20 @@ class MockImageAdapter(BaseAdapter):
             elif shape_type == "line":
                 draw.line([x1, y1, x2, y2], fill=0, width=line_width)
 
-        # Add some detail lines based on detail_level
+        # Add detail lines based on detail_level
         for _ in range(max(6, detail_level)):
-            x1 = int(rng.randint(0, resolution))
-            y1 = int(rng.randint(0, resolution))
-            x2 = int(rng.randint(0, resolution))
-            y2 = int(rng.randint(0, resolution))
+            x1 = int(rng.randint(0, width))
+            y1 = int(rng.randint(0, height))
+            x2 = int(rng.randint(0, width))
+            y2 = int(rng.randint(0, height))
             draw.line([x1, y1, x2, y2], fill=0, width=max(2, resolution // 150))
 
-        # Convert to RGB (grayscale stored as RGB for consistency)
         return img.convert("RGB")
 
     def _generate_colour_image(
         self,
-        resolution: int,
+        width: int,
+        height: int,
         detail_level: int,
         rng: np.random.RandomState,
         category: str,
@@ -244,21 +276,19 @@ class MockImageAdapter(BaseAdapter):
         """
         Generate a colourful image with distinct RGB channel variation.
         """
-        # Create image with colour gradients and shapes
-        arr = np.ones((resolution, resolution, 3), dtype=np.uint8) * 240  # near-white background
+        arr = np.ones((height, width, 3), dtype=np.uint8) * 240
 
-        # Add colourful gradient background
-        for i in range(resolution):
+        for i in range(height):
             for c in range(3):
                 arr[i, :, c] = np.clip(
-                    arr[i, :, c].astype(int) - int(rng.randint(0, 30)) + (i * 50 // resolution),
+                    arr[i, :, c].astype(int) - int(rng.randint(0, 30)) + (i * 50 // height),
                     0, 255
                 ).astype(np.uint8)
 
         img = Image.fromarray(arr)
         draw = ImageDraw.Draw(img)
 
-        # Draw colourful shapes
+        resolution = min(width, height)
         num_shapes = max(5, detail_level // 3)
         colours = [
             (255, 100, 100),   # Red
@@ -274,8 +304,8 @@ class MockImageAdapter(BaseAdapter):
             colour = colours[int(rng.randint(0, len(colours)))]
             shape_type = rng.choice(["circle", "rectangle"])
             size = int(rng.randint(resolution // 10, resolution // 3))
-            x = int(rng.randint(0, resolution - size))
-            y = int(rng.randint(0, resolution - size))
+            x = int(rng.randint(0, max(1, width - size)))
+            y = int(rng.randint(0, max(1, height - size)))
 
             if shape_type == "circle":
                 draw.ellipse([x, y, x + size, y + size], fill=colour, outline=(0, 0, 0))

@@ -1,0 +1,77 @@
+domain: image_resource_optimizer
+version: 1
+units:
+  name: "compute units (relative proxy)"
+  formula: "steps * megapixels * model_factor"
+  label: "simulated estimate, not measured energy"
+  source: placeholder
+  source_updated_at: "2026-10-01"
+
+tiers:
+  economy:
+    display: "Economy"
+    params:
+      width: 768
+      height: 768
+      steps: 20
+    model_factor: 1.0
+    source: placeholder
+    source_updated_at: "2026-10-01"
+  standard:
+    display: "Standard"
+    params:
+      width: 1024
+      height: 1024
+      steps: 30
+    model_factor: 1.0
+    source: placeholder
+    source_updated_at: "2026-10-01"
+  maximum:
+    display: "Maximum"
+    params:
+      width: 1536
+      height: 1536
+      steps: 50
+    model_factor: 1.0
+    source: placeholder
+    source_updated_at: "2026-10-01"
+
+purposes:
+  coloring_sheet:
+    label: "Coloring sheet"
+    min_tier: economy
+    notes: "Line art; low detail needed unless a large print size is requested."
+  educational_illustration:
+    label: "Educational illustration"
+    min_tier: economy
+    suggested_tier: standard
+  presentation_graphic:
+    label: "Presentation graphic"
+    min_tier: standard
+  social_media_artwork:
+    label: "Social media artwork"
+    min_tier: economy
+    suggested_tier: standard
+  professional_print_artwork:
+    label: "Professional/print artwork"
+    min_tier: maximum
+  custom:
+    label: "Custom purpose"
+    min_tier: standard
+    requires_inputs:
+      - required_detail
+      - target_resolution
+      - print_use
+    on_uncertain: standard
+
+policy:
+  active: lowest_suitable_tier
+  budgets:
+    per_request_units_max: 120
+    session_units_max: 2000
+  latency_max_s: 60
+
+energy_model:
+  enabled: false
+  wh_per_unit: null
+  source: null
