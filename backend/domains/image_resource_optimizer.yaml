@@ -1,4 +1,5 @@
 domain: image_resource_optimizer
+app_name: "EffortMatch"
 version: 1
 units:
   name: "compute units (relative proxy)"

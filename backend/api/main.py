@@ -918,6 +918,8 @@ frontend_dir.mkdir(parents=True, exist_ok=True)
 
 if (frontend_dir / "index.html").exists():
     app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
+    if (frontend_dir / "fonts").exists():
+        app.mount("/fonts", StaticFiles(directory=str(frontend_dir / "fonts")), name="fonts")
 
     @app.get("/")
     def serve_index():

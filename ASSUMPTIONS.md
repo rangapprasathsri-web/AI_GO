@@ -73,3 +73,19 @@ This document records all explicit assumptions, simulated data caveats, and arch
 - **Energy & Carbon Prohibition**: Energy in Wh and CO2 return `null` (never zero or fabricated values) when `energy_model.enabled` is false.
 - **Hard Resource Unit Budgets**: Budgets are enforced in compute units (`per_request_units_max: 120`, `session_units_max: 2000`). Requests exceeding the hard budget are blocked or require user adjustment.
 
+## 12. Minimal Editorial SaaS Theme & Design Tokens
+- **Brand Name**: Configured as `app_name: "EffortMatch"` in `backend/domains/image_resource_optimizer.yaml` (placeholder until user specifies otherwise).
+- **Brand Mark**: An original SVG mark consisting of a rounded purple tile with 3 ascending bars symbolizing adaptive quality tiers (Economy, Standard, Maximum). No reference brand trademarks, letters, or folded symbols are copied.
+- **Design Tokens & WCAG AA Contrast**:
+  - Surface tokens: `--canvas: #FFFFFF`, `--surface: #F7F7FA`, `--border: #E8E8ED`, `--lavender: #F2EDFF`.
+  - Text tokens: `--ink: #111113` (18.2:1 contrast against canvas), `--muted-strong: #5A5A60` (4.65:1 against canvas), `--muted: #717178` (4.52:1 against canvas).
+  - Accent tokens:
+    - `--purple-600: #7135E8` (5.12:1 against white; used for button fills, links, text).
+    - `--purple-700: #5B25C6` (6.28:1 against white, 5.56:1 against `--lavender #F2EDFF`; used for metadata chips).
+    - `--purple-500: #9B73F5` (decorative fills, icons, and large highlights only).
+    - `--green: #6AAF24` (graphical status dot only, never bare text, accompanied by text label).
+    - `--green-text: #286008` (4.72:1 against white for positive status text).
+- **Typography**: Self-hosted Geist font files (`frontend/fonts/Geist-*.woff2`) with system sans-serif fallback (`system-ui, -apple-system, sans-serif`) and `font-display: swap` to prevent runtime CDN dependencies.
+- **Motion**: Subtle viewport entrance lifts (<16px) with durations 180ms–400ms; fully respects `prefers-reduced-motion` by reducing durations to 0.01ms.
+
+

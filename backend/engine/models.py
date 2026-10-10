@@ -154,6 +154,7 @@ class PolicyConfig(BaseModel):
 class DomainConfig(BaseModel):
     """Complete domain configuration."""
     domain: str
+    app_name: Optional[str] = "EffortMatch"
     version: int = 1
     task_categories: dict[str, TaskCategory] = Field(default_factory=dict)
     strategies: dict[str, StrategyConfig] = Field(default_factory=dict)
