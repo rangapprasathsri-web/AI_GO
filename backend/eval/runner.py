@@ -154,6 +154,26 @@ class EvaluationRunner:
 
         reuse_hit_rate = round(reuse_hits / total, 4) if total > 0 else 0.0
 
+        # Data origin split
+        data_origin_split: dict[str, dict[str, Any]] = {
+            "simulated": {"requests": 0, "cost": 0.0},
+            "estimated": {"requests": 0, "cost": 0.0},
+            "provider_reported": {"requests": 0, "cost": 0.0},
+            "billing_confirmed": {"requests": 0, "cost": 0.0},
+        }
+        for r in results:
+            origin = "simulated"
+            if r.execution and getattr(r.execution, "data_origin", None):
+                origin = r.execution.data_origin.value if hasattr(r.execution.data_origin, "value") else str(r.execution.data_origin)
+            elif r.cost and getattr(r.cost, "data_origin", None):
+                origin = r.cost.data_origin.value if hasattr(r.cost.data_origin, "value") else str(r.cost.data_origin)
+
+            if origin not in data_origin_split:
+                data_origin_split[origin] = {"requests": 0, "cost": 0.0}
+            data_origin_split[origin]["requests"] += 1
+            if r.cost:
+                data_origin_split[origin]["cost"] = round(data_origin_split[origin]["cost"] + r.cost.actual_cost, 4)
+
         # Retry count
         total_retries = sum(
             r.cost.attempts - 1 for r in results if r.cost and r.cost.attempts > 1
@@ -179,6 +199,7 @@ class EvaluationRunner:
             "effort_level_mix": effort_mix,
             "reuse_hit_rate": reuse_hit_rate,
             "total_retries": total_retries,
+            "data_origin_split": data_origin_split,
             "all_values_simulated": True,
         }
 
@@ -363,5 +384,6 @@ class ReportWriter:
             f"| Reuse Hit Rate | {m.get('reuse_hit_rate', 0.0):.2%} |",
             f"| Effort Level Mix | {json.dumps(m.get('effort_level_mix', {}))} |",
             f"| Strategy Distribution | {json.dumps(m['strategy_distribution'])} |",
+            f"| Data Origin Split | {json.dumps(m.get('data_origin_split', {}))} |",
         ]
         return "\n".join(lines)

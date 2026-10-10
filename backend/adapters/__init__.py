@@ -3,6 +3,7 @@ from backend.adapters.mock_image import MockImageAdapter
 from backend.adapters.mock_text import MockTextAdapter
 from backend.adapters.template_outline import TemplateOutlineAdapter
 from backend.adapters.reuse_library import ReuseLibraryAdapter
+from backend.adapters.openai_image import OpenAIImageAdapter
 from backend.adapters.registry import AdapterRegistry, get_global_registry, register_adapter, get_adapter
 
 __all__ = [
@@ -13,8 +14,10 @@ __all__ = [
     "MockTextAdapter",
     "TemplateOutlineAdapter",
     "ReuseLibraryAdapter",
+    "OpenAIImageAdapter",
     "AdapterRegistry",
     "get_global_registry",
     "register_adapter",
     "get_adapter",
 ]
+
