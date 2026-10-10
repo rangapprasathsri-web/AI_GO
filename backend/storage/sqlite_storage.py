@@ -541,6 +541,10 @@ class SQLiteStorage(StorageInterface):
                 "all_values_simulated": True,
             }
 
+    def get_analytics_summary(self, domain: Optional[str] = None) -> dict[str, Any]:
+        """Backward compatible summary alias."""
+        return self.get_analytics()
+
     def save_config_version(
         self, domain: str, version: int, config_data: dict[str, Any], author: str
     ) -> None:
@@ -682,14 +686,14 @@ class SQLiteStorage(StorageInterface):
                  placeholder_label, preview_url, created_at, purpose_fit)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
-                gen.get("id"),
+                gen.get("id") or gen.get("generation_id"),
                 gen.get("prompt", ""),
                 gen.get("purpose", ""),
                 gen.get("tier", ""),
                 json.dumps(gen.get("parameters", {})),
-                gen.get("estimated_units", 0.0),
-                gen.get("baseline_units", 0.0),
-                gen.get("savings_units", 0.0),
+                gen.get("estimated_units") or gen.get("compute_units") or 0.0,
+                gen.get("baseline_units") or 1.0,
+                gen.get("savings_units") or gen.get("avoided_units") or 0.0,
                 gen.get("savings_percentage", 0.0),
                 gen.get("savings_label", ""),
                 gen.get("data_origin", "simulated"),
@@ -743,6 +747,7 @@ class SQLiteStorage(StorageInterface):
         purpose_fit = json.loads(purpose_fit_raw) if purpose_fit_raw else None
         return {
             "id": row["id"],
+            "generation_id": row["id"],
             "prompt": row["prompt"],
             "purpose": row["purpose"],
             "tier": row["tier"],
@@ -845,20 +850,31 @@ class SQLiteStorage(StorageInterface):
                 else:
                     failed_count += 1
 
-            saved_rounded = round(cumulative_units_saved, 1)
+            saved_rounded = round(cumulative_units_saved, 2)
             total_evaluated_fit = fit_passed_count + fit_failed_count
             fit_pass_rate = round(fit_passed_count / max(1, total_evaluated_fit), 2) if total_evaluated_fit > 0 else 1.0
 
             return {
                 "total_requests": total_requests,
+                "total_generations": total_requests,
                 "successful_generations": success_count,
                 "failed_generations": failed_count,
                 "fit_passed_count": fit_passed_count,
                 "fit_failed_count": fit_failed_count,
                 "fit_pass_rate": fit_pass_rate,
                 "cumulative_units_saved": saved_rounded,
+                "avoided_units": saved_rounded,
                 "cumulative_units_spent": round(cumulative_units_spent, 1),
+                "compute_units": round(cumulative_units_spent, 1),
                 "data_origin_split": origin_split,
                 "running_total_label": f"You have saved about {saved_rounded} units across {success_count} images (estimated, not measured)",
                 "counterfactual_note": "Baseline compute at Maximum tier was not run; savings are estimated avoided compute.",
             }
+
+    def is_healthy(self) -> bool:
+        try:
+            with self._get_conn() as conn:
+                conn.execute("SELECT 1").fetchone()
+            return True
+        except Exception:
+            return False

@@ -50,6 +50,7 @@ from backend.engine.resource import ResourceEstimator, compute_tier_units, compu
 from backend.engine.resource_optimizer import ResourceOptimizerService
 from backend.eval.runner import EvaluationRunner
 from backend.eval.workload_generator import generate_workload, get_labelled_routing_dataset
+from backend.storage.factory import create_storage
 from backend.storage.sqlite_storage import SQLiteStorage
 
 app = FastAPI(
@@ -67,7 +68,7 @@ app.add_middleware(
 )
 
 # ── State Initialization ──────────────────────────────────────────────
-STORAGE = SQLiteStorage(db_path="data/optimizer.db")
+STORAGE = create_storage(db_path="data/optimizer.db")
 REUSE_LIB = ReuseLibraryAdapter()
 
 REGISTRY = AdapterRegistry()
@@ -235,6 +236,7 @@ def serialize_record(record: RequestRecord, role: str) -> Dict[str, Any]:
 @app.get("/api/health")
 def health_check():
     meas_env = detect_measurement_level()
+    storage_status = getattr(STORAGE, "get_status", lambda: {"active_backend": "sqlite"})()
     return {
         "status": "healthy",
         "service": "Adaptive AI Image Resource Optimizer",
@@ -244,6 +246,7 @@ def health_check():
         "measurement_level": meas_env.level,
         "measurement_level_name": meas_env.level_name,
         "measurement_environment": meas_env.to_dict(),
+        "storage": storage_status,
     }
 
 

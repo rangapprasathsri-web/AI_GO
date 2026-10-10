@@ -73,3 +73,49 @@ class StorageInterface(ABC):
     def get_showback_report(self) -> dict[str, Any]:
         """Get showback report by school and by purpose."""
         ...
+
+    @abstractmethod
+    def save_generation(self, gen: dict[str, Any]) -> None:
+        """Save a resource generation record."""
+        ...
+
+    @abstractmethod
+    def get_generation(self, gen_id: str) -> Optional[dict[str, Any]]:
+        """Get a generation record by ID."""
+        ...
+
+    @abstractmethod
+    def list_generations(
+        self,
+        purpose: Optional[str] = None,
+        tier: Optional[str] = None,
+        status: Optional[str] = None,
+        limit: int = 100,
+    ) -> list[dict[str, Any]]:
+        """List generation records with optional filters."""
+        ...
+
+    @abstractmethod
+    def get_generation_summary(self, uid: Optional[str] = None) -> dict[str, Any]:
+        """Get running cumulative summary of resource generations and savings."""
+        ...
+
+    @abstractmethod
+    def save_feedback(self, feedback: dict[str, Any]) -> None:
+        """Save user feedback on a generation."""
+        ...
+
+    @abstractmethod
+    def get_feedback(self, generation_id: str) -> Optional[dict[str, Any]]:
+        """Get latest user feedback for a generation ID."""
+        ...
+
+    @abstractmethod
+    def list_feedback(self, limit: int = 100) -> list[dict[str, Any]]:
+        """List recent user feedback records."""
+        ...
+
+    @abstractmethod
+    def is_healthy(self) -> bool:
+        """Check if storage repository is reachable and healthy."""
+        ...

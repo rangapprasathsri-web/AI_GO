@@ -4,3 +4,13 @@ __pycache__/
 .pytest_cache/
 eval_reports/
 data/*.db
+data/outbox.json
+.env
+.env.local
+*.service-account.json
+*credentials*.json
+serviceAccountKey.json
+.firebase/
+firebase-debug.log
+database-debug.log
+ui-debug.log

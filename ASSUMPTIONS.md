@@ -109,4 +109,11 @@ This document records all explicit assumptions, simulated data caveats, and arch
   - In normal live usage, Maximum baseline is a counterfactual calculation labeled `"not run"`.
   - In the multi-prompt benchmark, the Maximum baseline is **actually executed** for every prompt to yield measured baseline data.
 
-
+## 14. Firebase Realtime Database Integration & Architecture
+- **Primary Store**: Firebase Realtime Database (RTDB) project `ai-go-a6a7a`, instance `ai-go-a6a7a-default-rtdb`, database URL `https://ai-go-a6a7a-default-rtdb.firebaseio.com`.
+- **Dual-Storage Contract**: Both `FirebaseRepository` and `SQLiteStorage` implement the exact same `StorageInterface` in `backend/storage/base.py`.
+- **Backend Authoritative Writer**: All writes go through the backend using Firebase Admin SDK (Python). Client browsers never write computed resources, savings, or fit verdicts directly.
+- **Frontend Live Sync**: Frontend uses Firebase Web SDK modular API to listen to user generation records and running totals via `onValue`/`onChildAdded`.
+- **Graceful Fallback & Outbox**: If Firebase is unreachable, misconfigured, or credentials are absent, the application logs a warning, falls back to `SQLiteStorage` without crashing, reports `storage_backend: "sqlite (fallback)"` in `/health`, and queues records in an outbox for subsequent replay.
+- **Engine Zero-Import Invariant**: The core engine (`backend/engine/`) has **zero imports** of Firebase code (`firebase_admin` or `google.cloud`). All persistence logic is isolated in `backend/storage/`.
+- **Security Invariant**: Service account credentials and private keys are never committed to git, logged, or sent to client browsers.

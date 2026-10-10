@@ -1,0 +1,74 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "generations": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false,
+        ".indexOn": ["createdAt", "purpose", "tier", "status"],
+        "$generationId": {
+          ".validate": "newData.hasChildren(['prompt', 'purpose', 'tier', 'units', 'fit', 'createdAt'])",
+          "prompt": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 2000"
+          },
+          "purpose": {
+            ".validate": "newData.isString()"
+          },
+          "tier": {
+            ".validate": "newData.isString() && (newData.val() === 'economy' || newData.val() === 'standard' || newData.val() === 'maximum')"
+          },
+          "status": {
+            ".validate": "newData.isString()"
+          },
+          "createdAt": {
+            ".validate": "newData.isString() || newData.isNumber()"
+          }
+        }
+      }
+    },
+
+    "summaries": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false,
+        ".validate": "newData.hasChildren(['total_requests', 'cumulative_units_saved', 'cumulative_units_spent'])"
+      }
+    },
+
+    "config": {
+      ".read": "auth != null",
+      ".write": false,
+      "active": {
+        ".validate": "newData.isNumber() || newData.isString()"
+      },
+      "versions": {
+        "$versionId": {
+          ".validate": "newData.hasChildren(['version', 'config_data', 'saved_at'])"
+        }
+      }
+    },
+
+    "benchmarks": {
+      ".read": "auth != null",
+      ".write": false,
+      "$runId": {
+        ".indexOn": ["timestamp", "seed"]
+      }
+    },
+
+    "feedback": {
+      ".read": "auth != null",
+      ".write": false,
+      "$feedbackId": {
+        ".validate": "newData.hasChildren(['generation_id', 'rating'])"
+      }
+    },
+
+    "audit": {
+      ".read": "auth != null && auth.token.admin === true",
+      ".write": false
+    }
+  }
+}
