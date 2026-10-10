@@ -89,3 +89,30 @@ def test_api_eval():
     assert "optimized_cost" in data
     assert "attribution" in data
     assert "total_savings" in data["attribution"]
+
+def test_api_history():
+    res = client.get("/api/history?limit=10")
+    assert res.status_code == 200
+    data = res.json()
+    assert isinstance(data, list)
+
+def test_api_config_rollback():
+    # 1. Update config
+    up_res = client.put("/api/config", json={
+        "updates": {"policy": {"approval_required_above_cost": 0.25}},
+        "author": "tester"
+    })
+    assert up_res.status_code == 200
+    new_version = up_res.json()["version"]
+
+    # 2. Check versions list
+    ver_res = client.get("/api/config/versions")
+    assert ver_res.status_code == 200
+    assert len(ver_res.json()) >= 1
+
+    # 3. Rollback
+    rb_res = client.post("/api/config/rollback", json={"author": "admin"})
+    assert rb_res.status_code == 200
+    assert rb_res.json()["success"] is True
+    assert rb_res.json()["version"] > new_version
+

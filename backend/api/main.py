@@ -72,6 +72,15 @@ REGISTRY.register(REUSE_LIB)
 DEFAULT_CONFIG_PATH = "backend/domains/education_images.yaml"
 CURRENT_CONFIG = load_config_from_file(DEFAULT_CONFIG_PATH)
 
+# Seed initial config version in storage if not present
+if not STORAGE.get_config_versions(CURRENT_CONFIG.domain):
+    STORAGE.save_config_version(
+        domain=CURRENT_CONFIG.domain,
+        version=CURRENT_CONFIG.version,
+        config_data=CURRENT_CONFIG.model_dump(),
+        author="system_init",
+    )
+
 
 def get_school_spend(school_id: str) -> float:
     return STORAGE.get_school_spend(school_id)
@@ -205,6 +214,73 @@ def update_domain_config(req: ConfigUpdateRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+class RollbackRequest(BaseModel):
+    version: Optional[int] = None
+    author: str = "admin"
+
+
+@app.get("/api/config/versions")
+def list_config_versions():
+    """Retrieve history of configuration versions."""
+    return STORAGE.get_config_versions(CURRENT_CONFIG.domain)
+
+
+@app.post("/api/config/rollback")
+def rollback_configuration(req: RollbackRequest):
+    """Roll back configuration to specified or previous version."""
+    global CURRENT_CONFIG, ORCHESTRATOR
+    versions = STORAGE.get_config_versions(CURRENT_CONFIG.domain)
+    if not versions:
+        raise HTTPException(status_code=400, detail="No previous configuration versions found to rollback")
+
+    target_version_data = None
+    if req.version is not None:
+        for v in versions:
+            if v["version"] == req.version:
+                target_version_data = v["config_data"]
+                break
+    else:
+        # Default to previous version
+        for v in versions:
+            if v["version"] < CURRENT_CONFIG.version:
+                target_version_data = v["config_data"]
+                break
+        if not target_version_data and versions:
+            target_version_data = versions[-1]["config_data"]
+
+    if not target_version_data:
+        raise HTTPException(status_code=404, detail=f"Target version {req.version} not found")
+
+    from backend.engine.config import _parse_config_dict
+    new_cfg = _parse_config_dict(target_version_data)
+    new_cfg.version = CURRENT_CONFIG.version + 1
+    CURRENT_CONFIG = new_cfg
+    ORCHESTRATOR = create_orchestrator(CURRENT_CONFIG)
+    STORAGE.save_config_version(
+        domain=CURRENT_CONFIG.domain,
+        version=CURRENT_CONFIG.version,
+        config_data=CURRENT_CONFIG.model_dump(),
+        author=f"{req.author} (rollback)",
+    )
+    return {
+        "success": True,
+        "version": CURRENT_CONFIG.version,
+        "message": f"Successfully rolled back configuration to version {CURRENT_CONFIG.version}",
+        "config": CURRENT_CONFIG.model_dump(),
+    }
+
+
+@app.get("/api/history")
+def get_request_history(
+    school_id: Optional[str] = None,
+    limit: int = Query(default=50, ge=1, le=200),
+    role: str = Query(default="requester"),
+):
+    """Retrieve history of past requests."""
+    records = STORAGE.list_requests(school_id=school_id, limit=limit)
+    return [serialize_record(r, role) for r in records]
 
 
 @app.get("/api/categories")

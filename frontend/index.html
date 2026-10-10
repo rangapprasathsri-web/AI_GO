@@ -742,9 +742,11 @@
   <!-- Main Tabs Bar -->
   <div class="tabs-bar">
     <button class="tab-btn active" onclick="switchTab('requestTab')">✨ Request Optimizer</button>
+    <button class="tab-btn" onclick="switchTab('historyTab')">📜 Request History</button>
+    <button class="tab-btn" onclick="switchTab('strategyTab')">⚖️ Strategy Comparison</button>
     <button class="tab-btn" onclick="switchTab('showbackTab')">📊 School Showback</button>
-    <button class="tab-btn" onclick="switchTab('configTab')">⚙️ Config Editor (Hot-Reload)</button>
-    <button class="tab-btn" onclick="switchTab('evalTab')">🧪 Evaluation & Lever Savings</button>
+    <button class="tab-btn" onclick="switchTab('configTab')">⚙️ Config Studio (Hot-Reload)</button>
+    <button class="tab-btn" onclick="switchTab('evalTab')">🧪 Evaluation Lab & Savings</button>
   </div>
 
   <main>
@@ -993,7 +995,66 @@
 
         <div class="btn-row" style="margin-top: 14px;">
           <button class="btn btn-primary" onclick="saveConfigToServer()">💾 Save & Apply Hot-Reload</button>
+          <button class="btn btn-secondary" onclick="rollbackConfig()">↺ Rollback to Previous Version</button>
           <button class="btn btn-secondary" onclick="reloadConfigFromServer()">🔄 Reset from Server</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: REQUEST HISTORY -->
+    <div id="historyTab" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Request History</span>
+          <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;" onclick="loadHistory()">🔄 Refresh History</button>
+        </div>
+        <div class="card-subtitle">Complete audit trail of processed requests, decisions, proxy checks, and human ratings.</div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Prompt</th>
+                <th>Category</th>
+                <th>Strategy Chosen</th>
+                <th>Effort Level</th>
+                <th>Cost</th>
+                <th>Quality Gate</th>
+                <th>Rating</th>
+                <th>Origin</th>
+              </tr>
+            </thead>
+            <tbody id="historyTbody">
+              <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading request history...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: STRATEGY COMPARISON -->
+    <div id="strategyTab" class="tab-content">
+      <div class="card">
+        <div class="card-title">Strategy Comparison Matrix</div>
+        <div class="card-subtitle">Compare all registered strategies, execution levers, price points, and target quality levels.</div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Strategy</th>
+                <th>Adapter</th>
+                <th>Effort Level</th>
+                <th>Price / Call</th>
+                <th>Latency (Est)</th>
+                <th>Levers Controlled</th>
+                <th>Data Origin</th>
+              </tr>
+            </thead>
+            <tbody id="strategyTbody">
+              <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading strategy matrix...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1089,6 +1150,8 @@
 
       if (tabId === 'showbackTab') loadShowback();
       if (tabId === 'configTab') loadConfig();
+      if (tabId === 'historyTab') loadHistory();
+      if (tabId === 'strategyTab') loadStrategies();
     }
 
     function selectPurpose(purpose) {
@@ -1404,6 +1467,87 @@
 
     function reloadConfigFromServer() {
       loadConfig();
+    }
+
+    async function rollbackConfig() {
+      if (!confirm('Are you sure you want to rollback to the previous configuration version?')) return;
+      try {
+        const res = await fetch('/api/config/rollback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ author: 'web_admin' })
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          alert(resp.message);
+          loadConfig();
+        } else {
+          alert('Rollback failed: ' + (resp.detail || JSON.stringify(resp)));
+        }
+      } catch (e) {
+        alert('Rollback error: ' + e.message);
+      }
+    }
+
+    async function loadHistory() {
+      try {
+        const res = await fetch(`/api/history?role=${currentRole}&limit=50`);
+        const records = await res.json();
+        const tbody = document.getElementById('historyTbody');
+        if (!records.length) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No requests processed yet. Submit a request in the Request Optimizer tab!</td></tr>';
+          return;
+        }
+        tbody.innerHTML = records.map(r => {
+          const prompt = r.request?.prompt || '(empty)';
+          const cat = r.analysis?.category || r.decision?.category || 'general';
+          const strat = r.decision?.chosen_strategy || '-';
+          const effort = r.decision?.explanation?.effort_level || 'Standard';
+          const cost = r.cost?.display_actual || (r.cost?.actual_cost ? `$${r.cost.actual_cost.toFixed(4)}` : '$0.00');
+          const qPassed = r.quality?.passed;
+          const rating = r.human_rating ? '★'.repeat(r.human_rating) + '☆'.repeat(5 - r.human_rating) : '-';
+          const origin = r.execution?.data_origin || 'simulated';
+          return `
+            <tr>
+              <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${prompt}">${prompt}</td>
+              <td><span class="purpose-tier-hint">${cat}</span></td>
+              <td><code>${strat}</code></td>
+              <td>${effort}</td>
+              <td style="font-family: 'JetBrains Mono', monospace;">${cost}</td>
+              <td><span class="check-badge ${qPassed ? 'check-pass' : 'check-fail'}">${qPassed ? 'PASSED' : 'FAILED'}</span></td>
+              <td style="color: var(--accent-amber);">${rating}</td>
+              <td><span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); text-transform: uppercase;">${origin}</span></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (e) {
+        console.error('Failed to load history', e);
+      }
+    }
+
+    async function loadStrategies() {
+      try {
+        const res = await fetch('/api/config?role=admin');
+        const data = await res.json();
+        const strats = data.strategies || {};
+        const tbody = document.getElementById('strategyTbody');
+        tbody.innerHTML = Object.entries(strats).map(([name, s]) => {
+          const levers = Object.entries(s.levers || {}).map(([k, v]) => `${k}: ${v}`).join(', ') || 'standard';
+          return `
+            <tr>
+              <td><code>${name}</code></td>
+              <td>${s.adapter}</td>
+              <td><strong>${s.effort_level || 'Standard'}</strong></td>
+              <td style="font-family: 'JetBrains Mono', monospace;">$${typeof s.price_per_call === 'number' ? s.price_per_call.toFixed(4) : s.price_per_call}</td>
+              <td>${s.latency_s ? s.latency_s + 's' : '0.1s'}</td>
+              <td style="color: var(--text-secondary); font-size: 12px;">${levers}</td>
+              <td><span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">SIMULATED</span></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (e) {
+        console.error('Failed to load strategies', e);
+      }
     }
 
     async function runBenchmark() {
