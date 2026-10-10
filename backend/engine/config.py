@@ -172,7 +172,7 @@ def _parse_config_dict(data: dict[str, Any]) -> DomainConfig:
 
     return DomainConfig(
         domain=data["domain"],
-        app_name=data.get("app_name", "EffortMatch"),
+        app_name=data.get("app_name", "AI GO"),
         version=data.get("version", 1),
         task_categories=task_categories,
         strategies=strategies,

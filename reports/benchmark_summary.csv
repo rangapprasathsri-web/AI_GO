@@ -1,20 +1,20 @@
 prompt_id,purpose,prompt,policy,tier_used,units_spent,latency_s,fit_verdict,fit_passed,failed_checks,savings_units,savings_percentage,savings_eligible,attempts_count,data_origin
-prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
 prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
-prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
 prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
-prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
 prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
-prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
 prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
-prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
 prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
-prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
 prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
 prompt-07,educational_illustration,"Cross-section diagram of plant cell anatomy showing nucleus, mitochondria, and cell wall",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated

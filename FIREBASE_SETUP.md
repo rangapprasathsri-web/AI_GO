@@ -1,6 +1,6 @@
 # Firebase Realtime Database Integration & Setup Guide
 
-This document describes the Firebase Realtime Database integration for the **EffortMatch / AI_GO** platform (`project: ai-go-a6a7a`, database instance: `ai-go-a6a7a-default-rtdb`).
+This document describes the Firebase Realtime Database integration for the **AI GO** platform (`project: ai-go-a6a7a`, database instance: `ai-go-a6a7a-default-rtdb`).
 
 ---
 

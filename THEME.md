@@ -1,6 +1,6 @@
 # Minimal Editorial SaaS Design System & Theme Specification
 
-**Product**: EffortMatch — Adaptive AI Image Resource Optimizer  
+**Product**: AI GO — Adaptive AI Image Resource Optimizer  
 **Style Direction**: Minimal Editorial SaaS  
 **Characteristics**: Large high-contrast headlines, generous whitespace, fine 1px borders, soft lavender surfaces, single expressive purple accent, compact evidence-dense cards, calm and precise copy.
 

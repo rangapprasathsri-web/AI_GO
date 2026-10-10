@@ -1,5 +1,5 @@
 domain: image_resource_optimizer
-app_name: "EffortMatch"
+app_name: "AI GO"
 version: 1
 units:
   name: "compute units (relative proxy)"

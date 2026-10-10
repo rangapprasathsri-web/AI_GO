@@ -74,7 +74,7 @@ This document records all explicit assumptions, simulated data caveats, and arch
 - **Hard Resource Unit Budgets**: Budgets are enforced in compute units (`per_request_units_max: 120`, `session_units_max: 2000`). Requests exceeding the hard budget are blocked or require user adjustment.
 
 ## 12. Minimal Editorial SaaS Theme & Design Tokens
-- **Brand Name**: Configured as `app_name: "EffortMatch"` in `backend/domains/image_resource_optimizer.yaml` (placeholder until user specifies otherwise).
+- **Brand Name**: Configured as `app_name: "AI GO"` in `backend/domains/image_resource_optimizer.yaml`.
 - **Brand Mark**: An original SVG mark consisting of a rounded purple tile with 3 ascending bars symbolizing adaptive quality tiers (Economy, Standard, Maximum). No reference brand trademarks, letters, or folded symbols are copied.
 - **Design Tokens & WCAG AA Contrast**:
   - Surface tokens: `--canvas: #FFFFFF`, `--surface: #F7F7FA`, `--border: #E8E8ED`, `--lavender: #F2EDFF`.

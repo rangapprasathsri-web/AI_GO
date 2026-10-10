@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EffortMatch — Adaptive AI Image Resource Optimizer</title>
+  <title>AI GO — Adaptive AI Image Resource Optimizer</title>
   <meta name="description"
     content="Matches computational effort to image purpose and reveals transparent avoided compute savings versus maximum tier.">
 
@@ -1360,7 +1360,7 @@
   <!-- 1. STICKY NAVIGATION -->
   <header class="sticky-nav">
     <div class="container nav-inner">
-      <a href="#" class="brand-wrap" aria-label="EffortMatch Home">
+      <a href="#" class="brand-wrap" aria-label="AI GO Home">
         <!-- Original brand mark: rounded purple tile with 3 ascending bars -->
         <div class="brand-mark" aria-hidden="true">
           <div class="brand-mark-bar bar-1"></div>
@@ -1368,7 +1368,7 @@
           <div class="brand-mark-bar bar-3"></div>
         </div>
         <div class="brand-text">
-          <span class="brand-name" id="brandNameText">EffortMatch</span>
+          <span class="brand-name" id="brandNameText">AI GO</span>
           <span class="brand-tagline">Adaptive AI Resource Optimizer</span>
         </div>
       </a>
@@ -1503,7 +1503,7 @@
             </p>
             <p>
               The energy and computational effort are completely invisible to the requester, so nobody can make an
-              informed choice. EffortMatch rightsizes computational effort to purpose and transparently reveals what was
+              informed choice. AI GO rightsizes computational effort to purpose and transparently reveals what was
               saved versus the Maximum quality tier.
             </p>
           </div>
@@ -1515,7 +1515,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
           <div>
             <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-700);">QUICK-START WORKFLOW</div>
-            <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use EffortMatch in 3 Steps</h3>
+            <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use AI GO in 3 Steps</h3>
           </div>
           <span class="role-badge" style="padding: 4px 10px;">Zero Waste AI</span>
         </div>
@@ -2072,7 +2072,7 @@
         <div class="section-eyebrow">METHODOLOGY</div>
         <h2 class="section-title" id="howItWorksHeading">How It Works</h2>
         <p style="font-size: 16px; color: var(--muted-strong); max-width: 600px;">
-          EffortMatch matches compute to purpose across four transparent, observable steps.
+          AI GO matches compute to purpose across four transparent, observable steps.
         </p>
 
         <div class="steps-grid">
@@ -2231,7 +2231,7 @@
           <h3 class="modal-title" id="authModalTitle">👤 Sign In & Workspace Identity</h3>
           <div class="modal-body">
             <p style="font-size: 13px; color: var(--muted-strong); margin-bottom: 16px;">
-              EffortMatch syncs your generated images, purpose decisions, and avoided compute to Firebase Realtime Database. Select your role or authenticate below:
+              AI GO syncs your generated images, purpose decisions, and avoided compute to Firebase Realtime Database. Select your role or authenticate below:
             </p>
 
             <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
@@ -2298,10 +2298,15 @@
 
       <!-- FOOTER -->
       <footer>
-        <div>
-          <strong>EffortMatch</strong> • Transparent Adaptive AI Image Resource Optimization
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong>AI GO</strong> • Transparent Adaptive AI Image Resource Optimization
+          </div>
+          <div id="footerProviderLabel" style="font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; background: var(--lavender); border-radius: var(--radius-pill); color: var(--purple-700);">
+            Active Generator: Detecting...
+          </div>
         </div>
-        <div>
+        <div style="margin-top: 6px;">
           Every resource number explicitly labeled: Simulated, Estimated, Provider-reported, or Measured.
         </div>
       </footer>
@@ -2320,11 +2325,11 @@
 
     // User & Workspace Auth State
     let currentUser = {
-      id: localStorage.getItem('effortmatch_uid') || 'teacher_grade5',
-      name: localStorage.getItem('effortmatch_name') || 'Educator',
-      role: localStorage.getItem('effortmatch_role') || 'requester',
-      school_id: localStorage.getItem('effortmatch_school') || 'oakwood_elem',
-      auth_type: localStorage.getItem('effortmatch_authtype') || 'local'
+      id: localStorage.getItem('aigo_uid') || localStorage.getItem('effortmatch_uid') || 'teacher_grade5',
+      name: localStorage.getItem('aigo_name') || localStorage.getItem('effortmatch_name') || 'Educator',
+      role: localStorage.getItem('aigo_role') || localStorage.getItem('effortmatch_role') || 'requester',
+      school_id: localStorage.getItem('aigo_school') || localStorage.getItem('effortmatch_school') || 'oakwood_elem',
+      auth_type: localStorage.getItem('aigo_authtype') || localStorage.getItem('effortmatch_authtype') || 'local'
     };
 
     function updateAuthHeaderUI() {
@@ -2431,6 +2436,11 @@
     }
 
     function signOutCurrentUser() {
+      localStorage.removeItem('aigo_uid');
+      localStorage.removeItem('aigo_name');
+      localStorage.removeItem('aigo_role');
+      localStorage.removeItem('aigo_school');
+      localStorage.removeItem('aigo_authtype');
       localStorage.removeItem('effortmatch_uid');
       localStorage.removeItem('effortmatch_name');
       localStorage.removeItem('effortmatch_role');
@@ -2450,11 +2460,11 @@
     }
 
     function saveAndApplyUser() {
-      localStorage.setItem('effortmatch_uid', currentUser.id);
-      localStorage.setItem('effortmatch_name', currentUser.name);
-      localStorage.setItem('effortmatch_role', currentUser.role);
-      localStorage.setItem('effortmatch_school', currentUser.school_id);
-      localStorage.setItem('effortmatch_authtype', currentUser.auth_type);
+      localStorage.setItem('aigo_uid', currentUser.id);
+      localStorage.setItem('aigo_name', currentUser.name);
+      localStorage.setItem('aigo_role', currentUser.role);
+      localStorage.setItem('aigo_school', currentUser.school_id);
+      localStorage.setItem('aigo_authtype', currentUser.auth_type);
       updateAuthHeaderUI();
       fetchConfig();
       fetchSummary();
@@ -2464,6 +2474,7 @@
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
       updateAuthHeaderUI();
+      fetchProviderStatus();
       fetchConfig();
       fetchSummary();
       triggerRecommend();
@@ -2478,6 +2489,20 @@
         );
       }
     });
+
+    async function fetchProviderStatus() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        const providerElem = document.getElementById('footerProviderLabel');
+        if (providerElem && data.active_provider) {
+          const capInfo = data.is_real_provider ? ` • Cap: ${data.real_generations_used}/${data.real_generations_cap} real calls` : ' • Demo Mode';
+          providerElem.textContent = `Active Generator: ${data.active_provider} (${data.model_name})${capInfo}`;
+        }
+      } catch (e) {
+        console.warn('Could not fetch provider status:', e);
+      }
+    }
 
     function toggleMobileMenu() {
       const navLinks = document.querySelector('.nav-links');
@@ -2720,17 +2745,37 @@
         if (data.preview_url) {
           img.src = data.preview_url;
           img.style.display = 'block';
-          phNotice.style.display = 'none';
         }
-        document.getElementById('outputTierBadge').textContent = `${data.tier.toUpperCase()} Placeholder`;
+        
+        // Output label and badges
+        const tierBadge = document.getElementById('outputTierBadge');
+        if (tierBadge) {
+          if (data.is_placeholder) {
+            tierBadge.textContent = 'DEMO PLACEHOLDER';
+            tierBadge.className = 'origin-badge origin-simulated';
+            if (phNotice) {
+              phNotice.style.display = 'block';
+              phNotice.textContent = data.placeholder_label || 'DEMO PLACEHOLDER: illustrative placeholder asset, not real model output';
+            }
+          } else {
+            tierBadge.textContent = data.placeholder_label || 'Generated by Diffusion';
+            tierBadge.className = 'origin-badge origin-measured';
+            tierBadge.style.background = '#E8F5E9';
+            tierBadge.style.color = '#1B5E20';
+            if (phNotice) {
+              phNotice.style.display = 'block';
+              phNotice.textContent = `Real Generation: ${data.placeholder_label} • Latency: ${data.latency_s}s (Measured)`;
+            }
+          }
+        }
 
         // Update side-by-side reference if available
         const maxImg = document.getElementById('maxTierImagePreview');
         const maxNotice = document.getElementById('maxPlaceholderNotice');
         if (data.preview_url) {
-          maxImg.src = data.preview_url; // Illustrative placeholder differing in resolution
+          maxImg.src = data.preview_url;
           maxImg.style.display = 'block';
-          maxNotice.style.display = 'none';
+          if (maxNotice) maxNotice.style.display = 'none';
         }
 
         // Update comparison panel
@@ -2741,9 +2786,10 @@
 
         notice.textContent = `Completed in ${data.latency_s}s. Saved ${data.savings_units} units (${data.savings_percentage}%)!`;
 
-        // Refresh summary and history
+        // Refresh summary, history and provider status
         fetchSummary();
         loadHistory();
+        fetchProviderStatus();
 
       } catch (err) {
         console.error('Error during generation:', err);
