@@ -50,6 +50,7 @@ from backend.adapters.mock_text import MockTextAdapter
 from backend.adapters.registry import AdapterRegistry
 from backend.adapters.reuse_library import ReuseLibraryAdapter
 from backend.adapters.template_outline import TemplateOutlineAdapter
+from backend.adapters.prompt_preprocessor import PromptPreprocessor
 from backend.engine.config import load_config_from_file, update_config, validate_config, ConfigValidationError
 from backend.engine.moderation import ModerationHook
 from backend.engine.models import (
@@ -138,6 +139,7 @@ CURRENT_CONFIG = load_config_from_file(DEFAULT_CONFIG_PATH)
 RESOURCE_CONFIG_PATH = "backend/domains/image_resource_optimizer.yaml"
 RESOURCE_CONFIG = load_config_from_file(RESOURCE_CONFIG_PATH)
 RESOURCE_OPTIMIZER = ResourceOptimizerService(config=RESOURCE_CONFIG)
+PROMPT_PREPROCESSOR = PromptPreprocessor()
 
 # Seed initial config version in storage if not present
 if not STORAGE.get_config_versions(CURRENT_CONFIG.domain):
@@ -205,6 +207,13 @@ class RecommendRequest(BaseModel):
     print_size: Optional[str] = None
     latency_max_s: Optional[float] = None
     budget_units: Optional[float] = None
+
+
+class PromptPreprocessRequest(BaseModel):
+    prompt: str = ""
+    purpose: Optional[str] = "coloring_sheet"
+    print_size: Optional[str] = None
+    role: Optional[str] = "requester"
 
 
 class GenerateRequest(BaseModel):
@@ -484,6 +493,21 @@ def recommend_tier(req: RecommendRequest):
         rec["missing_inputs"] = []
 
     return rec
+
+
+@app.post("/api/prompt/preprocess")
+def preprocess_prompt_endpoint(req: PromptPreprocessRequest):
+    """
+    LLM-powered prompt pre-verification, right-sized model recommendation,
+    suggestion rationale explanation, and prompt value-add enhancement.
+    """
+    if not req.prompt or not req.prompt.strip():
+        raise HTTPException(status_code=400, detail="Prompt cannot be empty")
+    return PROMPT_PREPROCESSOR.preprocess(
+        prompt=req.prompt,
+        purpose=req.purpose,
+        print_size=req.print_size,
+    )
 
 
 @app.post("/api/generate")
@@ -1368,6 +1392,7 @@ def run_evaluation(sample_size: int = Query(default=30, ge=10, le=100), seed: in
 make_legacy_alias("/health", "/api/health", ["GET"])
 make_legacy_alias("/config", "/api/config", ["GET", "PUT"])
 make_legacy_alias("/recommend", "/api/recommend", ["POST"])
+make_legacy_alias("/prompt/preprocess", "/api/prompt/preprocess", ["POST"])
 make_legacy_alias("/generate", "/api/generate", ["POST"])
 make_legacy_alias("/history/export.csv", "/api/history/export", ["GET"])
 make_legacy_alias("/history/{gen_id}", "/api/history/{gen_id}", ["GET"])

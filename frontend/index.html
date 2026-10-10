@@ -22,7 +22,7 @@
       font-weight: 400;
       font-display: swap;
       src: url('/fonts/Geist-Regular.woff2') format('woff2'),
-           url('/static/fonts/Geist-Regular.woff2') format('woff2');
+        url('/static/fonts/Geist-Regular.woff2') format('woff2');
     }
 
     @font-face {
@@ -31,7 +31,7 @@
       font-weight: 500;
       font-display: swap;
       src: url('/fonts/Geist-Medium.woff2') format('woff2'),
-           url('/static/fonts/Geist-Medium.woff2') format('woff2');
+        url('/static/fonts/Geist-Medium.woff2') format('woff2');
     }
 
     @font-face {
@@ -40,7 +40,7 @@
       font-weight: 600;
       font-display: swap;
       src: url('/fonts/Geist-SemiBold.woff2') format('woff2'),
-           url('/static/fonts/Geist-SemiBold.woff2') format('woff2');
+        url('/static/fonts/Geist-SemiBold.woff2') format('woff2');
     }
 
     @font-face {
@@ -49,7 +49,7 @@
       font-weight: 700;
       font-display: swap;
       src: url('/fonts/Geist-Bold.woff2') format('woff2'),
-           url('/static/fonts/Geist-Bold.woff2') format('woff2');
+        url('/static/fonts/Geist-Bold.woff2') format('woff2');
     }
 
     :root {
@@ -172,14 +172,17 @@
       --font-mono: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
     }
 
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     }
 
-    html, body {
+    html,
+    body {
       font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
       background-color: var(--canvas);
       color: var(--ink);
@@ -189,29 +192,54 @@
       overflow-x: hidden;
     }
 
-    h1, h2, h3, h4, h5, h6,
-    p, span, a, label, li,
-    button, input, select, textarea,
-    table, th, td, code, pre, div {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    a,
+    label,
+    li,
+    button,
+    input,
+    select,
+    textarea,
+    table,
+    th,
+    td,
+    code,
+    pre,
+    div {
       font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
     }
 
-    h1, .hero-heading {
+    h1,
+    .hero-heading {
       letter-spacing: -0.045em !important;
       font-weight: 800 !important;
     }
 
-    h2, .section-title, .problem-heading {
+    h2,
+    .section-title,
+    .problem-heading {
       letter-spacing: -0.035em !important;
       font-weight: 700 !important;
     }
 
-    h3, .card-title, .prompt-hero-title {
+    h3,
+    .card-title,
+    .prompt-hero-title {
       letter-spacing: -0.025em !important;
       font-weight: 700 !important;
     }
 
-    .hero-subheading, .problem-body, .card-subtitle, .prompt-hero-subtitle {
+    .hero-subheading,
+    .problem-body,
+    .card-subtitle,
+    .prompt-hero-subtitle {
       letter-spacing: -0.015em;
     }
 
@@ -1036,6 +1064,7 @@
         opacity: 0;
         transform: translateY(16px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1664,6 +1693,7 @@
       font-size: 13px;
       margin: 16px 0;
     }
+
     .benchmark-table th {
       text-align: left;
       padding: 10px 12px;
@@ -1672,14 +1702,17 @@
       border-bottom: 2px solid var(--border);
       font-weight: 600;
     }
+
     .benchmark-table td {
       padding: 12px;
       border-bottom: 1px solid var(--border);
       color: var(--ink);
     }
+
     .benchmark-table tr:hover {
       background: #FAFAFD;
     }
+
     .chart-bar-wrap {
       display: flex;
       flex-direction: column;
@@ -1690,12 +1723,14 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
     }
+
     .chart-bar-row {
       display: grid;
       grid-template-columns: 160px 1fr 100px;
       align-items: center;
       gap: 14px;
     }
+
     .chart-bar-track {
       background: #EBEBF0;
       height: 14px;
@@ -1703,29 +1738,34 @@
       overflow: hidden;
       position: relative;
     }
+
     .chart-bar-fill {
       height: 100%;
       border-radius: 9999px;
       transition: width 0.4s ease;
     }
+
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
       margin-top: 16px;
     }
+
     .gallery-card {
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 14px;
       background: #FFFFFF;
     }
+
     .gallery-img-pair {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin: 10px 0;
     }
+
     .gallery-img-box {
       border: 1px solid var(--border);
       border-radius: 4px;
@@ -1737,22 +1777,33 @@
       justify-content: center;
       position: relative;
     }
+
     .gallery-img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
+
     /* ── Multi-View Architecture & Transitions ──────────────────────────── */
     .app-view {
       display: none;
       animation: viewFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .app-view.is-active {
       display: block;
     }
+
     @keyframes viewFadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* ── Login Screen Aesthetics ────────────────────────────────────────── */
@@ -1763,6 +1814,7 @@
       justify-content: center;
       padding: 40px 16px;
     }
+
     .login-card {
       width: 100%;
       max-width: 440px;
@@ -1772,12 +1824,14 @@
       box-shadow: 0 12px 36px rgba(17, 17, 19, 0.06);
       padding: 36px 32px;
     }
+
     .login-brand-header {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 20px;
     }
+
     .login-title {
       font-size: 22px;
       font-weight: 700;
@@ -1785,12 +1839,14 @@
       letter-spacing: -0.03em;
       margin-bottom: 4px;
     }
+
     .login-subtitle {
       font-size: 13px;
       color: var(--muted-strong);
       margin-bottom: 24px;
       line-height: 1.45;
     }
+
     .btn-google-auth {
       display: flex;
       align-items: center;
@@ -1806,17 +1862,20 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
+
     .btn-google-auth:hover {
       background: #F8F9FA;
       border-color: #B8B8C0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       transform: translateY(-1px);
     }
+
     .btn-google-auth:active {
       transform: translateY(0);
     }
+
     .auth-divider {
       display: flex;
       align-items: center;
@@ -1828,17 +1887,22 @@
       letter-spacing: 0.06em;
       font-weight: 600;
     }
-    .auth-divider::before, .auth-divider::after {
+
+    .auth-divider::before,
+    .auth-divider::after {
       content: '';
       flex: 1;
       border-bottom: 1px solid var(--border);
     }
+
     .auth-divider span {
       padding: 0 12px;
     }
+
     .login-form-group {
       margin-bottom: 16px;
     }
+
     .login-form-group label {
       display: block;
       font-size: 12px;
@@ -1846,6 +1910,7 @@
       color: var(--ink);
       margin-bottom: 6px;
     }
+
     .demo-eval-box {
       background: #F8F8FC;
       border: 1px solid var(--border);
@@ -1853,6 +1918,7 @@
       padding: 14px 16px;
       margin-top: 24px;
     }
+
     .demo-eval-title {
       font-size: 11px;
       font-weight: 700;
@@ -1861,11 +1927,13 @@
       color: var(--purple-700);
       margin-bottom: 8px;
     }
+
     .demo-eval-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
+
     .demo-eval-btn {
       padding: 8px 10px;
       background: #FFFFFF;
@@ -1881,6 +1949,7 @@
       align-items: center;
       gap: 6px;
     }
+
     .demo-eval-btn:hover {
       background: var(--lavender);
       border-color: var(--purple-500);
@@ -1901,12 +1970,14 @@
       margin-bottom: 28px;
       box-shadow: 0 1px 3px rgba(17, 17, 19, 0.04);
     }
+
     .workspace-tabs {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
+
     .workspace-tab-btn {
       padding: 8px 16px;
       font-size: 13px;
@@ -1921,15 +1992,18 @@
       align-items: center;
       gap: 6px;
     }
+
     .workspace-tab-btn:hover {
       background: #F4F4F8;
       color: var(--ink);
     }
+
     .workspace-tab-btn.is-active {
       background: var(--lavender);
       color: var(--purple-700);
       border-color: rgba(110, 52, 226, 0.2);
     }
+
     .workspace-session-pill {
       display: flex;
       align-items: center;
@@ -1948,6 +2022,7 @@
       gap: 14px;
       margin-bottom: 22px;
     }
+
     .history-kpi-card {
       background: #FFFFFF;
       border: 1px solid var(--border);
@@ -1955,6 +2030,7 @@
       padding: 14px 16px;
       box-shadow: var(--shadow-sm);
     }
+
     .history-kpi-val {
       font-size: 22px;
       font-weight: 800;
@@ -1962,6 +2038,7 @@
       font-family: var(--font-mono);
       margin-top: 4px;
     }
+
     .history-kpi-sub {
       font-size: 11px;
       color: var(--muted-strong);
@@ -1969,12 +2046,14 @@
       letter-spacing: 0.05em;
       font-weight: 700;
     }
+
     .history-cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 20px;
       margin-top: 20px;
     }
+
     .history-img-card {
       background: #FFFFFF;
       border: 1px solid var(--border);
@@ -1985,11 +2064,13 @@
       display: flex;
       flex-direction: column;
     }
+
     .history-img-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-hover);
       border-color: var(--border-strong);
     }
+
     .history-card-media {
       position: relative;
       width: 100%;
@@ -2000,21 +2081,25 @@
       align-items: center;
       justify-content: center;
     }
+
     .history-card-media img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.3s ease;
     }
+
     .history-img-card:hover .history-card-media img {
       transform: scale(1.03);
     }
+
     .history-card-content {
       padding: 16px;
       display: flex;
       flex-direction: column;
       flex: 1;
     }
+
     .history-card-prompt {
       font-size: 13px;
       font-weight: 600;
@@ -2026,6 +2111,7 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+
     .history-card-stats {
       display: flex;
       justify-content: space-between;
@@ -2043,11 +2129,13 @@
       gap: 20px;
       margin-bottom: 24px;
     }
+
     @media (max-width: 900px) {
       .savings-horizon-grid {
         grid-template-columns: 1fr;
       }
     }
+
     .savings-horizon-card {
       background: #FFFFFF;
       border: 1px solid var(--border);
@@ -2060,10 +2148,12 @@
       overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+
     .savings-horizon-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-hover);
     }
+
     .savings-horizon-card::before {
       content: '';
       position: absolute;
@@ -2072,15 +2162,19 @@
       right: 0;
       height: 4px;
     }
+
     .savings-horizon-card.weekly::before {
       background: linear-gradient(90deg, var(--purple-600), #A855F7);
     }
+
     .savings-horizon-card.monthly::before {
       background: linear-gradient(90deg, #10B981, #059669);
     }
+
     .savings-horizon-card.annual::before {
       background: linear-gradient(90deg, #F59E0B, #D97706);
     }
+
     .savings-horizon-title {
       font-size: 13px;
       font-weight: 700;
@@ -2092,12 +2186,14 @@
       align-items: center;
       justify-content: space-between;
     }
+
     .savings-horizon-badge {
       font-size: 10px;
       padding: 2px 8px;
       border-radius: 9999px;
       font-weight: 600;
     }
+
     .savings-metric-big {
       font-family: var(--font-mono);
       font-size: 28px;
@@ -2106,12 +2202,14 @@
       line-height: 1.15;
       margin: 10px 0 4px 0;
     }
+
     .savings-reduction-tag {
       font-size: 13px;
       font-weight: 700;
       color: var(--green-text);
       margin-bottom: 16px;
     }
+
     .savings-stat-rows {
       display: flex;
       flex-direction: column;
@@ -2120,18 +2218,22 @@
       border-top: 1px solid var(--border);
       font-size: 13px;
     }
+
     .savings-stat-row {
       display: flex;
       justify-content: space-between;
       color: var(--ink);
     }
+
     .savings-stat-label {
       color: var(--muted-strong);
     }
+
     .savings-stat-val {
       font-family: var(--font-mono);
       font-weight: 600;
     }
+
     .savings-trend-chart-box {
       background: #FFFFFF;
       border: 1px solid var(--border);
@@ -2140,6 +2242,7 @@
       margin-bottom: 24px;
       box-shadow: var(--shadow-card);
     }
+
     .savings-trend-bars {
       display: flex;
       align-items: flex-end;
@@ -2148,6 +2251,7 @@
       padding-top: 20px;
       border-bottom: 1px solid var(--border);
     }
+
     .savings-trend-col {
       flex: 1;
       display: flex;
@@ -2156,6 +2260,7 @@
       height: 100%;
       justify-content: flex-end;
     }
+
     .savings-trend-bar {
       width: 100%;
       max-width: 42px;
@@ -2164,9 +2269,11 @@
       transition: height 0.4s ease;
       position: relative;
     }
+
     .savings-trend-bar:hover {
       background: linear-gradient(180deg, #A855F7, var(--purple-600));
     }
+
     .savings-trend-val {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -2174,12 +2281,14 @@
       color: var(--purple-700);
       margin-bottom: 6px;
     }
+
     .savings-trend-day {
       font-size: 12px;
       font-weight: 600;
       color: var(--muted-strong);
       margin-top: 8px;
     }
+
     /* Auth Mode Tabs in Login */
     .auth-mode-tabs {
       display: flex;
@@ -2189,6 +2298,7 @@
       margin-bottom: 18px;
       gap: 4px;
     }
+
     .auth-mode-tab {
       flex: 1;
       text-align: center;
@@ -2202,11 +2312,13 @@
       color: var(--muted-strong);
       transition: all 0.15s ease;
     }
+
     .auth-mode-tab.is-active {
       background: #FFFFFF;
       color: var(--ink);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
+
     .firebase-sync-ribbon {
       display: flex;
       align-items: center;
@@ -2268,7 +2380,8 @@
         </div>
 
         <!-- Sign In Button / User Profile (visible only in authenticated workspace views) -->
-        <button class="user-profile-btn" id="authBtn" onclick="handleNavAuthClick()" aria-label="Sign In or Switch Account" style="display: none;">
+        <button class="user-profile-btn" id="authBtn" onclick="handleNavAuthClick()"
+          aria-label="Sign In or Switch Account" style="display: none;">
           <span class="status-dot-indicator online" id="userConnDot" title="Firebase RTDB: Connected"></span>
           <span id="userNameDisplay">Sign In</span>
           <span class="user-role-tag" id="userRoleBadge">Guest</span>
@@ -2393,8 +2506,11 @@
         <div class="how-to-use-banner" id="how-to-use-guide">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
             <div>
-              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-700);">QUICK-START WORKFLOW</div>
-              <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use AI GO in 4 Steps</h3>
+              <div
+                style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-700);">
+                QUICK-START WORKFLOW</div>
+              <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use AI GO in 4
+                Steps</h3>
             </div>
             <span class="role-badge" style="padding: 4px 10px;">Adaptive AI</span>
           </div>
@@ -2408,21 +2524,24 @@
             </div>
             <div class="how-to-use-step">
               <div class="how-to-use-num">2</div>
-              <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Select Use Case</div>
+              <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Select Use Case
+              </div>
               <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
                 Pick your intended purpose. The optimizer selects the lowest suitable quality tier.
               </p>
             </div>
             <div class="how-to-use-step">
               <div class="how-to-use-num">3</div>
-              <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Generate Image</div>
+              <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Generate Image
+              </div>
               <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
                 Hit Generate to trigger live rendering with adaptive compute rightsizing.
               </p>
             </div>
             <div class="how-to-use-step">
               <div class="how-to-use-num">4</div>
-              <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Verify Savings</div>
+              <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Verify Savings
+              </div>
               <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
                 Inspect output fitness gate and view verified numerical compute units saved vs Maximum baseline.
               </p>
@@ -2449,7 +2568,8 @@
             <div class="step-card">
               <div class="step-number">2</div>
               <div class="step-title">Match the effort</div>
-              <div class="step-desc">The decision engine recommends the lowest tier satisfying the floor, raising it only
+              <div class="step-desc">The decision engine recommends the lowest tier satisfying the floor, raising it
+                only
                 if print or detail require more.</div>
             </div>
 
@@ -2476,11 +2596,14 @@
             <span class="chip-lavender">Central Demonstration</span>
           </div>
           <div class="card-subtitle">
-            Side-by-side comparison of rightsizing in action: Economy tier for coloring line-art vs Maximum tier for print artwork, with verified purpose fitness and compute accounting.
+            Side-by-side comparison of rightsizing in action: Economy tier for coloring line-art vs Maximum tier for
+            print artwork, with verified purpose fitness and compute accounting.
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 16px;">
             <!-- Left: Coloring Sheet -->
-            <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #FAFAFD;">
+            <div
+              style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #FAFAFD;">
               <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
                 <span style="font-weight: 700; font-size: 15px; color: var(--ink);">1. Children's Coloring Sheet</span>
                 <span class="chip-lavender" style="background: #EBE3FF; color: var(--purple-700);">Tier: ECONOMY</span>
@@ -2490,23 +2613,28 @@
               </p>
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
                 <span style="color: var(--muted-strong);">Computational Effort:</span>
-                <span style="font-family: var(--font-mono); font-weight: 700;">7.1 units <span class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
+                <span style="font-family: var(--font-mono); font-weight: 700;">7.1 units <span
+                    class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
                 <span style="color: var(--muted-strong);">Avoided Compute:</span>
-                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--green-text);">+110.9 units (94.0%)</span>
+                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--green-text);">+110.9 units
+                  (94.0%)</span>
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
                 <span style="color: var(--muted-strong);">Purpose-Fit Verdict:</span>
                 <span class="origin-badge origin-measured" style="font-size: 11px;">Fit for Purpose: YES (100%)</span>
               </div>
-              <div style="font-size: 12px; color: var(--muted-strong); background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px;">
-                <strong>Reasoning:</strong> Outline art requires light background and black lines, not diffusion rendering steps. Generating at Maximum wastes 94% compute with zero benefit.
+              <div
+                style="font-size: 12px; color: var(--muted-strong); background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px;">
+                <strong>Reasoning:</strong> Outline art requires light background and black lines, not diffusion
+                rendering steps. Generating at Maximum wastes 94% compute with zero benefit.
               </div>
             </div>
 
             <!-- Right: Professional Poster -->
-            <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #FAFAFD;">
+            <div
+              style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #FAFAFD;">
               <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
                 <span style="font-weight: 700; font-size: 15px; color: var(--ink);">2. Professional Print Poster</span>
                 <span class="chip-lavender" style="background: #FFE4E6; color: #9F1239;">Tier: MAXIMUM</span>
@@ -2516,18 +2644,22 @@
               </p>
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
                 <span style="color: var(--muted-strong);">Computational Effort:</span>
-                <span style="font-family: var(--font-mono); font-weight: 700;">118.0 units <span class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
+                <span style="font-family: var(--font-mono); font-weight: 700;">118.0 units <span
+                    class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
                 <span style="color: var(--muted-strong);">Avoided Compute:</span>
-                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--muted-strong);">0.0 units (0.0%)</span>
+                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--muted-strong);">0.0 units
+                  (0.0%)</span>
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
                 <span style="color: var(--muted-strong);">Purpose-Fit Verdict:</span>
                 <span class="origin-badge origin-measured" style="font-size: 11px;">Fit for Purpose: YES (100%)</span>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-strong); background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px;">
-                <strong>Reasoning:</strong> Large-format physical reproduction requires 1536px short-edge and high Laplacian sharpness to avoid visible blur at 300 DPI.
+              <div
+                style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-strong); background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px;">
+                <strong>Reasoning:</strong> Large-format physical reproduction requires 1536px short-edge and high
+                Laplacian sharpness to avoid visible blur at 300 DPI.
               </div>
             </div>
           </div>
@@ -2539,7 +2671,8 @@
           <p class="closing-cta-subtitle">
             Right-size GPU computational effort, reveal avoided compute, and eliminate invisible energy waste.
           </p>
-          <button type="button" class="btn-pill-primary" onclick="handleNavCtaClick()" style="padding: 12px 28px; font-size: 15px;">
+          <button type="button" class="btn-pill-primary" onclick="handleNavCtaClick()"
+            style="padding: 12px 28px; font-size: 15px;">
             Sign In & Launch Workspace <span aria-hidden="true">↗</span>
           </button>
         </section>
@@ -2571,24 +2704,32 @@
 
             <!-- Auth Mode Switch: Sign In vs Create Account -->
             <div class="auth-mode-tabs" role="tablist">
-              <button type="button" class="auth-mode-tab is-active" id="tabAuthSignIn" onclick="setAuthMode('signin')" role="tab" aria-selected="true">
+              <button type="button" class="auth-mode-tab is-active" id="tabAuthSignIn" onclick="setAuthMode('signin')"
+                role="tab" aria-selected="true">
                 Sign In
               </button>
-              <button type="button" class="auth-mode-tab" id="tabAuthSignUp" onclick="setAuthMode('signup')" role="tab" aria-selected="false">
+              <button type="button" class="auth-mode-tab" id="tabAuthSignUp" onclick="setAuthMode('signup')" role="tab"
+                aria-selected="false">
                 Create Account
               </button>
             </div>
 
             <!-- Realtime Auth Toast Notice -->
-            <div id="authStatusToast" style="display: none; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 13px; line-height: 1.4;"></div>
+            <div id="authStatusToast"
+              style="display: none; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 13px; line-height: 1.4;">
+            </div>
 
             <!-- Sign In With Google -->
             <button type="button" class="btn-google-auth" id="btnGoogleSignIn" onclick="handleGoogleSignIn()">
               <svg width="18" height="18" viewBox="0 0 18 18">
-                <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
-                <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
-                <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.347 2.825.957 4.039l3.007-2.332z"/>
-                <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+                <path fill="#4285F4"
+                  d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" />
+                <path fill="#34A853"
+                  d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" />
+                <path fill="#FBBC05"
+                  d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.347 2.825.957 4.039l3.007-2.332z" />
+                <path fill="#EA4335"
+                  d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" />
               </svg>
               <span>Sign in with Google</span>
             </button>
@@ -2599,14 +2740,19 @@
             <form id="emailLoginForm" onsubmit="handleAuthFormSubmit(event)">
               <div class="login-form-group">
                 <label for="loginEmailInput">Email address</label>
-                <input type="email" id="loginEmailInput" class="text-input" placeholder="e.g. user.educator@school.edu" required autocomplete="email">
+                <input type="email" id="loginEmailInput" class="text-input" placeholder="e.g. user.educator@school.edu"
+                  required autocomplete="email">
               </div>
               <div class="login-form-group">
                 <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
                   <label for="loginPasswordInput">Password</label>
-                  <a href="javascript:void(0)" onclick="alert('Password reset link sent to your email. Or click a 1-Click Demo Profile below!')" style="font-size: 11px; color: var(--purple-600); text-decoration: none;" id="loginForgotLink">Forgot?</a>
+                  <a href="javascript:void(0)"
+                    onclick="alert('Password reset link sent to your email. Or click a 1-Click Demo Profile below!')"
+                    style="font-size: 11px; color: var(--purple-600); text-decoration: none;"
+                    id="loginForgotLink">Forgot?</a>
                 </div>
-                <input type="password" id="loginPasswordInput" class="text-input" placeholder="••••••••••••" required autocomplete="current-password" minlength="6">
+                <input type="password" id="loginPasswordInput" class="text-input" placeholder="••••••••••••" required
+                  autocomplete="current-password" minlength="6">
               </div>
               <div class="login-form-group" id="signupRoleGroup" style="display: none;">
                 <label for="signupRoleSelect">Workspace Role</label>
@@ -2617,7 +2763,8 @@
                 </select>
               </div>
               <div style="display: flex; gap: 8px; margin-top: 8px;">
-                <button type="submit" class="btn-pill-primary" id="loginSubmitBtn" style="flex: 1; justify-content: center; padding: 12px; font-size: 14px;">
+                <button type="submit" class="btn-pill-primary" id="loginSubmitBtn"
+                  style="flex: 1; justify-content: center; padding: 12px; font-size: 14px;">
                   Sign In to Workspace ↗
                 </button>
               </div>
@@ -2627,15 +2774,20 @@
             <div class="demo-eval-box">
               <div class="demo-eval-title">⚡ 1-Click Demo Profiles (Instant Evaluation)</div>
               <div class="demo-eval-grid">
-                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('educator')">🎓 Teacher (Grade 5)</button>
-                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('designer')">🎨 Content Creator</button>
-                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('admin')">🛡️ District Admin</button>
-                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('guest')">⚡ Guest Sandbox</button>
+                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('educator')">🎓 Teacher (Grade
+                  5)</button>
+                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('designer')">🎨 Content
+                  Creator</button>
+                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('admin')">🛡️ District
+                  Admin</button>
+                <button type="button" class="demo-eval-btn" onclick="quickLoginProfile('guest')">⚡ Guest
+                  Sandbox</button>
               </div>
             </div>
 
             <div style="text-align: center; margin-top: 24px;">
-              <a href="javascript:void(0)" onclick="navigateTo('landing')" style="font-size: 13px; color: var(--muted-strong); text-decoration: none;">
+              <a href="javascript:void(0)" onclick="navigateTo('landing')"
+                style="font-size: 13px; color: var(--muted-strong); text-decoration: none;">
                 ← Return to Landing Page
               </a>
             </div>
@@ -2650,7 +2802,8 @@
         <!-- Workspace Sub-Navigation -->
         <div class="workspace-subnav">
           <div class="workspace-tabs">
-            <button type="button" class="workspace-tab-btn is-active" id="tabBtn-optimizer" onclick="navigateTo('optimizer')">
+            <button type="button" class="workspace-tab-btn is-active" id="tabBtn-optimizer"
+              onclick="navigateTo('optimizer')">
               ✨ <span>Optimizer Generator</span>
             </button>
             <button type="button" class="workspace-tab-btn" id="tabBtn-savings" onclick="navigateTo('savings')">
@@ -2671,7 +2824,8 @@
             <span class="user-role-tag ws-user-role">Requester</span>
             <span style="color: var(--border-strong);">|</span>
             <span>Saved: <strong class="ws-saved-units" style="color: var(--green-text);">0.0 units</strong></span>
-            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary" style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
+            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary"
+              style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
               🚪 Sign Out
             </button>
           </div>
@@ -2682,424 +2836,540 @@
           <div class="section-eyebrow">INTERACTIVE GENERATOR</div>
           <h2 class="section-title" id="toolHeading">Adaptive Request & Optimizer</h2>
 
-        <div class="card" style="box-shadow: var(--shadow-card);">
-          <!-- STEP 1: HERO PROMPT GETTING SECTION -->
-          <div class="prompt-hero-container" id="promptHeroSection">
-            <div class="prompt-hero-header">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="step-badge">STEP 1</span>
-                <h3 class="prompt-hero-title">What would you like to create?</h3>
+          <div class="card" style="box-shadow: var(--shadow-card);">
+            <!-- STEP 1: HERO PROMPT GETTING SECTION -->
+            <div class="prompt-hero-container" id="promptHeroSection">
+              <div class="prompt-hero-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="step-badge">STEP 1</span>
+                  <h3 class="prompt-hero-title">What would you like to create?</h3>
+                </div>
+                <span class="chip-lavender">Adaptive AI Studio</span>
               </div>
-              <span class="chip-lavender">Adaptive AI Studio</span>
-            </div>
-            <p class="prompt-hero-subtitle">
-              Enter any concept or subject below. AI GO dynamically aligns resolution and diffusion steps to save maximum compute without waste.
-            </p>
+              <p class="prompt-hero-subtitle">
+                Enter any concept or subject below. AI GO dynamically aligns resolution and diffusion steps to save
+                maximum compute without waste.
+              </p>
 
-            <div class="prompt-input-wrapper">
-              <div class="prompt-icon-addon" aria-hidden="true">✨</div>
-              <input type="text" id="promptInput" class="prompt-hero-input"
-                placeholder="e.g. Cute farm kitten playing with a ball of wool"
-                value="Cute kitten playing with wool"
-                oninput="onPromptInputChanged()"
-                aria-label="Image prompt description"
-                autocomplete="off">
-              <button type="button" class="prompt-clear-btn" onclick="clearPromptInput()" title="Clear prompt" aria-label="Clear prompt">✕</button>
+              <div class="prompt-input-wrapper">
+                <div class="prompt-icon-addon" aria-hidden="true">✨</div>
+                <input type="text" id="promptInput" class="prompt-hero-input"
+                  placeholder="e.g. Cute farm kitten playing with a ball of wool" value="Cute kitten playing with wool"
+                  oninput="onPromptInputChanged()" aria-label="Image prompt description" autocomplete="off">
+                <button type="button" class="prompt-clear-btn" onclick="clearPromptInput()" title="Clear prompt"
+                  aria-label="Clear prompt">✕</button>
+              </div>
+
+              <!-- Quick Inspiration Chips -->
+              <div class="prompt-chips-bar">
+                <span class="prompt-chips-label">Quick Ideas:</span>
+                <button type="button" class="prompt-chip"
+                  onclick="setQuickPrompt('Cute kitten playing with wool', 'coloring_sheet')">🐱 Cute Kitten</button>
+                <button type="button" class="prompt-chip"
+                  onclick="setQuickPrompt('Cross section diagram of plant photosynthesis cell', 'educational_illustration')">🌿
+                  Plant Cell Diagram</button>
+                <button type="button" class="prompt-chip"
+                  onclick="setQuickPrompt('Minimal quarterly revenue growth trend visual', 'presentation_graphic')">📊
+                  Business Slide</button>
+                <button type="button" class="prompt-chip"
+                  onclick="setQuickPrompt('Vibrant cyberpunk city street at rainy neon night', 'social_media_artwork')">🌃
+                  Cyberpunk City</button>
+                <button type="button" class="prompt-chip"
+                  onclick="setQuickPrompt('Detailed vintage botanical illustration of wild roses', 'professional_print_artwork')">🌹
+                  Fine Art Print</button>
+              </div>
+
+              <!-- LLM Pre-verification & Prompt Enhancer Trigger -->
+              <div
+                style="margin-top: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <button type="button" id="btnEnhancePrompt" class="btn-pill-primary" onclick="enhancePromptWithLLM()"
+                  style="padding: 7px 18px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <span>✨</span> <span id="enhanceBtnText">AI Model Advisor & Prompt Enhancer</span>
+                </button>
+                <span
+                  style="font-size: 11px; color: var(--muted); font-family: var(--font-mono); display: inline-flex; align-items: center; gap: 4px;">
+                  <span>⚡ Multi-Key LLM Router</span>
+                </span>
+              </div>
+
+              <!-- LLM Suggestion & Value-Added Prompt Review Card -->
+              <div id="promptEnhancementPanel"
+                style="display: none; margin-top: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md);">
+                <div
+                  style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-size: 16px;">🤖</span>
+                    <strong style="font-size: 13px; color: var(--ink);">Recommended Generator:</strong>
+                    <span id="enhancementModelBadge"
+                      style="font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 3px 10px; background: var(--lavender); border: 1px solid var(--lavender-border); border-radius: var(--radius-pill); color: var(--purple-700);">
+                      Gemini 2.5 Flash (Economy Tier)
+                    </span>
+                  </div>
+                  <span id="enhancementProviderBadge"
+                    style="font-size: 11px; color: var(--muted-strong); font-family: var(--font-mono);">
+                    Provider: Groq
+                  </span>
+                </div>
+
+                <!-- Recommendation Rationale -->
+                <div
+                  style="font-size: 12px; color: var(--ink); margin-bottom: 12px; line-height: 1.5; padding: 10px 12px; background: var(--canvas); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                  <strong>💡 Suggestion Rationale:</strong> <span id="enhancementExplanationText">Loading
+                    explanation...</span>
+                </div>
+
+                <!-- Improvements List -->
+                <div id="enhancementImprovementsWrap"
+                  style="margin-bottom: 12px; font-size: 12px; color: var(--muted-strong);">
+                  <div style="font-weight: 600; margin-bottom: 4px; color: var(--ink);">Key Value-Add Improvements:
+                  </div>
+                  <ul id="enhancementImprovementsList" style="margin: 0; padding-left: 20px; line-height: 1.45;"></ul>
+                </div>
+
+                <!-- Editable Revised Prompt -->
+                <div style="margin-bottom: 14px;">
+                  <label for="revisedPromptInput"
+                    style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--ink);">
+                    ✏️ Revised & Value-Added Prompt (Review & Customize):
+                  </label>
+                  <textarea id="revisedPromptInput" class="text-input"
+                    style="font-size: 13px; min-height: 80px; line-height: 1.45; resize: vertical; width: 100%;"
+                    spellcheck="false" aria-label="Editable Revised Prompt"></textarea>
+                </div>
+
+                <!-- Action Controls -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+                  <button type="button" class="btn-pill-secondary" onclick="dismissPromptEnhancement()"
+                    style="font-size: 12px; padding: 6px 14px;">
+                    Keep Original Prompt
+                  </button>
+                  <button type="button" class="btn-pill-primary" onclick="applyEnhancedPrompt()"
+                    style="font-size: 12px; padding: 6px 16px;">
+                    ✅ Apply Revised Prompt & Model
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <!-- Quick Inspiration Chips -->
-            <div class="prompt-chips-bar">
-              <span class="prompt-chips-label">Quick Ideas:</span>
-              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Cute kitten playing with wool', 'coloring_sheet')">🐱 Cute Kitten</button>
-              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Cross section diagram of plant photosynthesis cell', 'educational_illustration')">🌿 Plant Cell Diagram</button>
-              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Minimal quarterly revenue growth trend visual', 'presentation_graphic')">📊 Business Slide</button>
-              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Vibrant cyberpunk city street at rainy neon night', 'social_media_artwork')">🌃 Cyberpunk City</button>
-              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Detailed vintage botanical illustration of wild roses', 'professional_print_artwork')">🌹 Fine Art Print</button>
+            <!-- STEP 2: SELECTION OF USE CASE & QUALITY TIER -->
+            <div style="margin-top: 10px;">
+              <div class="card-title">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="step-badge">STEP 2</span>
+                  <span>Select Use Case & Quality Floor</span>
+                </div>
+                <span class="chip-lavender">Lowest Suitable Tier Policy</span>
+              </div>
+              <div class="card-subtitle">
+                Select the intended purpose. The decision engine selects the lowest quality tier that satisfies this
+                purpose.
+              </div>
+
+              <!-- Purpose Selection Grid (Section 4 Schema) -->
+              <div class="purpose-grid" id="purposeGrid" role="radiogroup" aria-label="Select Image Purpose">
+                <div class="purpose-card selected" data-purpose="coloring_sheet"
+                  onclick="selectPurpose('coloring_sheet')" role="radio" aria-checked="true" tabindex="0">
+                  <div class="purpose-header">
+                    <span class="purpose-icon" aria-hidden="true">🖍️</span>
+                    <span class="purpose-name">Coloring Sheet</span>
+                  </div>
+                  <div class="purpose-desc">Line art outline. Low detail needed unless large print size requested.</div>
+                  <span class="chip-lavender">Floor: Economy</span>
+                </div>
+
+                <div class="purpose-card" data-purpose="educational_illustration"
+                  onclick="selectPurpose('educational_illustration')" role="radio" aria-checked="false" tabindex="0">
+                  <div class="purpose-header">
+                    <span class="purpose-icon" aria-hidden="true">📖</span>
+                    <span class="purpose-name">Educational Illustration</span>
+                  </div>
+                  <div class="purpose-desc">Visual teaching aid or textbook figure. Standard detail suggested.</div>
+                  <span class="chip-lavender">Floor: Economy</span>
+                </div>
+
+                <div class="purpose-card" data-purpose="presentation_graphic"
+                  onclick="selectPurpose('presentation_graphic')" role="radio" aria-checked="false" tabindex="0">
+                  <div class="purpose-header">
+                    <span class="purpose-icon" aria-hidden="true">📊</span>
+                    <span class="purpose-name">Presentation Graphic</span>
+                  </div>
+                  <div class="purpose-desc">Slide decks & screen visuals. Crisp display quality required.</div>
+                  <span class="chip-lavender">Floor: Standard</span>
+                </div>
+
+                <div class="purpose-card" data-purpose="social_media_artwork"
+                  onclick="selectPurpose('social_media_artwork')" role="radio" aria-checked="false" tabindex="0">
+                  <div class="purpose-header">
+                    <span class="purpose-icon" aria-hidden="true">📱</span>
+                    <span class="purpose-name">Social Media Artwork</span>
+                  </div>
+                  <div class="purpose-desc">Feed artwork and banners for web platforms.</div>
+                  <span class="chip-lavender">Floor: Economy</span>
+                </div>
+
+                <div class="purpose-card" data-purpose="professional_print_artwork"
+                  onclick="selectPurpose('professional_print_artwork')" role="radio" aria-checked="false" tabindex="0">
+                  <div class="purpose-header">
+                    <span class="purpose-icon" aria-hidden="true">🖨️</span>
+                    <span class="purpose-name">Professional / Print</span>
+                  </div>
+                  <div class="purpose-desc">High-DPI exhibition prints, brochures, or publication assets.</div>
+                  <span class="chip-lavender">Floor: Maximum</span>
+                </div>
+
+                <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')" role="radio"
+                  aria-checked="false" tabindex="0">
+                  <div class="purpose-header">
+                    <span class="purpose-icon" aria-hidden="true">⚙️</span>
+                    <span class="purpose-name">Custom Purpose</span>
+                  </div>
+                  <div class="purpose-desc">Specify custom requirements. Conservative default applied on uncertainty.
+                  </div>
+                  <span class="chip-lavender">Conservative Default</span>
+                </div>
+              </div>
+
+              <!-- Dynamic Extra Fields (Print & Custom Inputs) -->
+              <div class="extra-inputs-row" id="extraInputsRow" style="display: none;">
+                <div>
+                  <label class="input-label" for="printUseCheck">
+                    <input type="checkbox" id="printUseCheck" onchange="triggerRecommend()"> Print Use Intended
+                  </label>
+                  <div style="font-size: 11px; color: var(--muted-strong);">Flags output for physical reproduction.
+                  </div>
+                </div>
+
+                <div>
+                  <label class="input-label" for="printSizeSelect">PRINT SIZE</label>
+                  <select id="printSizeSelect" class="select-input" onchange="triggerRecommend()">
+                    <option value="">Standard Paper (A4 / Letter)</option>
+                    <option value="A3">A3 (Medium Poster)</option>
+                    <option value="A1">A1 / Poster (Large Print — raises floor to Standard)</option>
+                    <option value="BANNER">Banner / Billboard (Large Format)</option>
+                  </select>
+                </div>
+
+                <div id="customDetailGroup" style="display: none;">
+                  <label class="input-label" for="requiredDetailSelect">REQUIRED DETAIL</label>
+                  <select id="requiredDetailSelect" class="select-input" onchange="triggerRecommend()">
+                    <option value="">Not Specified (Uncertain)</option>
+                    <option value="low">Low Detail</option>
+                    <option value="high">High Detail (Raises to Standard)</option>
+                    <option value="maximum">Maximum Detail (Raises to Maximum)</option>
+                  </select>
+                </div>
+
+                <div id="customResGroup" style="display: none;">
+                  <label class="input-label" for="targetResInput">TARGET RESOLUTION (PX)</label>
+                  <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024"
+                    oninput="triggerRecommend()">
+                </div>
+              </div>
+
+              <!-- Recommendation Panel -->
+              <div class="recommendation-panel" id="recommendationPanel" aria-live="polite">
+                <div class="rec-top-row">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="rec-tier-badge" id="recTierBadge">Economy Recommended</span>
+                    <span class="origin-badge origin-simulated" id="recOriginBadge">Simulated Proxy</span>
+                  </div>
+                  <div class="rec-factor-tag" id="recFactorTag">Deciding Factor: purpose_floor</div>
+                </div>
+                <div class="rec-explanation" id="recExplanationText">
+                  Coloring sheet: Economy tier satisfies the quality floor with minimal compute.
+                </div>
+              </div>
+
+              <!-- Quality Tier Selector (Segmented Control) - Clean & Focused without raw numbers upfront -->
+              <div class="tier-selector-container">
+                <div
+                  style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+                  <label class="input-label" style="margin-bottom: 0;">
+                    QUALITY TIER (PRE-SELECTED BY RECOMMENDATION)
+                  </label>
+                  <span style="font-size: 12px; color: var(--muted-strong);">Savings numbers verified upon
+                    generation</span>
+                </div>
+                <div class="tier-selector-grid" id="tierSelectorGrid" role="radiogroup"
+                  aria-label="Select Quality Tier">
+                  <!-- Economy Card -->
+                  <div class="tier-card is-recommended-card selected" id="tierCard-economy"
+                    onclick="selectTier('economy')" role="radio" aria-checked="true" tabindex="0">
+                    <div class="tier-name-row">
+                      <span class="tier-title">Economy</span>
+                      <span class="origin-badge origin-simulated">768×768</span>
+                    </div>
+                    <div class="tier-purpose-hint">Best for line art, coloring pages, quick sketches</div>
+                    <div class="tier-specs-line">20 steps • Model factor 1.0</div>
+                    <div class="tier-units-display" id="economyUnits">11.8 units</div>
+                    <div class="tier-savings-display" id="economySavings">~90.0% savings vs Maximum</div>
+                  </div>
+
+                  <!-- Standard Card -->
+                  <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')" role="radio"
+                    aria-checked="false" tabindex="0">
+                    <div class="tier-name-row">
+                      <span class="tier-title">Standard</span>
+                      <span class="origin-badge origin-simulated">1024×1024</span>
+                    </div>
+                    <div class="tier-purpose-hint">Balanced clarity for presentation decks & web graphics</div>
+                    <div class="tier-specs-line">30 steps • Model factor 1.0</div>
+                    <div class="tier-units-display" id="standardUnits">31.5 units</div>
+                    <div class="tier-savings-display" id="standardSavings">~73.3% savings vs Maximum</div>
+                  </div>
+
+                  <!-- Maximum Card -->
+                  <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')" role="radio"
+                    aria-checked="false" tabindex="0">
+                    <div class="tier-name-row">
+                      <span class="tier-title">Maximum</span>
+                      <span class="origin-badge origin-simulated">1536×1536</span>
+                    </div>
+                    <div class="tier-purpose-hint">High-fidelity unoptimized baseline for prints & posters</div>
+                    <div class="tier-specs-line">50 steps • Model factor 1.0</div>
+                    <div class="tier-units-display" id="maximumUnits">118.0 units</div>
+                    <div class="tier-savings-display" style="color: var(--muted);" id="maximumSavings">0.0% savings
+                      (Baseline)</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Inline Notice for Override Confirmation (also backed by modal) -->
+              <div id="overrideWarningBox"
+                style="display: none; background: var(--amber-surface); border: 1px solid rgba(138, 75, 0, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--amber-text);">
+                <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality
+                  Warning
+                </div>
+                <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor
+                  recommended for this purpose.</div>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="overrideConfirmCheckbox">
+                  <span>I confirm this below-floor choice (will be logged in audit trail).</span>
+                </label>
+              </div>
+
+              <!-- Budget Error Box -->
+              <div id="budgetErrorBox"
+                style="display: none; background: var(--rose-surface); border: 1px solid rgba(179, 27, 56, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--rose-text);">
+                <div style="font-weight: 700; margin-bottom: 2px;">🛑 Blocked by Hard Budget</div>
+                <div id="budgetMessageText">Selected tier exceeds hard budget limit.</div>
+              </div>
+            </div>
+
+            <!-- STEP 3: GENERATING IMAGE -->
+            <div
+              style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span class="step-badge">STEP 3</span>
+                <button class="btn-pill-primary" id="btnGenerate" onclick="generateImage()"
+                  style="font-size: 15px; padding: 12px 28px;">
+                  Generate Image <span aria-hidden="true">↗</span>
+                </button>
+                <button type="button" class="btn-pill-secondary" id="btnViewPrevious"
+                  onclick="revealPreviousGeneration()" style="font-size: 13px; padding: 10px 18px;"
+                  title="View previously generated kitten without creating a new image">
+                  👁️ View Previously Generated Image & Savings
+                </button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: var(--muted-strong); font-weight: 500;"
+                  id="generationStatusNotice">Ready to generate (or view previous)</span>
+              </div>
             </div>
           </div>
 
-          <!-- STEP 2: SELECTION OF USE CASE & QUALITY TIER -->
-          <div style="margin-top: 10px;">
+          <!-- STEP 4: VERIFY THE NUMERICAL VALUES OF SAVINGS (Revealed once generation ends or on view previous) -->
+          <div class="card comparison-verified-panel" id="comparisonPanel" aria-labelledby="comparisonHeading"
+            style="display: none; margin-top: 28px; border: 2px solid #C4B5FD; box-shadow: 0 8px 30px rgba(110, 52, 226, 0.08);">
             <div class="card-title">
               <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="step-badge">STEP 2</span>
-                <span>Select Use Case & Quality Floor</span>
+                <span class="step-badge step-badge-success">STEP 4</span>
+                <span id="comparisonHeading">Verified Generation & Avoided Compute Savings</span>
               </div>
-              <span class="chip-lavender">Lowest Suitable Tier Policy</span>
+              <span class="origin-badge origin-measured" id="comparisonDataOrigin">Verified Savings</span>
             </div>
             <div class="card-subtitle">
-              Select the intended purpose. The decision engine selects the lowest quality tier that satisfies this purpose.
+              Every number is explicitly attributed. "Saved" represents estimated savings vs maximum tier (not run).
             </div>
 
-            <!-- Purpose Selection Grid (Section 4 Schema) -->
-            <div class="purpose-grid" id="purposeGrid" role="radiogroup" aria-label="Select Image Purpose">
-              <div class="purpose-card selected" data-purpose="coloring_sheet" onclick="selectPurpose('coloring_sheet')"
-                role="radio" aria-checked="true" tabindex="0">
-                <div class="purpose-header">
-                  <span class="purpose-icon" aria-hidden="true">🖍️</span>
-                  <span class="purpose-name">Coloring Sheet</span>
+            <!-- Image Preview & Side-by-Side (P1) -->
+            <div class="preview-section" style="margin-bottom: 24px;">
+              <!-- Selected Output Preview -->
+              <div class="preview-box">
+                <div class="preview-box-header">
+                  <span class="preview-box-title" id="previewBoxTitle1">Generated Output Preview</span>
+                  <span class="origin-badge origin-measured" id="outputTierBadge"
+                    style="background: #E8F5E9; color: #1B5E20;">Real Generation (Flux.1)</span>
                 </div>
-                <div class="purpose-desc">Line art outline. Low detail needed unless large print size requested.</div>
-                <span class="chip-lavender">Floor: Economy</span>
-              </div>
-
-              <div class="purpose-card" data-purpose="educational_illustration"
-                onclick="selectPurpose('educational_illustration')" role="radio" aria-checked="false" tabindex="0">
-                <div class="purpose-header">
-                  <span class="purpose-icon" aria-hidden="true">📖</span>
-                  <span class="purpose-name">Educational Illustration</span>
-                </div>
-                <div class="purpose-desc">Visual teaching aid or textbook figure. Standard detail suggested.</div>
-                <span class="chip-lavender">Floor: Economy</span>
-              </div>
-
-              <div class="purpose-card" data-purpose="presentation_graphic"
-                onclick="selectPurpose('presentation_graphic')" role="radio" aria-checked="false" tabindex="0">
-                <div class="purpose-header">
-                  <span class="purpose-icon" aria-hidden="true">📊</span>
-                  <span class="purpose-name">Presentation Graphic</span>
-                </div>
-                <div class="purpose-desc">Slide decks & screen visuals. Crisp display quality required.</div>
-                <span class="chip-lavender">Floor: Standard</span>
-              </div>
-
-              <div class="purpose-card" data-purpose="social_media_artwork"
-                onclick="selectPurpose('social_media_artwork')" role="radio" aria-checked="false" tabindex="0">
-                <div class="purpose-header">
-                  <span class="purpose-icon" aria-hidden="true">📱</span>
-                  <span class="purpose-name">Social Media Artwork</span>
-                </div>
-                <div class="purpose-desc">Feed artwork and banners for web platforms.</div>
-                <span class="chip-lavender">Floor: Economy</span>
-              </div>
-
-              <div class="purpose-card" data-purpose="professional_print_artwork"
-                onclick="selectPurpose('professional_print_artwork')" role="radio" aria-checked="false" tabindex="0">
-                <div class="purpose-header">
-                  <span class="purpose-icon" aria-hidden="true">🖨️</span>
-                  <span class="purpose-name">Professional / Print</span>
-                </div>
-                <div class="purpose-desc">High-DPI exhibition prints, brochures, or publication assets.</div>
-                <span class="chip-lavender">Floor: Maximum</span>
-              </div>
-
-              <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')" role="radio"
-                aria-checked="false" tabindex="0">
-                <div class="purpose-header">
-                  <span class="purpose-icon" aria-hidden="true">⚙️</span>
-                  <span class="purpose-name">Custom Purpose</span>
-                </div>
-                <div class="purpose-desc">Specify custom requirements. Conservative default applied on uncertainty.</div>
-                <span class="chip-lavender">Conservative Default</span>
-              </div>
-            </div>
-
-            <!-- Dynamic Extra Fields (Print & Custom Inputs) -->
-            <div class="extra-inputs-row" id="extraInputsRow" style="display: none;">
-              <div>
-                <label class="input-label" for="printUseCheck">
-                  <input type="checkbox" id="printUseCheck" onchange="triggerRecommend()"> Print Use Intended
-                </label>
-                <div style="font-size: 11px; color: var(--muted-strong);">Flags output for physical reproduction.</div>
-              </div>
-
-              <div>
-                <label class="input-label" for="printSizeSelect">PRINT SIZE</label>
-                <select id="printSizeSelect" class="select-input" onchange="triggerRecommend()">
-                  <option value="">Standard Paper (A4 / Letter)</option>
-                  <option value="A3">A3 (Medium Poster)</option>
-                  <option value="A1">A1 / Poster (Large Print — raises floor to Standard)</option>
-                  <option value="BANNER">Banner / Billboard (Large Format)</option>
-                </select>
-              </div>
-
-              <div id="customDetailGroup" style="display: none;">
-                <label class="input-label" for="requiredDetailSelect">REQUIRED DETAIL</label>
-                <select id="requiredDetailSelect" class="select-input" onchange="triggerRecommend()">
-                  <option value="">Not Specified (Uncertain)</option>
-                  <option value="low">Low Detail</option>
-                  <option value="high">High Detail (Raises to Standard)</option>
-                  <option value="maximum">Maximum Detail (Raises to Maximum)</option>
-                </select>
-              </div>
-
-              <div id="customResGroup" style="display: none;">
-                <label class="input-label" for="targetResInput">TARGET RESOLUTION (PX)</label>
-                <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024"
-                  oninput="triggerRecommend()">
-              </div>
-            </div>
-
-            <!-- Recommendation Panel -->
-            <div class="recommendation-panel" id="recommendationPanel" aria-live="polite">
-              <div class="rec-top-row">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <span class="rec-tier-badge" id="recTierBadge">Economy Recommended</span>
-                  <span class="origin-badge origin-simulated" id="recOriginBadge">Simulated Proxy</span>
-                </div>
-                <div class="rec-factor-tag" id="recFactorTag">Deciding Factor: purpose_floor</div>
-              </div>
-              <div class="rec-explanation" id="recExplanationText">
-                Coloring sheet: Economy tier satisfies the quality floor with minimal compute.
-              </div>
-            </div>
-
-            <!-- Quality Tier Selector (Segmented Control) - Clean & Focused without raw numbers upfront -->
-            <div class="tier-selector-container">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
-                <label class="input-label" style="margin-bottom: 0;">
-                  QUALITY TIER (PRE-SELECTED BY RECOMMENDATION)
-                </label>
-                <span style="font-size: 12px; color: var(--muted-strong);">Savings numbers verified upon generation</span>
-              </div>
-              <div class="tier-selector-grid" id="tierSelectorGrid" role="radiogroup" aria-label="Select Quality Tier">
-                <!-- Economy Card -->
-                <div class="tier-card is-recommended-card selected" id="tierCard-economy" onclick="selectTier('economy')"
-                  role="radio" aria-checked="true" tabindex="0">
-                  <div class="tier-name-row">
-                    <span class="tier-title">Economy</span>
-                    <span class="origin-badge origin-simulated">768×768</span>
-                  </div>
-                  <div class="tier-purpose-hint">Best for line art, coloring pages, quick sketches</div>
-                  <div class="tier-specs-line">20 steps • Model factor 1.0</div>
-                  <div class="tier-units-display" id="economyUnits">11.8 units</div>
-                  <div class="tier-savings-display" id="economySavings">~90.0% savings vs Maximum</div>
-                </div>
-
-                <!-- Standard Card -->
-                <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')" role="radio"
-                  aria-checked="false" tabindex="0">
-                  <div class="tier-name-row">
-                    <span class="tier-title">Standard</span>
-                    <span class="origin-badge origin-simulated">1024×1024</span>
-                  </div>
-                  <div class="tier-purpose-hint">Balanced clarity for presentation decks & web graphics</div>
-                  <div class="tier-specs-line">30 steps • Model factor 1.0</div>
-                  <div class="tier-units-display" id="standardUnits">31.5 units</div>
-                  <div class="tier-savings-display" id="standardSavings">~73.3% savings vs Maximum</div>
-                </div>
-
-                <!-- Maximum Card -->
-                <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')" role="radio"
-                  aria-checked="false" tabindex="0">
-                  <div class="tier-name-row">
-                    <span class="tier-title">Maximum</span>
-                    <span class="origin-badge origin-simulated">1536×1536</span>
-                  </div>
-                  <div class="tier-purpose-hint">High-fidelity unoptimized baseline for prints & posters</div>
-                  <div class="tier-specs-line">50 steps • Model factor 1.0</div>
-                  <div class="tier-units-display" id="maximumUnits">118.0 units</div>
-                  <div class="tier-savings-display" style="color: var(--muted);" id="maximumSavings">0.0% savings (Baseline)</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Inline Notice for Override Confirmation (also backed by modal) -->
-            <div id="overrideWarningBox"
-              style="display: none; background: var(--amber-surface); border: 1px solid rgba(138, 75, 0, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--amber-text);">
-              <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality Warning
-              </div>
-              <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor
-                recommended for this purpose.</div>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" id="overrideConfirmCheckbox">
-                <span>I confirm this below-floor choice (will be logged in audit trail).</span>
-              </label>
-            </div>
-
-            <!-- Budget Error Box -->
-            <div id="budgetErrorBox"
-              style="display: none; background: var(--rose-surface); border: 1px solid rgba(179, 27, 56, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--rose-text);">
-              <div style="font-weight: 700; margin-bottom: 2px;">🛑 Blocked by Hard Budget</div>
-              <div id="budgetMessageText">Selected tier exceeds hard budget limit.</div>
-            </div>
-          </div>
-
-          <!-- STEP 3: GENERATING IMAGE -->
-          <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-              <span class="step-badge">STEP 3</span>
-              <button class="btn-pill-primary" id="btnGenerate" onclick="generateImage()" style="font-size: 15px; padding: 12px 28px;">
-                Generate Image <span aria-hidden="true">↗</span>
-              </button>
-              <button type="button" class="btn-pill-secondary" id="btnViewPrevious" onclick="revealPreviousGeneration()" style="font-size: 13px; padding: 10px 18px;" title="View previously generated kitten without creating a new image">
-                👁️ View Previously Generated Image & Savings
-              </button>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 13px; color: var(--muted-strong); font-weight: 500;" id="generationStatusNotice">Ready to generate (or view previous)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 4: VERIFY THE NUMERICAL VALUES OF SAVINGS (Revealed once generation ends or on view previous) -->
-        <div class="card comparison-verified-panel" id="comparisonPanel" aria-labelledby="comparisonHeading" style="display: none; margin-top: 28px; border: 2px solid #C4B5FD; box-shadow: 0 8px 30px rgba(110, 52, 226, 0.08);">
-          <div class="card-title">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="step-badge step-badge-success">STEP 4</span>
-              <span id="comparisonHeading">Verified Generation & Avoided Compute Savings</span>
-            </div>
-            <span class="origin-badge origin-measured" id="comparisonDataOrigin">Verified Savings</span>
-          </div>
-          <div class="card-subtitle">
-            Every number is explicitly attributed. "Saved" represents estimated savings vs maximum tier (not run).
-          </div>
-
-          <!-- Image Preview & Side-by-Side (P1) -->
-          <div class="preview-section" style="margin-bottom: 24px;">
-            <!-- Selected Output Preview -->
-            <div class="preview-box">
-              <div class="preview-box-header">
-                <span class="preview-box-title" id="previewBoxTitle1">Generated Output Preview</span>
-                <span class="origin-badge origin-measured" id="outputTierBadge" style="background: #E8F5E9; color: #1B5E20;">Real Generation (Flux.1)</span>
-              </div>
-              <div class="preview-img-container">
-                <img id="generatedImagePreview" src="/static/sample_preview.png"
-                  alt="Generated image output preview with DEMO PLACEHOLDER watermark" style="display: block; width: 100%; border-radius: var(--radius-sm); object-fit: contain; max-height: 420px;">
-                <div id="imagePlaceholderNotice"
-                  style="color: var(--muted-strong); font-size: 12px; text-align: center; padding: 10px 0 4px 0;">
-                  Previously Generated Output: "Cute kitten playing with wool" • Latency: 4.85s (Measured)
-                </div>
-              </div>
-              <div class="placeholder-honesty-note" id="placeholderHonestyLabel">
-                🏷️ DEMO PLACEHOLDER / Verified Output: previously generated image preserved without incurring new compute.
-              </div>
-
-              <!-- Feedback Control (P0) -->
-              <div id="goodEnoughControl" style="margin-top: 12px; padding: 12px 14px; background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); display: block;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                  <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Good enough for your purpose?</span>
-                  <div style="display: flex; gap: 8px;">
-                    <button type="button" class="btn-pill-secondary" id="btnFeedbackYes" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('yes')">✓ Yes</button>
-                    <button type="button" class="btn-pill-secondary" id="btnFeedbackNo" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('no')">✕ No</button>
+                <div class="preview-img-container">
+                  <img id="generatedImagePreview" src="/static/sample_preview.png"
+                    alt="Generated image output preview with DEMO PLACEHOLDER watermark"
+                    style="display: block; width: 100%; border-radius: var(--radius-sm); object-fit: contain; max-height: 420px;">
+                  <div id="imagePlaceholderNotice"
+                    style="color: var(--muted-strong); font-size: 12px; text-align: center; padding: 10px 0 4px 0;">
+                    Previously Generated Output: "Cute kitten playing with wool" • Latency: 4.85s (Measured)
                   </div>
                 </div>
-                <div id="feedbackResultNotice" style="display: none; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);"></div>
-              </div>
-            </div>
+                <div class="placeholder-honesty-note" id="placeholderHonestyLabel">
+                  🏷️ DEMO PLACEHOLDER / Verified Output: previously generated image preserved without incurring new
+                  compute.
+                </div>
 
-            <!-- Maximum Tier / Upscaled Reference Preview -->
-            <div class="preview-box">
-              <div class="preview-box-header">
-                <span class="preview-box-title" id="previewBoxTitle2">Maximum Quality Reference</span>
-                <span class="origin-badge origin-estimated" id="maxTierBadge">1536×1536 Baseline</span>
-              </div>
-              <div class="preview-img-container">
-                <img id="maxTierImagePreview" src="/static/sample_cat.png"
-                  alt="Maximum quality reference preview with DEMO PLACEHOLDER watermark" style="display: block; width: 100%; border-radius: var(--radius-sm); object-fit: contain; max-height: 420px;">
-                <div id="maxPlaceholderNotice"
-                  style="color: var(--muted); font-size: 12px; text-align: center; padding: 10px 0 4px 0;">
-                  Reference baseline: Illustrative placeholder asset differing in resolution.
+                <!-- Feedback Control (P0) -->
+                <div id="goodEnoughControl"
+                  style="margin-top: 12px; padding: 12px 14px; background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); display: block;">
+                  <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Good enough for your
+                      purpose?</span>
+                    <div style="display: flex; gap: 8px;">
+                      <button type="button" class="btn-pill-secondary" id="btnFeedbackYes"
+                        style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('yes')">✓ Yes</button>
+                      <button type="button" class="btn-pill-secondary" id="btnFeedbackNo"
+                        style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('no')">✕ No</button>
+                    </div>
+                  </div>
+                  <div id="feedbackResultNotice"
+                    style="display: none; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);">
+                  </div>
                 </div>
               </div>
-              <div style="font-size: 11px; color: var(--muted-strong); margin-top: 8px;" id="maxReferenceHonestyNote">
-                ℹ️ Illustrative placeholders: they differ only in resolution. Baseline was not run.
+
+              <!-- Maximum Tier / Upscaled Reference Preview -->
+              <div class="preview-box">
+                <div class="preview-box-header">
+                  <span class="preview-box-title" id="previewBoxTitle2">Maximum Quality Reference</span>
+                  <span class="origin-badge origin-estimated" id="maxTierBadge">1536×1536 Baseline</span>
+                </div>
+                <div class="preview-img-container">
+                  <img id="maxTierImagePreview" src="/static/sample_cat.png"
+                    alt="Maximum quality reference preview with DEMO PLACEHOLDER watermark"
+                    style="display: block; width: 100%; border-radius: var(--radius-sm); object-fit: contain; max-height: 420px;">
+                  <div id="maxPlaceholderNotice"
+                    style="color: var(--muted); font-size: 12px; text-align: center; padding: 10px 0 4px 0;">
+                    Reference baseline: Illustrative placeholder asset differing in resolution.
+                  </div>
+                </div>
+                <div style="font-size: 11px; color: var(--muted-strong); margin-top: 8px;" id="maxReferenceHonestyNote">
+                  ℹ️ Illustrative placeholders: they differ only in resolution. Baseline was not run.
+                </div>
+              </div>
+            </div>
+
+            <!-- ColourReady Upscale Panel (Feature 1) -->
+            <div id="colourReadyBanner"
+              style="display: none; margin-bottom: 24px; padding: 16px 20px; background: #FAF9FF; border: 1px solid #D8CEFD; border-radius: var(--radius-sm);">
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <span
+                    style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: var(--purple-700);">
+                    ✨ ColourReady: Draft → Local Print Upscale
+                  </span>
+                  <span class="origin-badge origin-measured" id="crPipelineTimeBadge"
+                    style="background: #E8F5E9; color: #1B5E20; font-weight: 600;">
+                    Pipeline Time: <span id="crTimeText">0.000s</span> (Measured)
+                  </span>
+                  <span class="origin-badge origin-simulated" id="crUnitsAddedBadge"
+                    style="background: #F3E8FF; color: var(--purple-700);">
+                    +<span id="crUnitsAddedText">0.000</span> units added to total
+                  </span>
+                </div>
+                <div style="font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--ink);">
+                  <span id="crPixelsStats">Pixels Generated vs Delivered</span>
+                </div>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted-strong); padding-top: 8px; border-top: 1px dashed #E2D9FD;">
+                <span id="crCaveatText">⚠️ Real-cost caveat: cost does not scale exactly with pixels.</span>
+                <span id="crTargetSizeText" style="font-family: var(--font-mono); font-size: 11px;">Target: A4 @ 300 DPI
+                  (pure B&W)</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar: Units Used vs Maximum -->
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-label-row">
+                <span>COMPUTATIONAL EFFORT RELATIVE TO MAXIMUM TIER</span>
+                <span id="progressPercentText" style="font-family: var(--font-mono);">10.0% of Maximum</span>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill" id="progressBarFill" style="width: 10%;"></div>
+              </div>
+            </div>
+
+            <!-- 4 Metrics Grid -->
+            <div class="comparison-grid">
+              <!-- Metric 1: Selected Tier -->
+              <div class="metric-card">
+                <div class="metric-label-row">
+                  <span class="metric-label">Selected Effort</span>
+                  <span class="origin-badge origin-simulated">Formula Proxy</span>
+                </div>
+                <div class="metric-value" id="metricSelectedUnits">11.8 units</div>
+                <div class="metric-sub" id="metricSelectedTierName">Economy (768×768, 20 steps)</div>
+              </div>
+
+              <!-- Metric 2: Baseline -->
+              <div class="metric-card">
+                <div class="metric-label-row">
+                  <span class="metric-label">Maximum Baseline</span>
+                  <span class="origin-badge origin-estimated">Not Run</span>
+                </div>
+                <div class="metric-value" style="color: var(--muted);" id="metricBaselineUnits">118.0 units</div>
+                <div class="metric-sub">Counterfactual standard (1536×1536, 50 steps)</div>
+              </div>
+
+              <!-- Metric 3: Avoided Compute -->
+              <div class="metric-card savings-highlight">
+                <div class="metric-label-row">
+                  <span class="metric-label" style="color: var(--green-text);">Avoided Compute</span>
+                  <span class="origin-badge origin-measured">Savings</span>
+                </div>
+                <div class="metric-value" style="color: var(--green-text);" id="metricSavingsUnits">+106.2 units</div>
+                <div class="metric-sub" style="font-weight: 700; color: var(--green-text);" id="metricSavingsPct">90.0%
+                  compute reduction</div>
+              </div>
+
+              <!-- Metric 4: Energy & Carbon -->
+              <div class="metric-card">
+                <div class="metric-label-row">
+                  <span class="metric-label">Energy & Carbon</span>
+                  <span class="origin-badge origin-simulated">Strict Policy</span>
+                </div>
+                <div class="metric-value" style="font-size: 16px; color: var(--muted-strong);" id="metricEnergyValue">
+                  null (Not Estimated)</div>
+                <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never
+                  presented as Wh without measured hardware data.</div>
+              </div>
+
+              <!-- Metric 5: Purpose-Fit Verification Gate (P0) -->
+              <div class="metric-card" id="purposeFitCard" style="grid-column: 1 / -1;">
+                <div class="metric-label-row">
+                  <span class="metric-label">Automated Purpose-Fit Gate</span>
+                  <span class="origin-badge origin-simulated" id="fitVerdictBadge">Verdict: Pending</span>
+                </div>
+                <div style="display: flex; align-items: baseline; justify-content: space-between; margin: 4px 0;">
+                  <div class="metric-value" id="metricFitVerdict" style="font-size: 18px;">Fit for Purpose: —</div>
+                  <div id="metricFitScore"
+                    style="font-family: var(--font-mono); font-size: 13px; color: var(--muted-strong);">Score: —</div>
+                </div>
+                <div class="metric-sub" id="metricFitSummary" style="margin-bottom: 6px;">
+                  Automated proxy verification evaluates output upon generation. Savings are claimed only when fit.
+                </div>
+                <div id="failedChecksListWrap"
+                  style="display: none; background: #FFF1F2; border: 1px solid rgba(225, 29, 72, 0.2); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: 6px; font-size: 12px; color: #9F1239;">
+                  <div style="font-weight: 700; margin-bottom: 2px;">Failed automated checks:</div>
+                  <ul id="failedChecksList" style="padding-left: 18px; margin: 0;"></ul>
+                </div>
+                <div style="font-size: 11px; color: var(--muted-strong); margin-top: 6px;">
+                  ℹ️ Automated proxy checks, not a judgement of whether a person will like the image.
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- ColourReady Upscale Panel (Feature 1) -->
-          <div id="colourReadyBanner" style="display: none; margin-bottom: 24px; padding: 16px 20px; background: #FAF9FF; border: 1px solid #D8CEFD; border-radius: var(--radius-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: var(--purple-700);">
-                  ✨ ColourReady: Draft → Local Print Upscale
-                </span>
-                <span class="origin-badge origin-measured" id="crPipelineTimeBadge" style="background: #E8F5E9; color: #1B5E20; font-weight: 600;">
-                  Pipeline Time: <span id="crTimeText">0.000s</span> (Measured)
-                </span>
-                <span class="origin-badge origin-simulated" id="crUnitsAddedBadge" style="background: #F3E8FF; color: var(--purple-700);">
-                  +<span id="crUnitsAddedText">0.000</span> units added to total
-                </span>
-              </div>
-              <div style="font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--ink);">
-                <span id="crPixelsStats">Pixels Generated vs Delivered</span>
-              </div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted-strong); padding-top: 8px; border-top: 1px dashed #E2D9FD;">
-              <span id="crCaveatText">⚠️ Real-cost caveat: cost does not scale exactly with pixels.</span>
-              <span id="crTargetSizeText" style="font-family: var(--font-mono); font-size: 11px;">Target: A4 @ 300 DPI (pure B&W)</span>
-            </div>
-          </div>
-
-          <!-- Progress Bar: Units Used vs Maximum -->
-          <div class="progress-bar-wrap">
-            <div class="progress-bar-label-row">
-              <span>COMPUTATIONAL EFFORT RELATIVE TO MAXIMUM TIER</span>
-              <span id="progressPercentText" style="font-family: var(--font-mono);">10.0% of Maximum</span>
-            </div>
-            <div class="progress-track" aria-hidden="true">
-              <div class="progress-fill" id="progressBarFill" style="width: 10%;"></div>
-            </div>
-          </div>
-
-          <!-- 4 Metrics Grid -->
-          <div class="comparison-grid">
-            <!-- Metric 1: Selected Tier -->
-            <div class="metric-card">
-              <div class="metric-label-row">
-                <span class="metric-label">Selected Effort</span>
-                <span class="origin-badge origin-simulated">Formula Proxy</span>
-              </div>
-              <div class="metric-value" id="metricSelectedUnits">11.8 units</div>
-              <div class="metric-sub" id="metricSelectedTierName">Economy (768×768, 20 steps)</div>
-            </div>
-
-            <!-- Metric 2: Baseline -->
-            <div class="metric-card">
-              <div class="metric-label-row">
-                <span class="metric-label">Maximum Baseline</span>
-                <span class="origin-badge origin-estimated">Not Run</span>
-              </div>
-              <div class="metric-value" style="color: var(--muted);" id="metricBaselineUnits">118.0 units</div>
-              <div class="metric-sub">Counterfactual standard (1536×1536, 50 steps)</div>
-            </div>
-
-            <!-- Metric 3: Avoided Compute -->
-            <div class="metric-card savings-highlight">
-              <div class="metric-label-row">
-                <span class="metric-label" style="color: var(--green-text);">Avoided Compute</span>
-                <span class="origin-badge origin-measured">Savings</span>
-              </div>
-              <div class="metric-value" style="color: var(--green-text);" id="metricSavingsUnits">+106.2 units</div>
-              <div class="metric-sub" style="font-weight: 700; color: var(--green-text);" id="metricSavingsPct">90.0% compute reduction</div>
-            </div>
-
-            <!-- Metric 4: Energy & Carbon -->
-            <div class="metric-card">
-              <div class="metric-label-row">
-                <span class="metric-label">Energy & Carbon</span>
-                <span class="origin-badge origin-simulated">Strict Policy</span>
-              </div>
-              <div class="metric-value" style="font-size: 16px; color: var(--muted-strong);" id="metricEnergyValue">null (Not Estimated)</div>
-              <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never presented as Wh without measured hardware data.</div>
-            </div>
-
-            <!-- Metric 5: Purpose-Fit Verification Gate (P0) -->
-            <div class="metric-card" id="purposeFitCard" style="grid-column: 1 / -1;">
-              <div class="metric-label-row">
-                <span class="metric-label">Automated Purpose-Fit Gate</span>
-                <span class="origin-badge origin-simulated" id="fitVerdictBadge">Verdict: Pending</span>
-              </div>
-              <div style="display: flex; align-items: baseline; justify-content: space-between; margin: 4px 0;">
-                <div class="metric-value" id="metricFitVerdict" style="font-size: 18px;">Fit for Purpose: —</div>
-                <div id="metricFitScore" style="font-family: var(--font-mono); font-size: 13px; color: var(--muted-strong);">Score: —</div>
-              </div>
-              <div class="metric-sub" id="metricFitSummary" style="margin-bottom: 6px;">
-                Automated proxy verification evaluates output upon generation. Savings are claimed only when fit.
-              </div>
-              <div id="failedChecksListWrap" style="display: none; background: #FFF1F2; border: 1px solid rgba(225, 29, 72, 0.2); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: 6px; font-size: 12px; color: #9F1239;">
-                <div style="font-weight: 700; margin-bottom: 2px;">Failed automated checks:</div>
-                <ul id="failedChecksList" style="padding-left: 18px; margin: 0;"></ul>
-              </div>
-              <div style="font-size: 11px; color: var(--muted-strong); margin-top: 6px;">
-                ℹ️ Automated proxy checks, not a judgement of whether a person will like the image.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div> <!-- /#viewOptimizer -->
+        </section>
+      </div> <!-- /#viewOptimizer -->
 
       <!-- =====================================================================
            VIEW: RESOURCE SAVINGS & IMPACT ANALYTICS (AUTHENTICATED)
@@ -3129,7 +3399,8 @@
             <span class="user-role-tag ws-user-role">Requester</span>
             <span style="color: var(--border-strong);">|</span>
             <span>Saved: <strong class="ws-saved-units" style="color: var(--green-text);">0.0 units</strong></span>
-            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary" style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
+            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary"
+              style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
               🚪 Sign Out
             </button>
           </div>
@@ -3138,11 +3409,14 @@
         <!-- SAVINGS & IMPACT SECTION -->
         <section class="savings-analytics-section" id="savings-section" aria-labelledby="savingsHeading">
           <div class="section-eyebrow">COMPUTE GOVERNANCE & SUSTAINABILITY</div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
             <div>
-              <h2 class="section-title" id="savingsHeading" style="margin-bottom: 4px;">Resource Savings & Impact Analytics</h2>
+              <h2 class="section-title" id="savingsHeading" style="margin-bottom: 4px;">Resource Savings & Impact
+                Analytics</h2>
               <p style="font-size: 14px; color: var(--muted-strong);">
-                Verified avoided computational effort, diffusion passes, and resource savings broken down across Weekly, Monthly, and Annual horizons.
+                Verified avoided computational effort, diffusion passes, and resource savings broken down across Weekly,
+                Monthly, and Annual horizons.
               </p>
             </div>
             <div style="display: flex; gap: 8px;">
@@ -3159,10 +3433,12 @@
           <div class="firebase-sync-ribbon">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="status-dot-indicator online" id="savingsSyncDot"></span>
-              <span><strong>Firebase Realtime Database:</strong> <span id="savingsSyncStatus">Active & Synchronized</span></span>
+              <span><strong>Firebase Realtime Database:</strong> <span id="savingsSyncStatus">Active &
+                  Synchronized</span></span>
             </div>
             <div style="display: flex; align-items: center; gap: 16px; color: var(--muted-strong);">
-              <span>Account UID: <strong id="savingsAccountUid" style="font-family: var(--font-mono); color: var(--ink);">auth-demo-user</strong></span>
+              <span>Account UID: <strong id="savingsAccountUid"
+                  style="font-family: var(--font-mono); color: var(--ink);">auth-demo-user</strong></span>
               <span>Last Synced: <span id="savingsLastSyncTime">Just now</span></span>
             </div>
           </div>
@@ -3201,9 +3477,11 @@
             <div class="savings-horizon-card monthly">
               <div class="savings-horizon-title">
                 <span>Monthly Savings</span>
-                <span class="savings-horizon-badge chip-lavender" style="background: #E8F5E9; color: #1B5E20;">Last 30 Days</span>
+                <span class="savings-horizon-badge chip-lavender" style="background: #E8F5E9; color: #1B5E20;">Last 30
+                  Days</span>
               </div>
-              <div class="savings-metric-big" id="monthlySavedUnits" style="color: var(--green-text);">+7,431.2 units</div>
+              <div class="savings-metric-big" id="monthlySavedUnits" style="color: var(--green-text);">+7,431.2 units
+              </div>
               <div class="savings-reduction-tag" id="monthlyReductionTag">85.1% compute reduction vs Maximum</div>
               <div class="savings-stat-rows">
                 <div class="savings-stat-row">
@@ -3229,10 +3507,12 @@
             <div class="savings-horizon-card annual">
               <div class="savings-horizon-title">
                 <span>Annual Savings</span>
-                <span class="savings-horizon-badge chip-lavender" style="background: #FEF3C7; color: #92400E;">12-Mo Run-Rate</span>
+                <span class="savings-horizon-badge chip-lavender" style="background: #FEF3C7; color: #92400E;">12-Mo
+                  Run-Rate</span>
               </div>
               <div class="savings-metric-big" id="annualSavedUnits" style="color: #D97706;">+89,174.4 units</div>
-              <div class="savings-reduction-tag" id="annualReductionTag" style="color: #D97706;">88.8% projected annual reduction</div>
+              <div class="savings-reduction-tag" id="annualReductionTag" style="color: #D97706;">88.8% projected annual
+                reduction</div>
               <div class="savings-stat-rows">
                 <div class="savings-stat-row">
                   <span class="savings-stat-label">Projected Annual Requests:</span>
@@ -3256,10 +3536,13 @@
 
           <!-- 7-DAY SAVINGS DISTRIBUTION CHART -->
           <div class="savings-trend-chart-box">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <div
+              style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
               <div>
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--ink); margin: 0 0 2px 0;">Weekly Savings Cadence (Daily Compute Units Saved)</h3>
-                <div style="font-size: 12px; color: var(--muted-strong);">Daily distribution of computational units rightsized vs unoptimized baseline.</div>
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--ink); margin: 0 0 2px 0;">Weekly Savings
+                  Cadence (Daily Compute Units Saved)</h3>
+                <div style="font-size: 12px; color: var(--muted-strong);">Daily distribution of computational units
+                  rightsized vs unoptimized baseline.</div>
               </div>
               <span class="origin-badge origin-measured">Empirical Verification</span>
             </div>
@@ -3275,7 +3558,8 @@
               <span class="chip-lavender">Impact by Use Case</span>
             </div>
             <div class="card-subtitle">
-              Breakdown of computational units saved, quality floors, and purpose-fit rates across different content purposes.
+              Breakdown of computational units saved, quality floors, and purpose-fit rates across different content
+              purposes.
             </div>
             <div style="overflow-x: auto; margin-top: 14px;">
               <table class="benchmark-table" id="savingsPurposeTable">
@@ -3289,16 +3573,23 @@
                   </tr>
                 </thead>
                 <tbody id="savingsPurposeTableBody">
-                  <tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">Loading purpose savings breakdown...</td></tr>
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">Loading purpose
+                      savings breakdown...</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
           <!-- RIGOROUS HONESTY & SUSTAINABILITY NOTICE -->
-          <div style="background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px 20px; font-size: 13px; color: var(--ink); line-height: 1.5;">
+          <div
+            style="background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px 20px; font-size: 13px; color: var(--ink); line-height: 1.5;">
             <strong>Methodology & Energy Transparency Notice:</strong>
-            Computational units are mathematical formulas (<code>steps × megapixels × model_factor</code>) representing the compute saved by rightsizing parameters vs the Maximum tier baseline (not run). In compliance with our strict honesty specification, energy and carbon values are <strong>not estimated</strong> without direct hardware RAPL or power-meter telemetry.
+            Computational units are mathematical formulas (<code>steps × megapixels × model_factor</code>) representing
+            the compute saved by rightsizing parameters vs the Maximum tier baseline (not run). In compliance with our
+            strict honesty specification, energy and carbon values are <strong>not estimated</strong> without direct
+            hardware RAPL or power-meter telemetry.
           </div>
         </section>
       </div> <!-- /#viewSavings -->
@@ -3331,32 +3622,41 @@
             <span class="user-role-tag ws-user-role">Requester</span>
             <span style="color: var(--border-strong);">|</span>
             <span>Saved: <strong class="ws-saved-units" style="color: var(--green-text);">0.0 units</strong></span>
-            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary" style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
+            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary"
+              style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
               🚪 Sign Out
             </button>
           </div>
         </div>
 
         <!-- 5B. MULTI-PROMPT BENCHMARK SECTION (P0) -->
-        <section class="benchmark-section" id="benchmark-section" aria-labelledby="benchmarkHeading" style="margin: 20px 0 40px 0;">
+        <section class="benchmark-section" id="benchmark-section" aria-labelledby="benchmarkHeading"
+          style="margin: 20px 0 40px 0;">
           <div class="section-eyebrow">REPRODUCIBLE EVALUATION</div>
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 12px;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 12px;">
             <div>
               <h2 class="section-title" id="benchmarkHeading">Multi-Prompt Policy Benchmark</h2>
               <p style="font-size: 15px; color: var(--muted-strong); max-width: 650px;">
-                Systematic evaluation of 20 standardized prompts comparing Always Maximum (Baseline), Adaptive (Optimizer), and Cascade (Escalation) policies.
+                Systematic evaluation of 20 standardized prompts comparing Always Maximum (Baseline), Adaptive
+                (Optimizer), and Cascade (Escalation) policies.
               </p>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button class="btn-pill-secondary" onclick="loadBenchmark()" id="btnRefreshBenchmark">↻ Reload Benchmark</button>
-              <button class="btn-pill-primary" onclick="runBenchmarkNow()" id="btnRunBenchmark">Run Benchmark Suite</button>
+              <button class="btn-pill-secondary" onclick="loadBenchmark()" id="btnRefreshBenchmark">↻ Reload
+                Benchmark</button>
+              <button class="btn-pill-primary" onclick="runBenchmarkNow()" id="btnRunBenchmark">Run Benchmark
+                Suite</button>
             </div>
           </div>
 
           <!-- Honest Disclaimer Callout -->
-          <div style="background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: var(--ink);">
-            <strong>Notice:</strong> We wrote these 20 prompts for comparative evaluation; they are not a representative sample of real-world usage.
-            In this benchmark, the Maximum baseline was <strong>actually executed</strong> for every prompt to establish an empirical comparison.
+          <div
+            style="background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: var(--ink);">
+            <strong>Notice:</strong> We wrote these 20 prompts for comparative evaluation; they are not a representative
+            sample of real-world usage.
+            In this benchmark, the Maximum baseline was <strong>actually executed</strong> for every prompt to establish
+            an empirical comparison.
           </div>
 
           <div class="card">
@@ -3381,20 +3681,24 @@
                   </tr>
                 </thead>
                 <tbody id="policyTableBody">
-                  <tr><td colspan="8" style="text-align: center; color: var(--muted);">Loading benchmark results...</td></tr>
+                  <tr>
+                    <td colspan="8" style="text-align: center; color: var(--muted);">Loading benchmark results...</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
 
             <!-- Visual Bar Chart of Policy Effort -->
             <div class="chart-bar-wrap">
-              <div style="font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Total Computational Effort Spent (Proxy Units)</div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Total Computational
+                Effort Spent (Proxy Units)</div>
               <div id="benchmarkChartBars"></div>
             </div>
 
             <!-- Per-Purpose Breakdown Table -->
             <div style="margin-top: 24px;">
-              <div style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">2. Per-Purpose Breakdown (Adaptive vs Maximum Baseline)</div>
+              <div style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">2. Per-Purpose
+                Breakdown (Adaptive vs Maximum Baseline)</div>
               <div style="overflow-x: auto;">
                 <table class="benchmark-table" id="purposeBreakdownTable">
                   <thead>
@@ -3409,30 +3713,39 @@
                     </tr>
                   </thead>
                   <tbody id="purposeTableBody">
-                    <tr><td colspan="7" style="text-align: center; color: var(--muted);">Loading purpose breakdown...</td></tr>
+                    <tr>
+                      <td colspan="7" style="text-align: center; color: var(--muted);">Loading purpose breakdown...</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
             <!-- Report Downloads -->
-            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-              <span style="font-size: 13px; color: var(--muted-strong);">Download full reproducible benchmark audit data:</span>
+            <div
+              style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <span style="font-size: 13px; color: var(--muted-strong);">Download full reproducible benchmark audit
+                data:</span>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <a href="/reports/benchmark_summary.json" class="btn-pill-secondary" style="padding: 6px 14px; font-size: 12px;" download>Download JSON</a>
-                <a href="/reports/benchmark_summary.csv" class="btn-pill-secondary" style="padding: 6px 14px; font-size: 12px;" download>Download CSV</a>
-                <a href="/reports/benchmark_summary.md" class="btn-pill-secondary" style="padding: 6px 14px; font-size: 12px;" download>Download Markdown</a>
+                <a href="/reports/benchmark_summary.json" class="btn-pill-secondary"
+                  style="padding: 6px 14px; font-size: 12px;" download>Download JSON</a>
+                <a href="/reports/benchmark_summary.csv" class="btn-pill-secondary"
+                  style="padding: 6px 14px; font-size: 12px;" download>Download CSV</a>
+                <a href="/reports/benchmark_summary.md" class="btn-pill-secondary"
+                  style="padding: 6px 14px; font-size: 12px;" download>Download Markdown</a>
               </div>
             </div>
 
             <!-- Image Pair Gallery -->
             <div style="margin-top: 28px;">
               <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-                <div style="font-size: 14px; font-weight: 700; color: var(--ink);">3. Benchmark Output Gallery (Adaptive vs Maximum Pairs)</div>
+                <div style="font-size: 14px; font-weight: 700; color: var(--ink);">3. Benchmark Output Gallery (Adaptive
+                  vs Maximum Pairs)</div>
                 <span class="origin-badge origin-simulated" style="font-size: 10px;">illustrative placeholders</span>
               </div>
               <p style="font-size: 12px; color: var(--muted-strong); margin-bottom: 12px;">
-                Inspect real empirical differences between rightsized output and Maximum baseline across prompt categories. In demo mode, these are labeled illustrative placeholders.
+                Inspect real empirical differences between rightsized output and Maximum baseline across prompt
+                categories. In demo mode, these are labeled illustrative placeholders.
               </p>
               <div class="gallery-grid" id="benchmarkGalleryGrid">
                 <!-- Dynamically populated -->
@@ -3470,7 +3783,8 @@
             <span class="user-role-tag ws-user-role">Requester</span>
             <span style="color: var(--border-strong);">|</span>
             <span>Saved: <strong class="ws-saved-units" style="color: var(--green-text);">0.0 units</strong></span>
-            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary" style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
+            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary"
+              style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
               🚪 Sign Out
             </button>
           </div>
@@ -3479,9 +3793,11 @@
         <!-- 7. GENERATION HISTORY & VISUAL GALLERY -->
         <section class="history-section" id="history-section" aria-labelledby="historyHeading">
           <div class="section-eyebrow">AUDIT TRAIL & VISUAL VAULT</div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
             <div>
-              <h2 class="section-title" id="historyHeading" style="margin-bottom: 4px;">Image History & Visual Gallery</h2>
+              <h2 class="section-title" id="historyHeading" style="margin-bottom: 4px;">Image History & Visual Gallery
+              </h2>
               <p style="font-size: 14px; color: var(--muted-strong);">
                 Browse previously generated visual assets with transparent compute savings and purpose-fit status.
               </p>
@@ -3512,7 +3828,8 @@
             </div>
             <div class="history-kpi-card">
               <div class="history-kpi-sub">Active Engine</div>
-              <div class="history-kpi-val" id="kpiHistoryProvider" style="font-size: 14px; margin-top: 8px;">Flux.1 / Demo Proxy</div>
+              <div class="history-kpi-val" id="kpiHistoryProvider" style="font-size: 14px; margin-top: 8px;">Flux.1 /
+                Demo Proxy</div>
             </div>
           </div>
 
@@ -3540,8 +3857,11 @@
                 🔄 Refresh
               </button>
               <div style="display: flex; gap: 4px; margin-left: 8px;">
-                <button type="button" class="btn-pill-secondary is-active" id="btnViewCards" onclick="setHistoryViewMode('grid')" style="padding: 8px 12px; font-size: 12px;">🖼️ Cards Grid</button>
-                <button type="button" class="btn-pill-secondary" id="btnViewTable" onclick="setHistoryViewMode('table')" style="padding: 8px 12px; font-size: 12px;">📋 Audit Table</button>
+                <button type="button" class="btn-pill-secondary is-active" id="btnViewCards"
+                  onclick="setHistoryViewMode('grid')" style="padding: 8px 12px; font-size: 12px;">🖼️ Cards
+                  Grid</button>
+                <button type="button" class="btn-pill-secondary" id="btnViewTable" onclick="setHistoryViewMode('table')"
+                  style="padding: 8px 12px; font-size: 12px;">📋 Audit Table</button>
               </div>
             </div>
             <div style="font-size: 13px; color: var(--muted-strong);">
@@ -3612,7 +3932,8 @@
             <span class="user-role-tag ws-user-role">Requester</span>
             <span style="color: var(--border-strong);">|</span>
             <span>Saved: <strong class="ws-saved-units" style="color: var(--green-text);">0.0 units</strong></span>
-            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary" style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
+            <button type="button" onclick="signOutCurrentUser()" class="btn-pill-secondary"
+              style="padding: 3px 8px; font-size: 11px; color: var(--rose-text);" title="Sign out to landing page">
               🚪 Sign Out
             </button>
           </div>
@@ -3635,12 +3956,15 @@
             </div>
             <div style="margin: 12px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
               <label for="adminTokenInput" style="font-size: 13px; font-weight: 500;">Admin Token:</label>
-              <input type="password" id="adminTokenInput" placeholder="Enter X-Admin-Token" class="text-input" style="max-width: 280px; padding: 6px 12px; font-size: 13px;" />
-              <span id="adminOpenNote" style="display: none; font-size: 12px; color: var(--amber-text); background: var(--amber-surface); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong);">demo: admin is open</span>
+              <input type="password" id="adminTokenInput" placeholder="Enter X-Admin-Token" class="text-input"
+                style="max-width: 280px; padding: 6px 12px; font-size: 13px;" />
+              <span id="adminOpenNote"
+                style="display: none; font-size: 12px; color: var(--amber-text); background: var(--amber-surface); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong);">demo:
+                admin is open</span>
             </div>
             <textarea id="configEditor" class="text-input"
-              style="font-family: var(--font-mono); height: 260px; font-size: 13px; line-height: 1.45;" spellcheck="false"
-              aria-label="Domain Configuration JSON Editor"></textarea>
+              style="font-family: var(--font-mono); height: 260px; font-size: 13px; line-height: 1.45;"
+              spellcheck="false" aria-label="Domain Configuration JSON Editor"></textarea>
             <div style="margin-top: 10px; font-size: 12px; color: var(--muted-strong);" id="configSaveStatus">
               Loaded active configuration.
             </div>
@@ -3670,10 +3994,12 @@
           <h3 class="modal-title" id="authModalTitle">👤 Sign In & Workspace Identity</h3>
           <div class="modal-body">
             <p style="font-size: 13px; color: var(--muted-strong); margin-bottom: 16px;">
-              AI GO syncs your generated images, purpose decisions, and avoided compute to Firebase Realtime Database. Select your role or authenticate below:
+              AI GO syncs your generated images, purpose decisions, and avoided compute to Firebase Realtime Database.
+              Select your role or authenticate below:
             </p>
 
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
+            <div
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
               CHOOSE A WORKSPACE PROFILE
             </div>
 
@@ -3695,7 +4021,8 @@
                 <span style="font-size: 24px;">🎨</span>
                 <div>
                   <div style="font-weight: 600; font-size: 14px; color: var(--ink);">Content Creator</div>
-                  <div style="font-size: 12px; color: var(--muted);">User: creator_pro • Advanced generation & exports</div>
+                  <div style="font-size: 12px; color: var(--muted);">User: creator_pro • Advanced generation & exports
+                  </div>
                 </div>
               </div>
               <span class="user-role-tag">Requester</span>
@@ -3707,7 +4034,8 @@
                 <span style="font-size: 24px;">🛡️</span>
                 <div>
                   <div style="font-weight: 600; font-size: 14px; color: var(--ink);">District Administrator</div>
-                  <div style="font-size: 12px; color: var(--muted);">User: district_admin • Quota showback & Studio</div>
+                  <div style="font-size: 12px; color: var(--muted);">User: district_admin • Quota showback & Studio
+                  </div>
                 </div>
               </div>
               <span class="user-role-tag" style="background: #E8F5E9; color: #1B5E20;">Admin</span>
@@ -3715,21 +4043,27 @@
 
             <!-- Custom User / Firebase Anonymous -->
             <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);">
-              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
+              <div
+                style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
                 OR ENTER CUSTOM CREDENTIALS / FIREBASE UID
               </div>
               <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                <input type="text" id="customUidInput" class="text-input" placeholder="User ID (e.g. user_alpha)" style="height: 40px; font-size: 13px;" />
-                <input type="text" id="customSchoolInput" class="text-input" placeholder="School ID (e.g. oakwood)" style="height: 40px; font-size: 13px;" />
+                <input type="text" id="customUidInput" class="text-input" placeholder="User ID (e.g. user_alpha)"
+                  style="height: 40px; font-size: 13px;" />
+                <input type="text" id="customSchoolInput" class="text-input" placeholder="School ID (e.g. oakwood)"
+                  style="height: 40px; font-size: 13px;" />
               </div>
               <div style="display: flex; gap: 8px;">
-                <button class="btn-pill-secondary" style="flex: 1;" onclick="applyCustomUser()">Apply Custom User</button>
-                <button class="btn-pill-primary" style="flex: 1;" onclick="signInFirebaseAnonymous()">⚡ Firebase Anonymous</button>
+                <button class="btn-pill-secondary" style="flex: 1;" onclick="applyCustomUser()">Apply Custom
+                  User</button>
+                <button class="btn-pill-primary" style="flex: 1;" onclick="signInFirebaseAnonymous()">⚡ Firebase
+                  Anonymous</button>
               </div>
             </div>
           </div>
           <div class="modal-actions" style="margin-top: 16px; display: flex; justify-content: space-between;">
-            <button class="btn-pill-secondary" onclick="signOutCurrentUser()" style="color: var(--rose-text); border-color: #F8D7DA;">Sign Out</button>
+            <button class="btn-pill-secondary" onclick="signOutCurrentUser()"
+              style="color: var(--rose-text); border-color: #F8D7DA;">Sign Out</button>
             <button class="btn-pill-secondary" onclick="closeAuthModal()">Close</button>
           </div>
         </div>
@@ -3741,7 +4075,8 @@
           <div>
             <strong>AI GO</strong> • Transparent Adaptive AI Image Resource Optimization
           </div>
-          <div id="footerProviderLabel" style="font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; background: var(--lavender); border-radius: var(--radius-pill); color: var(--purple-700);">
+          <div id="footerProviderLabel"
+            style="font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; background: var(--lavender); border-radius: var(--radius-pill); color: var(--purple-700);">
             Active Generator: Detecting...
           </div>
         </div>
@@ -5487,13 +5822,13 @@
   <!-- Modular Firebase Web SDK Realtime Sync & Authentication -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword, 
-      createUserWithEmailAndPassword, 
-      GoogleAuthProvider, 
-      signInWithPopup, 
-      signInAnonymously, 
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signInAnonymously,
       onAuthStateChanged,
       signOut as fbSignOut
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -5595,4 +5930,5 @@
     }
   </script>
 </body>
+
 </html>

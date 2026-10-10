@@ -144,8 +144,10 @@ This document records all explicit assumptions, simulated data caveats, and arch
 - **Distribution Exposure & Rotation Recommendation**: Because `.env` containing a live `GEMINI_API_KEY` was packaged inside the distributed `.zip` archive, the key was distributed to recipients. It is strongly advised to rotate this key immediately in Google AI Studio / Google Cloud Console to invalidate the distributed credential.
 - **Header Transmission & Sanitization**: The backend Gemini adapter sends the key via the `x-goog-api-key` HTTP header rather than query parameters (`?key=...`), and all logging/error formatters actively sanitize API keys and full URLs before output.
 
-## 18. Groq API Keys for Prompt Pre-verification & Chatbot
-- **Primary & Fallback Provisioning**: `GROQ_API_KEY` and `GROQ_API_KEY_FALLBACK` environment variables are provisioned for prompt pre-verification, prompt preprocessing, and chatbot workflows.
-- **Failover Architecture**: When processing prompt pre-verification or chatbot interactions, the primary key is utilized first; if rate limits (HTTP 429) or transient provider outages occur, requests gracefully failover to the fallback key without disrupting user interactions.
-- **Secret Hygiene**: Both Groq keys are stored strictly in `.env` (git-ignored) with placeholder values in `.env.example`, ensuring zero secrets are committed or printed.
+## 18. Groq API Keys for Prompt Pre-verification, Model Routing & Chatbot
+- **3-Tier Key Provisioning**: Three Groq API key tiers (`GROQ_API_KEY`, `GROQ_API_KEY_FALLBACK`, `GROQ_API_KEY_FALLBACK_2`) are provisioned for prompt pre-verification, right-sized model routing, and prompt enhancement.
+- **Failover Chain & Offline Resilience**: Requests attempt the Primary key first; on rate limits (HTTP 429) or transient provider errors, the adapter automatically fails over to Fallback 1, and then to Fallback 2. If all external keys are unavailable or the environment is offline, a deterministic rule-based engine supplies rightsized recommendations without service disruption.
+- **Model Recommendation & Human-in-the-Loop**: The LLM suggests the lowest suitable model tier (e.g. Gemini 2.5 Flash for line-art vs Gemini 3 Pro for exhibition prints), explains why to prevent compute waste, and generates an editable value-added prompt that requesters can review and refine before image generation.
+- **Secret Hygiene**: All Groq keys are stored strictly in `.env` (git-ignored) with placeholder values in `.env.example`, ensuring zero secrets are committed or printed.
+
 

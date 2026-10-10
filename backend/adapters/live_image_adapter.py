@@ -48,12 +48,15 @@ class LiveImageAdapter(BaseAdapter):
         self,
         openai_api_key: Optional[str] = None,
         gemini_api_key: Optional[str] = None,
-        real_generation_cap: int = 10,
+        real_generation_cap: Optional[int] = None,
         enable_live_diffusion: Optional[bool] = None,
     ):
         self._openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY", "").strip()
         self._gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY", "").strip()
-        self.real_generations_cap = int(os.getenv("REAL_GENERATION_CAP", str(real_generation_cap)))
+        if real_generation_cap is not None:
+            self.real_generations_cap = real_generation_cap
+        else:
+            self.real_generations_cap = int(os.getenv("REAL_GENERATION_CAP", "10"))
         self.real_generations_count = 0
         self._fallback_mock = MockImageAdapter()
 
