@@ -1420,6 +1420,20 @@ if (frontend_dir / "index.html").exists():
             raise HTTPException(status_code=404, detail="index.html not found")
         return FileResponse(str(idx_path))
 
+    @app.api_route("/logo.png", methods=["GET", "HEAD"])
+    def serve_logo():
+        logo_path = frontend_dir / "logo.png"
+        if not logo_path.is_file():
+            raise HTTPException(status_code=404, detail="logo.png not found")
+        return FileResponse(str(logo_path), media_type="image/png")
+
+    @app.api_route("/favicon.ico", methods=["GET", "HEAD"])
+    def serve_favicon():
+        logo_path = frontend_dir / "logo.png"
+        if not logo_path.is_file():
+            raise HTTPException(status_code=404, detail="favicon not found")
+        return FileResponse(str(logo_path), media_type="image/png")
+
     @app.get("/tokens.css")
     def serve_tokens():
         tokens_path = frontend_dir / "tokens.css"

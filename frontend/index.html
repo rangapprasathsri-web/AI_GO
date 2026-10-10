@@ -8,6 +8,10 @@
   <meta name="description"
     content="Matches computational effort to image purpose and reveals transparent avoided compute savings versus maximum tier.">
 
+  <!-- Favicon and Brand Icons -->
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="apple-touch-icon" href="/logo.png">
+
   <!-- Self-Hosted Tokens & Typography (No Runtime CDN Dependency) -->
   <link rel="stylesheet" href="/tokens.css">
   <link rel="stylesheet" href="/static/tokens.css">
@@ -287,6 +291,24 @@
       text-decoration: none;
       color: var(--ink);
       flex-shrink: 0;
+    }
+
+    /* App Logo Image */
+    .brand-logo-img {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 168, 150, 0.22);
+      border: 1px solid rgba(0, 168, 150, 0.15);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    }
+
+    .brand-wrap:hover .brand-logo-img {
+      transform: scale(1.08) rotate(2deg);
+      box-shadow: 0 4px 14px rgba(0, 168, 150, 0.35);
     }
 
     /* Original Brand Mark: Rounded purple tile with 3 ascending tier bars */
@@ -2341,12 +2363,7 @@
   <header class="sticky-nav">
     <div class="container nav-inner">
       <a href="javascript:void(0)" onclick="navigateTo('landing')" class="brand-wrap" aria-label="AI GO Home">
-        <!-- Original brand mark: rounded purple tile with 3 ascending bars -->
-        <div class="brand-mark" aria-hidden="true">
-          <div class="brand-mark-bar bar-1"></div>
-          <div class="brand-mark-bar bar-2"></div>
-          <div class="brand-mark-bar bar-3"></div>
-        </div>
+        <img src="/logo.png" alt="AI GO Logo" class="brand-logo-img" width="36" height="36" onerror="this.onerror=null; this.src='/static/logo.png';">
         <div class="brand-text">
           <span class="brand-name" id="brandNameText">AI GO</span>
           <span class="brand-tagline">Adaptive AI Resource Optimizer</span>
@@ -2686,11 +2703,7 @@
         <div class="login-screen-wrap">
           <div class="login-card">
             <div class="login-brand-header">
-              <div class="brand-mark" aria-hidden="true" style="width: 36px; height: 36px;">
-                <div class="brand-mark-bar bar-1"></div>
-                <div class="brand-mark-bar bar-2"></div>
-                <div class="brand-mark-bar bar-3"></div>
-              </div>
+              <img src="/logo.png" alt="AI GO Logo" class="brand-logo-img" width="44" height="44" style="width: 44px; height: 44px;" onerror="this.onerror=null; this.src='/static/logo.png';">
               <div>
                 <div style="font-weight: 800; font-size: 18px; color: var(--ink); letter-spacing: -0.02em;">AI GO</div>
                 <div style="font-size: 11px; color: var(--muted-strong);">Adaptive AI Resource Optimizer</div>
@@ -4072,8 +4085,11 @@
       <!-- FOOTER -->
       <footer>
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <strong>AI GO</strong> • Transparent Adaptive AI Image Resource Optimization
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="/logo.png" alt="AI GO Logo" class="brand-logo-img" width="24" height="24" style="width: 24px; height: 24px;" onerror="this.onerror=null; this.src='/static/logo.png';">
+            <div>
+              <strong>AI GO</strong> • Transparent Adaptive AI Image Resource Optimization
+            </div>
           </div>
           <div id="footerProviderLabel"
             style="font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; background: var(--lavender); border-radius: var(--radius-pill); color: var(--purple-700);">

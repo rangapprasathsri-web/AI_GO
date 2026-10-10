@@ -8,6 +8,14 @@
   ],
   "routes": [
     {
+      "src": "/logo.png",
+      "dest": "/frontend/logo.png"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/frontend/logo.png"
+    },
+    {
       "src": "/tokens.css",
       "dest": "/frontend/tokens.css"
     },
