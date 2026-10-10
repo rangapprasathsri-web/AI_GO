@@ -165,6 +165,7 @@ class DomainConfig(BaseModel):
     tiers: Optional[dict[str, Any]] = None
     purposes: Optional[dict[str, Any]] = None
     energy_model: Optional[dict[str, Any]] = None
+    colour_ready: Optional[dict[str, Any]] = None
     raw_config: Optional[dict[str, Any]] = None
 
 

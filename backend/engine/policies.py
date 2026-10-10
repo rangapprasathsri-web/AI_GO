@@ -313,6 +313,7 @@ POLICY_REGISTRY: dict[PolicyName, type[PolicyInterface]] = {
     PolicyName.BASELINE_ALWAYS_MAX: BaselineAlwaysMaxPolicy,
     PolicyName.RULE_BASED: RuleBasedPolicy,
     PolicyName.CHEAPEST_MEETING_QUALITY: CheapestMeetingQualityPolicy,
+    PolicyName.LOWEST_SUITABLE_TIER: CheapestMeetingQualityPolicy,
     PolicyName.QUALITY_FIRST_WITHIN_BUDGET: QualityFirstWithinBudgetPolicy,
     PolicyName.LATENCY_FIRST_WITHIN_BUDGET: LatencyFirstWithinBudgetPolicy,
     PolicyName.WEIGHTED: WeightedPolicy,

@@ -146,7 +146,12 @@ def _parse_config_dict(data: dict[str, Any]) -> DomainConfig:
                 required_inputs=purp_info.get("requires_inputs", []),
                 default_tier_hint=purp_info.get("suggested_tier") or min_t,
                 allowed_strategies=list(tiers_dict.keys()) or None,
-                defaults={"min_tier": min_t, "label": purp_info.get("label", purp_name), "notes": purp_info.get("notes", "")},
+                defaults={
+                    "min_tier": min_t,
+                    "label": purp_info.get("label", purp_name),
+                    "notes": purp_info.get("notes", ""),
+                    "route": purp_info.get("route"),
+                },
             )
 
     # Parse policy
@@ -182,6 +187,7 @@ def _parse_config_dict(data: dict[str, Any]) -> DomainConfig:
         tiers=data.get("tiers"),
         purposes=data.get("purposes"),
         energy_model=data.get("energy_model"),
+        colour_ready=data.get("colour_ready"),
         raw_config=data,
     )
 

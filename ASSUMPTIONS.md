@@ -117,3 +117,17 @@ This document records all explicit assumptions, simulated data caveats, and arch
 - **Graceful Fallback & Outbox**: If Firebase is unreachable, misconfigured, or credentials are absent, the application logs a warning, falls back to `SQLiteStorage` without crashing, reports `storage_backend: "sqlite (fallback)"` in `/health`, and queues records in an outbox for subsequent replay.
 - **Engine Zero-Import Invariant**: The core engine (`backend/engine/`) has **zero imports** of Firebase code (`firebase_admin` or `google.cloud`). All persistence logic is isolated in `backend/storage/`.
 - **Security Invariant**: Service account credentials and private keys are never committed to git, logged, or sent to client browsers.
+
+## 15. Feature 1: ColourReady Local Line-Art Pipeline
+- **Purpose Gating**: Strictly restricted to line-art purposes (`coloring_sheet`, `colouring_worksheet`). Non-line-art purposes skip execution deterministically with draft output untouched (`skipped: true`).
+- **Processing Chain**: Deterministic 6-step local post-processing:
+  1. Grayscale conversion.
+  2. Denoising via median filter.
+  3. Adaptive Gaussian thresholding.
+  4. Smooth Lanczos upscale to target print dimensions (default A4 @ 300 DPI: 2481×3507 portrait or 3507×2481 landscape).
+  5. Anti-aliasing Gaussian blur.
+  6. Re-thresholding to strictly binary {0, 255} pixel values.
+- **Honesty Labels & Latency**: Wall-clock pipeline execution time is explicitly labelled `Measured`.
+- **Added Units Proxy**: Local processing time is converted into relative compute units via configurable factor (`time_to_units_rate: 0.1`) and added to unit totals.
+- **Real-Cost Caveat**: Every ColourReady outcome prominently displays and stores the caveat: `"cost does not scale exactly with pixels"`.
+- **Engine Isolation**: `backend/engine/colour_ready.py` imports only standard libraries, OpenCV, NumPy, and Pillow; zero imports from `backend.domains`, `backend.adapters`, or `backend.api`.

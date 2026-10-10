@@ -44,6 +44,7 @@ from backend.engine.models import (
 )
 from backend.engine.orchestrator import Orchestrator
 from backend.engine.purpose_fit import PurposeFitChecker
+from backend.engine.colour_ready import process_line_art
 from backend.engine.measurement import detect_measurement_level
 from backend.benchmarks.runner import BenchmarkRunner
 from backend.storage.replay_cache import ReplayCache
@@ -168,6 +169,7 @@ class GenerateRequest(BaseModel):
     print_size: Optional[str] = None
     budget_units: Optional[float] = None
     use_replay: bool = False
+    route: Optional[str] = None
 
 
 class FeedbackRequest(BaseModel):
@@ -514,6 +516,36 @@ def generate_image_tier(req: GenerateRequest):
     model_factor = tier_info.get("model_factor", 1.0)
     units = compute_tier_units(width, height, steps, model_factor)
 
+    # Check if route is small_then_upscale (ColourReady line-art local upscale)
+    purp_cfg = (RESOURCE_CONFIG.purposes or {}).get(req.purpose, {})
+    route = req.route or purp_cfg.get("route")
+    if not route and req.purpose in ["coloring_sheet", "colouring_worksheet"]:
+        route = purp_cfg.get("route", "small_then_upscale")
+
+    cr_dict = None
+    if route == "small_then_upscale" and exec_result.success and exec_result.output_data:
+        cr_cfg = (RESOURCE_CONFIG.raw_config or {}).get("colour_ready") or {}
+        cr_res = process_line_art(
+            image_input=exec_result.output_data,
+            purpose=req.purpose,
+            print_size=req.print_size or cr_cfg.get("default_print_size", "A4"),
+            dpi=int(cr_cfg.get("default_dpi", 300)),
+            config=cr_cfg,
+        )
+        if not cr_res.skipped:
+            cr_dict = cr_res.to_dict()
+            exec_result.output_data["draft_image"] = cr_res.draft_image
+            exec_result.output_data["draft_image_bytes"] = cr_res.draft_image_bytes
+            exec_result.output_data["image"] = cr_res.final_image
+            exec_result.output_data["image_bytes"] = cr_res.final_image_bytes
+            exec_result.metadata["colour_ready"] = cr_dict
+            exec_result.metadata["pixels_generated"] = cr_res.pixels_generated
+            exec_result.metadata["pixels_delivered"] = cr_res.pixels_delivered
+            exec_result.metadata["pipeline_time_s"] = cr_res.pipeline_time_s
+            exec_result.metadata["pipeline_time_origin"] = "Measured"
+            exec_result.metadata["real_cost_caveat"] = cr_res.real_cost_caveat
+            units = round(units + cr_res.time_units_added, 4)
+
     max_tier = RESOURCE_CONFIG.tiers.get("maximum", {})
     max_params = max_tier.get("params", {"width": 1536, "height": 1536, "steps": 50})
     max_factor = max_tier.get("model_factor", 1.0)
@@ -627,6 +659,15 @@ def generate_image_tier(req: GenerateRequest):
             "is_real": not is_placeholder,
         },
     }
+
+    if cr_dict:
+        gen_record["colour_ready"] = cr_dict
+        gen_record["draft_preview_url"] = cr_dict.get("draft_preview_url")
+        gen_record["pixels_generated"] = cr_dict.get("pixels_generated")
+        gen_record["pixels_delivered"] = cr_dict.get("pixels_delivered")
+        gen_record["pipeline_time_s"] = cr_dict.get("pipeline_time_s")
+        gen_record["pipeline_time_origin"] = "Measured"
+        gen_record["real_cost_caveat"] = cr_dict.get("real_cost_caveat")
 
     STORAGE.save_generation(gen_record)
     return gen_record

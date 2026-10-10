@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import Any, Callable, Optional
 
 from backend.engine.analysis import AnalysisInterface, RulesBasedAnalyser
+from backend.engine.colour_ready import process_line_art
 from backend.engine.config import ConfigValidationError
 from backend.engine.cost import (
     check_request_budget,
@@ -328,6 +329,41 @@ class Orchestrator:
 
         record.execution = execution
 
+        # Step 4b: ColourReady (small draft then local upscale for line art)
+        route = request.inputs.get("route")
+        if not route and decision and decision.category:
+            cat_obj = self.config.task_categories.get(decision.category)
+            if cat_obj and cat_obj.defaults:
+                route = cat_obj.defaults.get("route")
+            if not route:
+                purp_cfg = (self.config.purposes or {}).get(decision.category, {})
+                route = purp_cfg.get("route")
+
+        if route == "small_then_upscale" and execution.output_data:
+            cr_cfg = getattr(self.config, "colour_ready", None) or (self.config.raw_config or {}).get("colour_ready", {})
+            print_size = request.inputs.get("print_size") or cr_cfg.get("default_print_size", "A4")
+            dpi = int(request.inputs.get("dpi") or request.inputs.get("target_dpi") or cr_cfg.get("default_dpi", 300))
+
+            cr_res = process_line_art(
+                image_input=execution.output_data,
+                purpose=decision.category or "",
+                print_size=print_size,
+                dpi=dpi,
+                config=cr_cfg,
+            )
+
+            if not cr_res.skipped:
+                execution.output_data["draft_image"] = cr_res.draft_image
+                execution.output_data["draft_image_bytes"] = cr_res.draft_image_bytes
+                execution.output_data["image"] = cr_res.final_image
+                execution.output_data["image_bytes"] = cr_res.final_image_bytes
+                execution.metadata["colour_ready"] = cr_res.to_dict()
+                execution.metadata["pixels_generated"] = cr_res.pixels_generated
+                execution.metadata["pixels_delivered"] = cr_res.pixels_delivered
+                execution.metadata["pipeline_time_s"] = cr_res.pipeline_time_s
+                execution.metadata["pipeline_time_origin"] = "Measured"
+                execution.metadata["real_cost_caveat"] = cr_res.real_cost_caveat
+
         # Moderation check on output
         if execution.output_data:
             mod_result = self._moderation.check_output(execution.output_data)
@@ -353,6 +389,14 @@ class Orchestrator:
         record.cost = record_cost(
             strategy, decision.cost_estimate, execution, attempts
         )
+        if route == "small_then_upscale" and "colour_ready" in execution.metadata:
+            cr_meta = execution.metadata["colour_ready"]
+            cr_units = cr_meta.get("time_units_added", 0.0)
+            if cr_units > 0 and record.cost:
+                record.cost.actual_cost = round(record.cost.actual_cost + cr_units, 4)
+                record.cost.breakdown["colour_ready_units"] = cr_units
+                record.cost.breakdown["total"] = record.cost.actual_cost
+
         if record.analysis and record.analysis.analysis_overhead_cost > 0:
             record.cost.actual_cost = round(record.cost.actual_cost + record.analysis.analysis_overhead_cost, 4)
             record.cost.breakdown["llm_analysis_overhead"] = record.analysis.analysis_overhead_cost

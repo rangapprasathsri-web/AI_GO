@@ -184,6 +184,11 @@ class SQLiteStorage(StorageInterface):
             except Exception:
                 pass
 
+            try:
+                conn.execute("ALTER TABLE resource_generations ADD COLUMN colour_ready TEXT")
+            except Exception:
+                pass
+
     def save_request(self, record: RequestRecord) -> None:
         with self._get_conn() as conn:
             req = record.request
@@ -683,8 +688,8 @@ class SQLiteStorage(StorageInterface):
                  baseline_units, savings_units, savings_percentage, savings_label,
                  data_origin, provider_reported_usage, latency_s, status,
                  override_flag, override_reason, config_version, is_placeholder,
-                 placeholder_label, preview_url, created_at, purpose_fit)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 placeholder_label, preview_url, created_at, purpose_fit, colour_ready)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 gen.get("id") or gen.get("generation_id"),
                 gen.get("prompt", ""),
@@ -708,6 +713,7 @@ class SQLiteStorage(StorageInterface):
                 gen.get("preview_url") or gen.get("preview_image_url"),
                 gen.get("created_at") or datetime.utcnow().isoformat(),
                 json.dumps(gen.get("purpose_fit")) if gen.get("purpose_fit") is not None else None,
+                json.dumps(gen.get("colour_ready")) if gen.get("colour_ready") is not None else None,
             ))
 
     def get_generation(self, gen_id: str) -> Optional[dict[str, Any]]:
@@ -745,6 +751,8 @@ class SQLiteStorage(StorageInterface):
     def _row_to_generation(self, row: sqlite3.Row) -> dict[str, Any]:
         purpose_fit_raw = row["purpose_fit"] if "purpose_fit" in row.keys() else None
         purpose_fit = json.loads(purpose_fit_raw) if purpose_fit_raw else None
+        colour_ready_raw = row["colour_ready"] if "colour_ready" in row.keys() else None
+        colour_ready = json.loads(colour_ready_raw) if colour_ready_raw else None
         return {
             "id": row["id"],
             "generation_id": row["id"],
@@ -769,6 +777,7 @@ class SQLiteStorage(StorageInterface):
             "preview_url": row["preview_url"],
             "created_at": row["created_at"],
             "purpose_fit": purpose_fit,
+            "colour_ready": colour_ready,
         }
 
     def save_feedback(self, feedback: dict[str, Any]) -> None:
