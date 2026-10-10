@@ -1,0 +1,153 @@
+{
+  "disclaimer": "We wrote these prompts for comparative evaluation; they are not a representative sample of real-world usage.",
+  "_disclaimer": "We wrote these prompts for comparative evaluation; they are not a representative sample of real-world usage.",
+  "prompts": [
+    {
+      "id": "prompt-01",
+      "purpose": "coloring_sheet",
+      "prompt": "Simple black outline of a garden snail on a leaf for kindergarten children to color",
+      "expected_floor": "economy",
+      "inputs": { "print_use": false }
+    },
+    {
+      "id": "prompt-02",
+      "purpose": "coloring_sheet",
+      "prompt": "Cute playful puppy with floppy ears and a ball, clean black line art, no shading",
+      "expected_floor": "economy",
+      "inputs": { "print_use": false }
+    },
+    {
+      "id": "prompt-03",
+      "purpose": "coloring_sheet",
+      "prompt": "Cartoon rocket ship blasting into space with stars and planets, outline drawing",
+      "expected_floor": "economy",
+      "inputs": { "print_use": false }
+    },
+    {
+      "id": "prompt-04",
+      "purpose": "coloring_sheet",
+      "prompt": "Friendly smiling farm cow standing in meadow, simple bold line art for coloring",
+      "expected_floor": "economy",
+      "inputs": { "print_use": false }
+    },
+    {
+      "id": "prompt-05",
+      "purpose": "coloring_sheet",
+      "prompt": "Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",
+      "expected_floor": "economy",
+      "inputs": { "print_use": false }
+    },
+    {
+      "id": "prompt-06",
+      "purpose": "coloring_sheet",
+      "prompt": "Intricate medieval castle coloring sheet for classroom art project",
+      "expected_floor": "economy",
+      "inputs": { "print_use": false }
+    },
+    {
+      "id": "prompt-07",
+      "purpose": "educational_illustration",
+      "prompt": "Cross-section diagram of plant cell anatomy showing nucleus, mitochondria, and cell wall",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "high" }
+    },
+    {
+      "id": "prompt-08",
+      "purpose": "educational_illustration",
+      "prompt": "Water cycle diagram illustrating evaporation, condensation, precipitation, and collection",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "standard" }
+    },
+    {
+      "id": "prompt-09",
+      "purpose": "educational_illustration",
+      "prompt": "Solar system planetary orbit illustration with labeled terrestrial and gas planets",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "high" }
+    },
+    {
+      "id": "prompt-10",
+      "purpose": "educational_illustration",
+      "prompt": "Human heart diagram showing chambers, valves, and blood flow pathways",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "standard" }
+    },
+    {
+      "id": "prompt-11",
+      "purpose": "presentation_graphic",
+      "prompt": "Clean minimalist slide graphic illustrating renewable clean energy grid transition",
+      "expected_floor": "standard",
+      "inputs": { "target_resolution": 1024 }
+    },
+    {
+      "id": "prompt-12",
+      "purpose": "presentation_graphic",
+      "prompt": "Quarterly technology growth concept illustration with modern geometric architecture",
+      "expected_floor": "standard",
+      "inputs": { "target_resolution": 1024 }
+    },
+    {
+      "id": "prompt-13",
+      "purpose": "presentation_graphic",
+      "prompt": "Artificial intelligence neural network nodes abstract diagram for conference keynote slide",
+      "expected_floor": "standard",
+      "inputs": { "target_resolution": 1024 }
+    },
+    {
+      "id": "prompt-14",
+      "purpose": "presentation_graphic",
+      "prompt": "Global logistics supply chain network map with shipping routes and connected hubs",
+      "expected_floor": "standard",
+      "inputs": { "target_resolution": 1024 }
+    },
+    {
+      "id": "prompt-15",
+      "purpose": "social_media_artwork",
+      "prompt": "Vibrant coffee shop morning promotion banner with latte art and warm café lighting",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "low" }
+    },
+    {
+      "id": "prompt-16",
+      "purpose": "social_media_artwork",
+      "prompt": "Community park cleanup volunteer announcement graphic with cheerful illustrated characters",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "low" }
+    },
+    {
+      "id": "prompt-17",
+      "purpose": "social_media_artwork",
+      "prompt": "Science festival announcement flyer with beaker bubbles and colorful fireworks",
+      "expected_floor": "economy",
+      "expected_suggested": "standard",
+      "inputs": { "required_detail": "standard" }
+    },
+    {
+      "id": "prompt-18",
+      "purpose": "professional_print_artwork",
+      "prompt": "Fine art exhibition poster of a misty alpine mountain range at sunrise, high-DPI reproduction",
+      "expected_floor": "maximum",
+      "inputs": { "print_use": true, "print_size": "A1" }
+    },
+    {
+      "id": "prompt-19",
+      "purpose": "professional_print_artwork",
+      "prompt": "District annual report cover illustration with detailed architectural campus watercolor",
+      "expected_floor": "maximum",
+      "inputs": { "print_use": true, "print_size": "A3" }
+    },
+    {
+      "id": "prompt-20",
+      "purpose": "professional_print_artwork",
+      "prompt": "Large format science laboratory safety protocol poster with intricate technical diagrams",
+      "expected_floor": "maximum",
+      "inputs": { "print_use": true, "print_size": "BANNER" }
+    }
+  ]
+}

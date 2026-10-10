@@ -1,0 +1,61 @@
+prompt_id,purpose,prompt,policy,tier_used,units_spent,latency_s,fit_verdict,fit_passed,failed_checks,savings_units,savings_percentage,savings_eligible,attempts_count,data_origin
+prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-01,coloring_sheet,Simple black outline of a garden snail on a leaf for kindergarten children to color,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-02,coloring_sheet,"Cute playful puppy with floppy ears and a ball, clean black line art, no shading",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-03,coloring_sheet,"Cartoon rocket ship blasting into space with stars and planets, outline drawing",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-04,coloring_sheet,"Friendly smiling farm cow standing in meadow, simple bold line art for coloring",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-05,coloring_sheet,"Undersea scene with sea turtle, starfish, and seaweed, outline coloring page",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,always_maximum,maximum,117.96,,partly,True,"['light_background', 'line_coverage_range']",0.0,0.0,True,1,simulated
+prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-06,coloring_sheet,Intricate medieval castle coloring sheet for classroom art project,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-07,educational_illustration,"Cross-section diagram of plant cell anatomy showing nucleus, mitochondria, and cell wall",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-07,educational_illustration,"Cross-section diagram of plant cell anatomy showing nucleus, mitochondria, and cell wall",adaptive,standard,31.46,,yes,True,[],86.5,73.3,True,1,simulated
+prompt-07,educational_illustration,"Cross-section diagram of plant cell anatomy showing nucleus, mitochondria, and cell wall",cascade,standard,31.46,,yes,True,[],86.5,73.3,True,1,simulated
+prompt-08,educational_illustration,"Water cycle diagram illustrating evaporation, condensation, precipitation, and collection",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-08,educational_illustration,"Water cycle diagram illustrating evaporation, condensation, precipitation, and collection",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-08,educational_illustration,"Water cycle diagram illustrating evaporation, condensation, precipitation, and collection",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-09,educational_illustration,Solar system planetary orbit illustration with labeled terrestrial and gas planets,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-09,educational_illustration,Solar system planetary orbit illustration with labeled terrestrial and gas planets,adaptive,standard,31.46,,yes,True,[],86.5,73.3,True,1,simulated
+prompt-09,educational_illustration,Solar system planetary orbit illustration with labeled terrestrial and gas planets,cascade,standard,31.46,,yes,True,[],86.5,73.3,True,1,simulated
+prompt-10,educational_illustration,"Human heart diagram showing chambers, valves, and blood flow pathways",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-10,educational_illustration,"Human heart diagram showing chambers, valves, and blood flow pathways",adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-10,educational_illustration,"Human heart diagram showing chambers, valves, and blood flow pathways",cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-11,presentation_graphic,Clean minimalist slide graphic illustrating renewable clean energy grid transition,always_maximum,maximum,117.96,,partly,True,['slide_aspect_ratio'],0.0,0.0,True,1,simulated
+prompt-11,presentation_graphic,Clean minimalist slide graphic illustrating renewable clean energy grid transition,adaptive,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-11,presentation_graphic,Clean minimalist slide graphic illustrating renewable clean energy grid transition,cascade,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-12,presentation_graphic,Quarterly technology growth concept illustration with modern geometric architecture,always_maximum,maximum,117.96,,partly,True,['slide_aspect_ratio'],0.0,0.0,True,1,simulated
+prompt-12,presentation_graphic,Quarterly technology growth concept illustration with modern geometric architecture,adaptive,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-12,presentation_graphic,Quarterly technology growth concept illustration with modern geometric architecture,cascade,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-13,presentation_graphic,Artificial intelligence neural network nodes abstract diagram for conference keynote slide,always_maximum,maximum,117.96,,partly,True,['slide_aspect_ratio'],0.0,0.0,True,1,simulated
+prompt-13,presentation_graphic,Artificial intelligence neural network nodes abstract diagram for conference keynote slide,adaptive,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-13,presentation_graphic,Artificial intelligence neural network nodes abstract diagram for conference keynote slide,cascade,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-14,presentation_graphic,Global logistics supply chain network map with shipping routes and connected hubs,always_maximum,maximum,117.96,,partly,True,['slide_aspect_ratio'],0.0,0.0,True,1,simulated
+prompt-14,presentation_graphic,Global logistics supply chain network map with shipping routes and connected hubs,adaptive,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-14,presentation_graphic,Global logistics supply chain network map with shipping routes and connected hubs,cascade,standard,31.46,,partly,True,['slide_aspect_ratio'],86.5,73.3,True,1,simulated
+prompt-15,social_media_artwork,Vibrant coffee shop morning promotion banner with latte art and warm café lighting,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-15,social_media_artwork,Vibrant coffee shop morning promotion banner with latte art and warm café lighting,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-15,social_media_artwork,Vibrant coffee shop morning promotion banner with latte art and warm café lighting,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-16,social_media_artwork,Community park cleanup volunteer announcement graphic with cheerful illustrated characters,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-16,social_media_artwork,Community park cleanup volunteer announcement graphic with cheerful illustrated characters,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-16,social_media_artwork,Community park cleanup volunteer announcement graphic with cheerful illustrated characters,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-17,social_media_artwork,Science festival announcement flyer with beaker bubbles and colorful fireworks,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-17,social_media_artwork,Science festival announcement flyer with beaker bubbles and colorful fireworks,adaptive,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-17,social_media_artwork,Science festival announcement flyer with beaker bubbles and colorful fireworks,cascade,economy,11.8,,yes,True,[],106.16,90.0,True,1,simulated
+prompt-18,professional_print_artwork,"Fine art exhibition poster of a misty alpine mountain range at sunrise, high-DPI reproduction",always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-18,professional_print_artwork,"Fine art exhibition poster of a misty alpine mountain range at sunrise, high-DPI reproduction",adaptive,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-18,professional_print_artwork,"Fine art exhibition poster of a misty alpine mountain range at sunrise, high-DPI reproduction",cascade,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-19,professional_print_artwork,District annual report cover illustration with detailed architectural campus watercolor,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-19,professional_print_artwork,District annual report cover illustration with detailed architectural campus watercolor,adaptive,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-19,professional_print_artwork,District annual report cover illustration with detailed architectural campus watercolor,cascade,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-20,professional_print_artwork,Large format science laboratory safety protocol poster with intricate technical diagrams,always_maximum,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-20,professional_print_artwork,Large format science laboratory safety protocol poster with intricate technical diagrams,adaptive,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated
+prompt-20,professional_print_artwork,Large format science laboratory safety protocol poster with intricate technical diagrams,cascade,maximum,117.96,,yes,True,[],0.0,0.0,True,1,simulated

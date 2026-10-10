@@ -1110,6 +1110,92 @@
         display: none;
       }
     }
+
+    /* ── Benchmark Screen Styles ────────────────────────────────────────── */
+    .benchmark-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 16px 0;
+    }
+    .benchmark-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--surface);
+      color: var(--muted-strong);
+      border-bottom: 2px solid var(--border);
+      font-weight: 600;
+    }
+    .benchmark-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink);
+    }
+    .benchmark-table tr:hover {
+      background: #FAFAFD;
+    }
+    .chart-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 20px 0;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .chart-bar-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 100px;
+      align-items: center;
+      gap: 14px;
+    }
+    .chart-bar-track {
+      background: #EBEBF0;
+      height: 14px;
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .chart-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.4s ease;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .gallery-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      background: #FFFFFF;
+    }
+    .gallery-img-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .gallery-img-box {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: #F4F4F8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .gallery-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 </head>
 
@@ -1135,6 +1221,7 @@
       <nav aria-label="Main Navigation">
         <ul class="nav-links">
           <li><a href="#tool-section">Generate</a></li>
+          <li><a href="#benchmark-section">Benchmark</a></li>
           <li><a href="#proof-section">Evidence</a></li>
           <li><a href="#how-it-works">How It Works</a></li>
           <li><a href="#history-section">History</a></li>
@@ -1535,6 +1622,28 @@
               <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never presented
                 as Wh without measured hardware data.</div>
             </div>
+
+            <!-- Metric 5: Purpose-Fit Verification Gate (P0) -->
+            <div class="metric-card" id="purposeFitCard" style="grid-column: 1 / -1;">
+              <div class="metric-label-row">
+                <span class="metric-label">Automated Purpose-Fit Gate</span>
+                <span class="origin-badge origin-simulated" id="fitVerdictBadge">Verdict: Pending</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; margin: 4px 0;">
+                <div class="metric-value" id="metricFitVerdict" style="font-size: 18px;">Fit for Purpose: —</div>
+                <div id="metricFitScore" style="font-family: var(--font-mono); font-size: 13px; color: var(--muted-strong);">Score: —</div>
+              </div>
+              <div class="metric-sub" id="metricFitSummary" style="margin-bottom: 6px;">
+                Automated proxy verification evaluates output upon generation. Savings are claimed only when fit.
+              </div>
+              <div id="failedChecksListWrap" style="display: none; background: #FFF1F2; border: 1px solid rgba(225, 29, 72, 0.2); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: 6px; font-size: 12px; color: #9F1239;">
+                <div style="font-weight: 700; margin-bottom: 2px;">Failed automated checks:</div>
+                <ul id="failedChecksList" style="padding-left: 18px; margin: 0;"></ul>
+              </div>
+              <div style="font-size: 11px; color: var(--muted-strong); margin-top: 6px;">
+                ℹ️ Automated proxy checks, not a judgement of whether a person will like the image.
+              </div>
+            </div>
           </div>
 
           <!-- Image Preview & Side-by-Side (P1) -->
@@ -1556,6 +1665,18 @@
               <div class="placeholder-honesty-note" id="placeholderHonestyLabel">
                 🏷️ DEMO PLACEHOLDER: illustrative placeholder asset, not real model output.
               </div>
+
+              <!-- Feedback Control (P0) -->
+              <div id="goodEnoughControl" style="margin-top: 12px; padding: 12px 14px; background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                  <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Good enough for your purpose?</span>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-pill-secondary" id="btnFeedbackYes" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('yes')">✓ Yes</button>
+                    <button type="button" class="btn-pill-secondary" id="btnFeedbackNo" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('no')">✕ No</button>
+                  </div>
+                </div>
+                <div id="feedbackResultNotice" style="display: none; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);"></div>
+              </div>
             </div>
 
             <!-- Maximum Tier Reference Preview -->
@@ -1575,6 +1696,174 @@
               <div style="font-size: 11px; color: var(--muted-strong); margin-top: 8px;">
                 ℹ️ Illustrative placeholders: they differ only in resolution. Baseline was not run.
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEMO CLOSING FRAME: COLORING SHEET VS POSTER -->
+        <div class="card" id="demoClosingFrame" style="margin-top: 24px;">
+          <div class="card-title">
+            <span>Demo Closing Frame: Children's Coloring Sheet vs Professional Poster</span>
+            <span class="chip-lavender">Central Demonstration</span>
+          </div>
+          <div class="card-subtitle">
+            Side-by-side comparison of rightsizing in action: Economy tier for coloring line-art vs Maximum tier for print artwork, with verified purpose fitness and compute accounting.
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 16px;">
+            <!-- Left: Coloring Sheet -->
+            <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #FAFAFD;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                <span style="font-weight: 700; font-size: 15px; color: var(--ink);">1. Children's Coloring Sheet</span>
+                <span class="chip-lavender" style="background: #EBE3FF; color: var(--purple-700);">Tier: ECONOMY</span>
+              </div>
+              <p style="font-size: 13px; color: var(--muted-strong); margin-bottom: 12px;">
+                "Simple black and white line art coloring sheet of a giraffe for kindergarten children."
+              </p>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span style="color: var(--muted-strong);">Computational Effort:</span>
+                <span style="font-family: var(--font-mono); font-weight: 700;">7.1 units <span class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span style="color: var(--muted-strong);">Avoided Compute:</span>
+                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--green-text);">+110.9 units (94.0%)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+                <span style="color: var(--muted-strong);">Purpose-Fit Verdict:</span>
+                <span class="origin-badge origin-measured" style="font-size: 11px;">Fit for Purpose: YES (100%)</span>
+              </div>
+              <div style="font-size: 12px; color: var(--muted-strong); background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px;">
+                <strong>Reasoning:</strong> Outline art requires light background and black lines, not diffusion rendering steps. Generating at Maximum wastes 94% compute with zero benefit.
+              </div>
+            </div>
+
+            <!-- Right: Professional Poster -->
+            <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #FAFAFD;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                <span style="font-weight: 700; font-size: 15px; color: var(--ink);">2. Professional Print Poster</span>
+                <span class="chip-lavender" style="background: #FFE4E6; color: #9F1239;">Tier: MAXIMUM</span>
+              </div>
+              <p style="font-size: 13px; color: var(--muted-strong); margin-bottom: 12px;">
+                "Annual school science fair celebration banner, rich watercolor campus architectural illustration."
+              </p>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span style="color: var(--muted-strong);">Computational Effort:</span>
+                <span style="font-family: var(--font-mono); font-weight: 700;">118.0 units <span class="origin-badge origin-simulated" style="font-size: 9px;">Proxy</span></span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span style="color: var(--muted-strong);">Avoided Compute:</span>
+                <span style="font-family: var(--font-mono); font-weight: 700; color: var(--muted-strong);">0.0 units (0.0%)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+                <span style="color: var(--muted-strong);">Purpose-Fit Verdict:</span>
+                <span class="origin-badge origin-measured" style="font-size: 11px;">Fit for Purpose: YES (100%)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-strong); background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px;">
+                <strong>Reasoning:</strong> Large-format physical reproduction requires 1536px short-edge and high Laplacian sharpness to avoid visible blur at 300 DPI.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5B. MULTI-PROMPT BENCHMARK SECTION (P0) -->
+      <section class="benchmark-section" id="benchmark-section" aria-labelledby="benchmarkHeading" style="margin: 48px 0;">
+        <div class="section-eyebrow">REPRODUCIBLE EVALUATION</div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 12px;">
+          <div>
+            <h2 class="section-title" id="benchmarkHeading">Multi-Prompt Policy Benchmark</h2>
+            <p style="font-size: 15px; color: var(--muted-strong); max-width: 650px;">
+              Systematic evaluation of 20 standardized prompts comparing Always Maximum (Baseline), Adaptive (Optimizer), and Cascade (Escalation) policies.
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn-pill-secondary" onclick="loadBenchmark()" id="btnRefreshBenchmark">↻ Reload Benchmark</button>
+            <button class="btn-pill-primary" onclick="runBenchmarkNow()" id="btnRunBenchmark">Run Benchmark Suite</button>
+          </div>
+        </div>
+
+        <!-- Honest Disclaimer Callout -->
+        <div style="background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: var(--ink);">
+          <strong>Notice:</strong> We wrote these 20 prompts for comparative evaluation; they are not a representative sample of real-world usage.
+          In this benchmark, the Maximum baseline was <strong>actually executed</strong> for every prompt to establish an empirical comparison.
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>1. Policy Performance Comparison</span>
+            <span class="origin-badge origin-simulated" id="benchmarkOriginBadge">Simulated Proxy</span>
+          </div>
+
+          <!-- Policy Comparison Table -->
+          <div style="overflow-x: auto;">
+            <table class="benchmark-table" id="policyComparisonTable">
+              <thead>
+                <tr>
+                  <th>Policy</th>
+                  <th>Prompts</th>
+                  <th>Units Spent</th>
+                  <th>Fit Pass Rate</th>
+                  <th>Units / Fit</th>
+                  <th>Units Saved</th>
+                  <th>Savings %</th>
+                  <th>Origin</th>
+                </tr>
+              </thead>
+              <tbody id="policyTableBody">
+                <tr><td colspan="8" style="text-align: center; color: var(--muted);">Loading benchmark results...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Visual Bar Chart of Policy Effort -->
+          <div class="chart-bar-wrap">
+            <div style="font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Total Computational Effort Spent (Proxy Units)</div>
+            <div id="benchmarkChartBars"></div>
+          </div>
+
+          <!-- Per-Purpose Breakdown Table -->
+          <div style="margin-top: 24px;">
+            <div style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">2. Per-Purpose Breakdown (Adaptive vs Maximum Baseline)</div>
+            <div style="overflow-x: auto;">
+              <table class="benchmark-table" id="purposeBreakdownTable">
+                <thead>
+                  <tr>
+                    <th>Purpose Category</th>
+                    <th>Count</th>
+                    <th>Adaptive Units</th>
+                    <th>Maximum Units</th>
+                    <th>Saved Units</th>
+                    <th>Reduction %</th>
+                    <th>Fit Pass Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="purposeTableBody">
+                  <tr><td colspan="7" style="text-align: center; color: var(--muted);">Loading purpose breakdown...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Report Downloads -->
+          <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <span style="font-size: 13px; color: var(--muted-strong);">Download full reproducible benchmark audit data:</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="/reports/benchmark_summary.json" class="btn-pill-secondary" style="padding: 6px 14px; font-size: 12px;" download>Download JSON</a>
+              <a href="/reports/benchmark_summary.csv" class="btn-pill-secondary" style="padding: 6px 14px; font-size: 12px;" download>Download CSV</a>
+              <a href="/reports/benchmark_summary.md" class="btn-pill-secondary" style="padding: 6px 14px; font-size: 12px;" download>Download Markdown</a>
+            </div>
+          </div>
+
+          <!-- Image Pair Gallery -->
+          <div style="margin-top: 28px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+              <div style="font-size: 14px; font-weight: 700; color: var(--ink);">3. Benchmark Output Gallery (Adaptive vs Maximum Pairs)</div>
+              <span class="origin-badge origin-simulated" style="font-size: 10px;">illustrative placeholders</span>
+            </div>
+            <p style="font-size: 12px; color: var(--muted-strong); margin-bottom: 12px;">
+              Inspect real empirical differences between rightsized output and Maximum baseline across prompt categories. In demo mode, these are labeled illustrative placeholders.
+            </p>
+            <div class="gallery-grid" id="benchmarkGalleryGrid">
+              <!-- Dynamically populated -->
             </div>
           </div>
         </div>

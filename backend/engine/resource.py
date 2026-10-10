@@ -23,22 +23,38 @@ def compute_tier_units(width: int, height: int, steps: int, model_factor: float 
     return round(steps * megapixels * model_factor, 2)
 
 
-def compute_savings(selected_units: float, maximum_units: Optional[float]) -> dict[str, Any]:
+def compute_savings(
+    selected_units: float,
+    maximum_units: Optional[float],
+    fit_verdict: Optional[str] = None,
+) -> dict[str, Any]:
     """
     Counterfactual savings calculation vs Maximum tier:
     savings_units = maximum_tier_units - selected_tier_units
     savings_percentage = savings_units / maximum_tier_units * 100
 
     Guards:
+    - If fit_verdict == 'no', savings are marked ineligible (0.0 units, 0.0%). No savings claimed on unfit results.
     - If maximum_tier_units is zero, missing or invalid, returns 'unavailable' with reason. Never crashes.
     - If selected_tier costs more than Maximum, returns negative numbers honestly (never clamped to zero).
     """
+    if fit_verdict == "no":
+        return {
+            "savings_units": 0.0,
+            "savings_percentage": 0.0,
+            "status": "ineligible_unfit",
+            "reason": "No savings claimed: output failed purpose-fit verification criteria.",
+            "is_negative": False,
+            "savings_eligible": False,
+        }
+
     if maximum_units is None or maximum_units <= 0:
         return {
             "savings_units": None,
             "savings_percentage": None,
             "status": "unavailable",
             "reason": "Maximum tier units baseline is unavailable (missing, zero, or invalid)",
+            "savings_eligible": False,
         }
 
     savings_units = round(maximum_units - selected_units, 2)
@@ -50,6 +66,7 @@ def compute_savings(selected_units: float, maximum_units: Optional[float]) -> di
         "status": "available",
         "reason": None if savings_units >= 0 else "Selected tier exceeds baseline Maximum tier (negative savings)",
         "is_negative": savings_units < 0,
+        "savings_eligible": True,
     }
 
 

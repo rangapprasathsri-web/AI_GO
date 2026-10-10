@@ -42,6 +42,10 @@ from backend.engine.models import (
     UserRequest,
 )
 from backend.engine.orchestrator import Orchestrator
+from backend.engine.purpose_fit import PurposeFitChecker
+from backend.engine.measurement import detect_measurement_level
+from backend.benchmarks.runner import BenchmarkRunner
+from backend.storage.replay_cache import ReplayCache
 from backend.engine.resource import ResourceEstimator, compute_tier_units, compute_savings
 from backend.engine.resource_optimizer import ResourceOptimizerService
 from backend.eval.runner import EvaluationRunner
@@ -159,6 +163,13 @@ class GenerateRequest(BaseModel):
     print_use: bool = False
     print_size: Optional[str] = None
     budget_units: Optional[float] = None
+    use_replay: bool = False
+
+
+class FeedbackRequest(BaseModel):
+    generation_id: str
+    rating: str  # "yes" or "no"
+    comment: Optional[str] = None
 
 
 def sanitize_config(cfg_dict: dict[str, Any]) -> dict[str, Any]:
@@ -223,12 +234,16 @@ def serialize_record(record: RequestRecord, role: str) -> Dict[str, Any]:
 @app.get("/health")
 @app.get("/api/health")
 def health_check():
+    meas_env = detect_measurement_level()
     return {
         "status": "healthy",
         "service": "Adaptive AI Image Resource Optimizer",
         "active_domain": CURRENT_CONFIG.domain,
         "resource_domain": RESOURCE_CONFIG.domain,
         "version": RESOURCE_CONFIG.version,
+        "measurement_level": meas_env.level,
+        "measurement_level_name": meas_env.level_name,
+        "measurement_environment": meas_env.to_dict(),
     }
 
 
@@ -403,6 +418,12 @@ def generate_image_tier(req: GenerateRequest):
     global RESOURCE_CONFIG
     import uuid
 
+    if req.use_replay:
+        rc = ReplayCache()
+        cached = rc.get_replay(req.purpose, req.confirmed_tier.lower())
+        if cached:
+            return cached
+
     user_req = UserRequest(
         prompt=req.prompt or f"Image for {req.purpose}",
         domain=RESOURCE_CONFIG.domain,
@@ -490,16 +511,45 @@ def generate_image_tier(req: GenerateRequest):
         max_params.get("steps", 50),
         max_factor,
     )
-    savings = compute_savings(units, baseline_units)
+
+    # Automated Purpose-Fit Image Verification
+    fit_checker = PurposeFitChecker(
+        RESOURCE_CONFIG.fit_thresholds if hasattr(RESOURCE_CONFIG, "fit_thresholds") else None
+    )
+    img_data = None
+    if exec_result.output_data:
+        img_data = exec_result.output_data.get("image_bytes")
+        if not img_data and "image" in exec_result.output_data:
+            buf = io.BytesIO()
+            exec_result.output_data["image"].save(buf, format="PNG")
+            img_data = buf.getvalue()
+
+    fit_res = fit_checker.evaluate_image(
+        image_bytes=img_data or b"",
+        purpose=req.purpose,
+        parameters=strat_params,
+        print_use=req.print_use,
+        print_size=req.print_size,
+    )
+
+    # Compute savings conditional on purpose fitness:
+    savings = compute_savings(units, baseline_units, fit_verdict=fit_res.verdict)
 
     if not exec_result.success:
         savings_units = 0.0
         savings_pct = 0.0
         gen_status = "failed"
+        savings_label = "generation failed (no savings)"
+    elif fit_res.verdict == "no":
+        savings_units = 0.0
+        savings_pct = 0.0
+        gen_status = "completed"
+        savings_label = "no savings claimed: output failed purpose-fit verification"
     else:
         savings_units = savings["savings_units"]
         savings_pct = savings["savings_percentage"]
         gen_status = "completed"
+        savings_label = "estimated savings vs maximum tier (not run)"
 
     gen_id = f"gen-{uuid.uuid4().hex[:10]}"
     preview_url = image_to_base64(exec_result.output_data) if exec_result.output_data else None
@@ -527,7 +577,8 @@ def generate_image_tier(req: GenerateRequest):
         "baseline_units": baseline_units,
         "savings_units": savings_units,
         "savings_percentage": savings_pct,
-        "savings_label": "estimated savings vs maximum tier (not run)",
+        "savings_label": savings_label,
+        "savings_eligible": fit_res.verdict != "no",
         "data_origin": "simulated",
         "label": "simulated estimate, not measured energy",
         "formula": "steps * megapixels * model_factor",
@@ -543,6 +594,7 @@ def generate_image_tier(req: GenerateRequest):
         "is_placeholder": True,
         "placeholder_label": "DEMO PLACEHOLDER: illustrative placeholder asset, not real model output",
         "preview_url": preview_url,
+        "purpose_fit": fit_res.to_dict(),
         "created_at": datetime.utcnow().isoformat(),
         "explanation": rec_result.get("explanation"),
         "deciding_factor": rec_result.get("deciding_factor"),
@@ -620,6 +672,108 @@ def export_history_csv():
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=generation_history.csv"}
     )
+
+
+@app.post("/feedback")
+@app.post("/api/feedback")
+def submit_feedback(req: FeedbackRequest):
+    """
+    Store 'Good enough? Yes/No' user feedback.
+    A 'No' rating suggests the next tier up with the reason; it never escalates automatically.
+    """
+    import uuid
+    gen = STORAGE.get_generation(req.generation_id)
+    current_tier = gen.get("tier", "economy") if gen else "economy"
+    suggested_tier = None
+    suggestion_reason = None
+
+    if req.rating.lower() == "no":
+        if current_tier == "economy":
+            suggested_tier = "standard"
+            suggestion_reason = "Standard tier provides higher resolution and sampling steps for crisper details."
+        elif current_tier == "standard":
+            suggested_tier = "maximum"
+            suggestion_reason = "Maximum tier activates full unconstrained model capability and print-grade detail."
+        else:
+            suggested_tier = "maximum"
+            suggestion_reason = "Already generated at Maximum tier. Consider adding specific prompt constraints."
+
+    feedback_id = f"fb-{uuid.uuid4().hex[:8]}"
+    feedback_record = {
+        "id": feedback_id,
+        "generation_id": req.generation_id,
+        "rating": req.rating.lower(),
+        "suggested_tier": suggested_tier,
+        "comment": req.comment or suggestion_reason,
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    STORAGE.save_feedback(feedback_record)
+    return {
+        "id": feedback_id,
+        "generation_id": req.generation_id,
+        "rating": req.rating.lower(),
+        "suggested_tier": suggested_tier,
+        "suggestion_reason": suggestion_reason,
+        "escalation_policy": "manual_only",
+        "escalation_note": "A higher tier is suggested to improve quality, but will not be escalated automatically.",
+    }
+
+
+@app.get("/feedback")
+@app.get("/api/feedback")
+def list_user_feedback(generation_id: Optional[str] = None):
+    """Retrieve recorded user feedback."""
+    if generation_id:
+        fb = STORAGE.get_feedback(generation_id)
+        return [fb] if fb else []
+    return STORAGE.list_feedback()
+
+
+@app.get("/replay")
+@app.get("/api/replay")
+def get_replay_items(purpose: Optional[str] = None, tier: Optional[str] = None):
+    """Get replay snapshot entries for offline demonstration safety net."""
+    rc = ReplayCache()
+    if purpose or tier:
+        entry = rc.get_replay(purpose, tier)
+        return [entry] if entry else []
+    return rc.list_replays()
+
+
+@app.get("/benchmark")
+@app.get("/api/benchmark")
+def get_benchmark_results():
+    """Retrieve the latest multi-prompt benchmark summary and results."""
+    import json
+    summary_path = Path("reports/benchmark_summary.json")
+    if not summary_path.exists():
+        runner = BenchmarkRunner()
+        results = runner.run_all()
+        runner.save_reports(results)
+        return results
+    with open(summary_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+@app.post("/benchmark/run")
+@app.post("/api/benchmark/run")
+def run_benchmark_endpoint():
+    """Execute reproducible multi-prompt benchmark across all policies."""
+    runner = BenchmarkRunner()
+    results = runner.run_all()
+    runner.save_reports(results)
+    return results
+
+
+@app.get("/reports/{filename}")
+@app.get("/api/reports/{filename}")
+def download_benchmark_report(filename: str):
+    """Download generated benchmark reports (json, csv, md)."""
+    p = Path("reports") / filename
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="Report file not found")
+    media_type = "application/json" if filename.endswith(".json") else "text/csv" if filename.endswith(".csv") else "text/markdown"
+    return FileResponse(p, media_type=media_type, filename=filename)
 
 
 @app.get("/api/history")
