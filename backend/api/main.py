@@ -1081,3 +1081,7 @@ if (frontend_dir / "index.html").exists():
     @app.get("/")
     def serve_index():
         return FileResponse(str(frontend_dir / "index.html"))
+
+    @app.get("/tokens.css")
+    def serve_tokens():
+        return FileResponse(str(frontend_dir / "tokens.css"), media_type="text/css")

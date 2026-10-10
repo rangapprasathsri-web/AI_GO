@@ -14,8 +14,51 @@
 
   <style>
     /* ==========================================================================
-       MINIMAL EDITORIAL SAAS STYLESHEET
+       MINIMAL EDITORIAL SAAS DESIGN TOKENS (EMBEDDED FOR 100% RELIABILITY)
        ========================================================================== */
+    :root {
+      /* Surfaces & Canvas */
+      --canvas: #FFFFFF;
+      --surface: #F7F7FA;
+      --border: #E8E8ED;
+      --border-strong: #D6D6DC;
+      --lavender: #F2EDFF;
+
+      /* Typography Colors (WCAG AA Compliant) */
+      --ink: #111113;
+      --muted: #6B6B72;
+      --muted-strong: #55555C;
+
+      /* Accent & Brand Colors */
+      --purple-500: #9B73F5;
+      --purple-600: #6E34E2;
+      --purple-700: #5221BA;
+
+      /* Status Colors (Always Paired with Text) */
+      --green: #6AAF24;
+      --green-text: #286208;
+      --green-surface: #F0F9E8;
+      --amber-text: #8A4B00;
+      --amber-surface: #FFF8E6;
+      --rose-text: #B31B38;
+      --rose-surface: #FFF1F3;
+
+      /* Radii */
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+
+      /* Shadows (Subtle & Quiet) */
+      --shadow-sm: 0 1px 2px rgba(17, 17, 19, 0.04);
+      --shadow-card: 0 2px 8px rgba(17, 17, 19, 0.04), 0 1px 2px rgba(17, 17, 19, 0.02);
+      --shadow-hover: 0 4px 16px rgba(110, 52, 226, 0.12);
+
+      /* Typography Stacks */
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -233,6 +276,119 @@
       color: var(--ink);
       cursor: pointer;
       padding: 6px;
+    }
+
+    /* User Profile & Auth Button */
+    .user-profile-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      min-height: 42px;
+    }
+
+    .user-profile-btn:hover {
+      background: #EBEBF2;
+      border-color: var(--purple-600);
+    }
+
+    .status-dot-indicator {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .status-dot-indicator.online {
+      background: var(--green);
+      box-shadow: 0 0 0 2px var(--green-surface);
+    }
+
+    .status-dot-indicator.offline {
+      background: var(--muted);
+    }
+
+    .user-role-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--lavender);
+      color: var(--purple-700);
+    }
+
+    .auth-profile-option {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: var(--canvas);
+      margin-bottom: 10px;
+    }
+
+    .auth-profile-option:hover {
+      border-color: var(--purple-600);
+      background: #FAF8FF;
+      transform: translateY(-1px);
+    }
+
+    .auth-profile-option.active {
+      border-color: var(--purple-600);
+      background: var(--lavender);
+    }
+
+    /* How-To-Use Step Cards */
+    .how-to-use-banner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 32px;
+    }
+
+    .how-to-use-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+
+    .how-to-use-step {
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      position: relative;
+    }
+
+    .how-to-use-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--purple-600);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 12px;
     }
 
     /* ── Hero Section ─────────────────────────────────────────────────────── */
@@ -1236,6 +1392,14 @@
           <span class="running-total-value" id="runningTotalText">0.0 units</span>
           <span class="origin-badge origin-simulated" id="runningTotalOrigin">Simulated</span>
         </div>
+
+        <!-- Sign In Button / User Profile -->
+        <button class="user-profile-btn" id="authBtn" onclick="openAuthModal()" aria-label="Sign In or Switch Account">
+          <span class="status-dot-indicator online" id="userConnDot" title="Firebase RTDB: Connected"></span>
+          <span id="userNameDisplay">Sign In</span>
+          <span class="user-role-tag" id="userRoleBadge">Guest</span>
+        </button>
+
         <a href="#tool-section" class="btn-pill-primary">
           Start generating <span aria-hidden="true">↗</span>
         </a>
@@ -1345,6 +1509,40 @@
           </div>
         </div>
       </section>
+
+      <!-- QUICK-START GUIDE -->
+      <div class="how-to-use-banner" id="how-to-use-guide">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-700);">QUICK-START WORKFLOW</div>
+            <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use EffortMatch in 3 Steps</h3>
+          </div>
+          <span class="role-badge" style="padding: 4px 10px;">Zero Waste AI</span>
+        </div>
+        <div class="how-to-use-grid">
+          <div class="how-to-use-step">
+            <div class="how-to-use-num">1</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Choose Purpose</div>
+            <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
+              Select what your image is for (e.g. Coloring Sheet, Slide Background, or Print Poster).
+            </p>
+          </div>
+          <div class="how-to-use-step">
+            <div class="how-to-use-num">2</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Review Match</div>
+            <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
+              The engine rightsizes parameters and calculates transparent avoided compute savings vs Maximum tier.
+            </p>
+          </div>
+          <div class="how-to-use-step">
+            <div class="how-to-use-num">3</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Generate & Save</div>
+            <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
+              Hit Generate to inspect the image, view counterfactual proof, and sync savings to Firebase RTDB.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <!-- 5. THE TOOL SECTION (THE CENTREPIECE) -->
       <section class="tool-section" id="tool-section" aria-labelledby="toolHeading">
@@ -2026,6 +2224,78 @@
         </div>
       </div>
 
+      <!-- 11. SIGN IN & PROFILE IDENTITY MODAL -->
+      <div class="modal-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle"
+        onclick="onAuthModalBackdropClick(event)">
+        <div class="modal-window" style="max-width: 520px;">
+          <h3 class="modal-title" id="authModalTitle">👤 Sign In & Workspace Identity</h3>
+          <div class="modal-body">
+            <p style="font-size: 13px; color: var(--muted-strong); margin-bottom: 16px;">
+              EffortMatch syncs your generated images, purpose decisions, and avoided compute to Firebase Realtime Database. Select your role or authenticate below:
+            </p>
+
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
+              CHOOSE A WORKSPACE PROFILE
+            </div>
+
+            <!-- Profile 1: Classroom Educator -->
+            <div class="auth-profile-option" onclick="selectUserProfile('educator')">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 24px;">🎓</span>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px; color: var(--ink);">Educator / Teacher</div>
+                  <div style="font-size: 12px; color: var(--muted);">User: teacher_grade5 • School: oakwood_elem</div>
+                </div>
+              </div>
+              <span class="user-role-tag">Requester</span>
+            </div>
+
+            <!-- Profile 2: Graphic Designer -->
+            <div class="auth-profile-option" onclick="selectUserProfile('designer')">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 24px;">🎨</span>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px; color: var(--ink);">Content Creator</div>
+                  <div style="font-size: 12px; color: var(--muted);">User: creator_pro • Advanced generation & exports</div>
+                </div>
+              </div>
+              <span class="user-role-tag">Requester</span>
+            </div>
+
+            <!-- Profile 3: School District Administrator -->
+            <div class="auth-profile-option" onclick="selectUserProfile('admin')">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 24px;">🛡️</span>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px; color: var(--ink);">District Administrator</div>
+                  <div style="font-size: 12px; color: var(--muted);">User: district_admin • Quota showback & Studio</div>
+                </div>
+              </div>
+              <span class="user-role-tag" style="background: #E8F5E9; color: #1B5E20;">Admin</span>
+            </div>
+
+            <!-- Custom User / Firebase Anonymous -->
+            <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;">
+                OR ENTER CUSTOM CREDENTIALS / FIREBASE UID
+              </div>
+              <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" id="customUidInput" class="text-input" placeholder="User ID (e.g. user_alpha)" style="height: 40px; font-size: 13px;" />
+                <input type="text" id="customSchoolInput" class="text-input" placeholder="School ID (e.g. oakwood)" style="height: 40px; font-size: 13px;" />
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-pill-secondary" style="flex: 1;" onclick="applyCustomUser()">Apply Custom User</button>
+                <button class="btn-pill-primary" style="flex: 1;" onclick="signInFirebaseAnonymous()">⚡ Firebase Anonymous</button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-actions" style="margin-top: 16px; display: flex; justify-content: space-between;">
+            <button class="btn-pill-secondary" onclick="signOutCurrentUser()" style="color: var(--rose-text); border-color: #F8D7DA;">Sign Out</button>
+            <button class="btn-pill-secondary" onclick="closeAuthModal()">Close</button>
+          </div>
+        </div>
+      </div>
+
       <!-- FOOTER -->
       <footer>
         <div>
@@ -2048,8 +2318,152 @@
     let latestRecommendation = null;
     let pendingModalAction = null;
 
+    // User & Workspace Auth State
+    let currentUser = {
+      id: localStorage.getItem('effortmatch_uid') || 'teacher_grade5',
+      name: localStorage.getItem('effortmatch_name') || 'Educator',
+      role: localStorage.getItem('effortmatch_role') || 'requester',
+      school_id: localStorage.getItem('effortmatch_school') || 'oakwood_elem',
+      auth_type: localStorage.getItem('effortmatch_authtype') || 'local'
+    };
+
+    function updateAuthHeaderUI() {
+      const nameDisp = document.getElementById('userNameDisplay');
+      const badge = document.getElementById('userRoleBadge');
+      if (nameDisp) {
+        nameDisp.textContent = currentUser.name || currentUser.id;
+      }
+      if (badge) {
+        badge.textContent = currentUser.role === 'admin' ? 'Admin' : 'Requester';
+        if (currentUser.role === 'admin') {
+          badge.style.background = '#E8F5E9';
+          badge.style.color = '#1B5E20';
+        } else {
+          badge.style.background = 'var(--lavender)';
+          badge.style.color = 'var(--purple-700)';
+        }
+      }
+    }
+
+    function openAuthModal() {
+      const modal = document.getElementById('authModal');
+      if (modal) modal.style.display = 'flex';
+      const uidInput = document.getElementById('customUidInput');
+      const schoolInput = document.getElementById('customSchoolInput');
+      if (uidInput) uidInput.value = currentUser.id;
+      if (schoolInput) schoolInput.value = currentUser.school_id;
+    }
+
+    function closeAuthModal() {
+      const modal = document.getElementById('authModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function onAuthModalBackdropClick(e) {
+      if (e.target.id === 'authModal') closeAuthModal();
+    }
+
+    function selectUserProfile(profileKey) {
+      if (profileKey === 'educator') {
+        currentUser = {
+          id: 'teacher_grade5',
+          name: 'Educator (Grade 5)',
+          role: 'requester',
+          school_id: 'oakwood_elem',
+          auth_type: 'profile'
+        };
+      } else if (profileKey === 'designer') {
+        currentUser = {
+          id: 'creator_pro',
+          name: 'Content Creator',
+          role: 'requester',
+          school_id: 'studio_alpha',
+          auth_type: 'profile'
+        };
+      } else if (profileKey === 'admin') {
+        currentUser = {
+          id: 'district_admin',
+          name: 'District Admin',
+          role: 'admin',
+          school_id: 'district_hq',
+          auth_type: 'profile'
+        };
+      }
+      saveAndApplyUser();
+      closeAuthModal();
+    }
+
+    function applyCustomUser() {
+      const uid = (document.getElementById('customUidInput').value || '').trim() || 'user_' + Math.floor(Math.random() * 1000);
+      const school = (document.getElementById('customSchoolInput').value || '').trim() || 'default_school';
+      currentUser = {
+        id: uid,
+        name: uid,
+        role: 'requester',
+        school_id: school,
+        auth_type: 'custom'
+      };
+      saveAndApplyUser();
+      closeAuthModal();
+    }
+
+    async function signInFirebaseAnonymous() {
+      if (window.signInAnonymously && window.firebaseAuth) {
+        try {
+          const cred = await window.signInAnonymously(window.firebaseAuth);
+          const uid = cred.user.uid;
+          currentUser = {
+            id: uid,
+            name: `Anon-${uid.substring(0, 5)}`,
+            role: 'requester',
+            school_id: 'cloud_workspace',
+            auth_type: 'firebase_anonymous'
+          };
+          saveAndApplyUser();
+          closeAuthModal();
+          alert(`Signed in anonymously via Firebase! UID: ${uid}`);
+          return;
+        } catch (err) {
+          console.warn("Firebase Auth error:", err);
+        }
+      }
+      applyCustomUser();
+    }
+
+    function signOutCurrentUser() {
+      localStorage.removeItem('effortmatch_uid');
+      localStorage.removeItem('effortmatch_name');
+      localStorage.removeItem('effortmatch_role');
+      localStorage.removeItem('effortmatch_school');
+      localStorage.removeItem('effortmatch_authtype');
+      currentUser = {
+        id: 'guest_' + Math.floor(Math.random() * 1000),
+        name: 'Guest User',
+        role: 'requester',
+        school_id: 'default',
+        auth_type: 'guest'
+      };
+      updateAuthHeaderUI();
+      closeAuthModal();
+      fetchSummary();
+      loadHistory();
+    }
+
+    function saveAndApplyUser() {
+      localStorage.setItem('effortmatch_uid', currentUser.id);
+      localStorage.setItem('effortmatch_name', currentUser.name);
+      localStorage.setItem('effortmatch_role', currentUser.role);
+      localStorage.setItem('effortmatch_school', currentUser.school_id);
+      localStorage.setItem('effortmatch_authtype', currentUser.auth_type);
+      updateAuthHeaderUI();
+      fetchConfig();
+      fetchSummary();
+      loadHistory();
+    }
+
     // Initialization
     window.addEventListener('DOMContentLoaded', () => {
+      updateAuthHeaderUI();
       fetchConfig();
       fetchSummary();
       triggerRecommend();
@@ -2273,6 +2687,8 @@
             override_confirmed: overrideConfirmed,
             print_use: printUse,
             print_size: printSize,
+            user_id: currentUser.id,
+            school_id: currentUser.school_id,
           })
         });
 
@@ -2509,3 +2925,66 @@
 
     function setupKeyboardAccessibility() {
       window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeModal();
+          closeAuthModal();
+        }
+      });
+    }
+  </script>
+
+  <!-- Modular Firebase Web SDK Realtime Sync -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc",
+      authDomain: "ai-go-a6a7a.firebaseapp.com",
+      databaseURL: "https://ai-go-a6a7a-default-rtdb.firebaseio.com/",
+      projectId: "ai-go-a6a7a",
+      appId: "1:135018196507:web:e2b2d62bbd35390221d2be"
+    };
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getDatabase(app);
+
+      window.firebaseAuth = auth;
+      window.firebaseDb = db;
+      window.signInAnonymously = signInAnonymously;
+
+      // Monitor live connection to RTDB (.info/connected)
+      const connectedRef = ref(db, ".info/connected");
+      onValue(connectedRef, (snap) => {
+        const isLive = snap.val() === true;
+        const dot = document.getElementById('userConnDot');
+        if (dot) {
+          dot.className = isLive ? 'status-dot-indicator online' : 'status-dot-indicator offline';
+          dot.title = isLive ? 'Firebase Realtime Database: Live' : 'Offline / Local SQLite Fallback';
+        }
+      });
+
+      // Listen for authenticated user
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("Firebase Auth active UID:", user.uid);
+          // Listen to server-authoritative summary updates for this user
+          const userSummaryRef = ref(db, `summaries/${user.uid}`);
+          onValue(userSummaryRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.avoided_units !== undefined) {
+              const textElem = document.getElementById('runningTotalText');
+              if (textElem) textElem.textContent = `${data.avoided_units} units`;
+            }
+          });
+        }
+      });
+    } catch (err) {
+      console.warn("Firebase client initialization skipped:", err);
+    }
+  </script>
+</body>
+</html>
