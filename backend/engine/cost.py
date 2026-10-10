@@ -9,6 +9,7 @@ from __future__ import annotations
 from backend.engine.models import (
     CostEstimate,
     CostRecord,
+    DataOrigin,
     DomainConfig,
     ExecutionResult,
     StrategyConfig,
@@ -29,7 +30,9 @@ def estimate_cost(
         strategy_name=strategy.name,
         estimated_cost=strategy.price_per_call,
         source=strategy.source,
+        source_updated_at="2026-10-01",
         is_simulated=True,
+        data_origin=DataOrigin.SIMULATED,
         breakdown={
             "base_price": strategy.price_per_call,
         },
@@ -48,13 +51,16 @@ def record_cost(
     """
     # Actual cost = price per call * number of attempts
     actual_cost = strategy.price_per_call * attempts
+    origin = getattr(execution, "data_origin", DataOrigin.SIMULATED)
 
     return CostRecord(
         strategy_name=strategy.name,
         estimated_cost=estimate.estimated_cost,
         actual_cost=actual_cost,
         source=strategy.source,
-        is_simulated=True,
+        source_updated_at="2026-10-01",
+        is_simulated=origin == DataOrigin.SIMULATED,
+        data_origin=origin,
         attempts=attempts,
         includes_retries=attempts > 1,
         breakdown={

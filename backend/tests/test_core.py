@@ -67,7 +67,10 @@ from backend.engine.orchestrator import Orchestrator
 from backend.engine.policies import (
     BaselineAlwaysMaxPolicy,
     CheapestMeetingQualityPolicy,
+    LatencyFirstWithinBudgetPolicy,
+    ManualApprovalPolicy,
     ManualReviewPolicy,
+    QualityFirstWithinBudgetPolicy,
     RuleBasedPolicy,
     UserSelectedPolicy,
     WeightedPolicy,
@@ -316,6 +319,34 @@ class TestPolicies:
         request = _make_request()
         ranked = policy.rank_strategies(candidates, floor, request, image_config)
         assert "manual review" in ranked[0][1].lower()
+
+    def test_quality_first_within_budget(self, image_config):
+        policy = QualityFirstWithinBudgetPolicy()
+        candidates = self._make_strategies()
+        floor = QualityFloor()
+        request = _make_request()
+        request.max_budget = 0.05
+        ranked = policy.rank_strategies(candidates, floor, request, image_config)
+        # Should pick standard ($0.04) over draft ($0.01) within budget 0.05
+        assert ranked[0][0].name == "standard"
+
+    def test_latency_first_within_budget(self, image_config):
+        policy = LatencyFirstWithinBudgetPolicy()
+        candidates = self._make_strategies()
+        floor = QualityFloor()
+        request = _make_request()
+        request.max_budget = 0.15
+        ranked = policy.rank_strategies(candidates, floor, request, image_config)
+        # Should pick draft because it has lowest latency (2s)
+        assert ranked[0][0].name == "draft"
+
+    def test_manual_approval(self, image_config):
+        policy = ManualApprovalPolicy()
+        candidates = self._make_strategies()
+        floor = QualityFloor()
+        request = _make_request()
+        ranked = policy.rank_strategies(candidates, floor, request, image_config)
+        assert "approval" in ranked[0][1].lower()
 
 
 # ══════════════════════════════════════════════════════════════════════

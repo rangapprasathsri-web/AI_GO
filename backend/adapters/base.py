@@ -34,10 +34,14 @@ class AdapterPricing:
         method: str = "per_call",
         values: dict[str, float] | None = None,
         source: str = "placeholder",
+        source_updated_at: str = "2026-10-01",
+        data_origin: str = "simulated",
     ):
         self.method = method
         self.values = values or {}
         self.source = source
+        self.source_updated_at = source_updated_at
+        self.data_origin = data_origin
 
 
 class BaseAdapter(ABC):

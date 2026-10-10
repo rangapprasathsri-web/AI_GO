@@ -202,6 +202,77 @@ class UserSelectedPolicy(PolicyInterface):
         return result
 
 
+class QualityFirstWithinBudgetPolicy(PolicyInterface):
+    """Picks highest quality strategy within budget that meets the quality floor."""
+
+    def rank_strategies(
+        self,
+        candidates: list[StrategyConfig],
+        quality_floor: QualityFloor,
+        request: UserRequest,
+        config: DomainConfig,
+    ) -> list[tuple[StrategyConfig, str]]:
+        budget = request.max_budget if request.max_budget is not None else config.policy.budgets.per_request_max
+        within = [s for s in candidates if s.price_per_call <= budget]
+        if not within:
+            within = candidates
+
+        # Quality proxy: higher price, higher resolution/steps, lower latency, then name
+        sorted_candidates = sorted(
+            within,
+            key=lambda s: (-s.price_per_call, s.latency_s, s.name),
+        )
+        return [
+            (s, f"Quality-first within budget (${s.price_per_call:.4f}): highest fidelity meeting quality floor")
+            for s in sorted_candidates
+        ]
+
+
+class LatencyFirstWithinBudgetPolicy(PolicyInterface):
+    """Picks fastest strategy within budget that meets the quality floor."""
+
+    def rank_strategies(
+        self,
+        candidates: list[StrategyConfig],
+        quality_floor: QualityFloor,
+        request: UserRequest,
+        config: DomainConfig,
+    ) -> list[tuple[StrategyConfig, str]]:
+        budget = request.max_budget if request.max_budget is not None else config.policy.budgets.per_request_max
+        within = [s for s in candidates if s.price_per_call <= budget]
+        if not within:
+            within = candidates
+
+        sorted_candidates = sorted(
+            within,
+            key=lambda s: (s.latency_s, s.price_per_call, s.name),
+        )
+        return [
+            (s, f"Latency-first within budget: fastest tier ({s.latency_s:.2f}s) at ${s.price_per_call:.4f}")
+            for s in sorted_candidates
+        ]
+
+
+class ManualApprovalPolicy(PolicyInterface):
+    """Marks all requests as requiring explicit administrative approval before execution."""
+
+    def rank_strategies(
+        self,
+        candidates: list[StrategyConfig],
+        quality_floor: QualityFloor,
+        request: UserRequest,
+        config: DomainConfig,
+    ) -> list[tuple[StrategyConfig, str]]:
+        sorted_candidates = sorted(
+            candidates,
+            key=lambda s: (s.price_per_call, s.latency_s, s.name),
+        )
+        return [
+            (s, "Policy requires explicit district administrator approval before execution")
+            for s in sorted_candidates
+        ]
+
+
 class ManualReviewPolicy(PolicyInterface):
     """Flags for manual review when no strategy passes or analysis is uncertain."""
 
@@ -242,8 +313,11 @@ POLICY_REGISTRY: dict[PolicyName, type[PolicyInterface]] = {
     PolicyName.BASELINE_ALWAYS_MAX: BaselineAlwaysMaxPolicy,
     PolicyName.RULE_BASED: RuleBasedPolicy,
     PolicyName.CHEAPEST_MEETING_QUALITY: CheapestMeetingQualityPolicy,
+    PolicyName.QUALITY_FIRST_WITHIN_BUDGET: QualityFirstWithinBudgetPolicy,
+    PolicyName.LATENCY_FIRST_WITHIN_BUDGET: LatencyFirstWithinBudgetPolicy,
     PolicyName.WEIGHTED: WeightedPolicy,
     PolicyName.USER_SELECTED: UserSelectedPolicy,
+    PolicyName.MANUAL_APPROVAL: ManualApprovalPolicy,
     PolicyName.MANUAL_REVIEW: ManualReviewPolicy,
 }
 

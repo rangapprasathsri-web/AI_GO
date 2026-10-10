@@ -215,6 +215,7 @@ class Orchestrator:
         # Approval gate
         requires_approval = (
             cost_est.estimated_cost > self.config.policy.approval_required_above_cost
+            or policy_name in (PolicyName.MANUAL_APPROVAL, PolicyName.MANUAL_REVIEW)
         )
 
         # Build alternatives

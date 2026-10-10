@@ -41,9 +41,19 @@ class PolicyName(str, Enum):
     BASELINE_ALWAYS_MAX = "baseline_always_max"
     RULE_BASED = "rule_based"
     CHEAPEST_MEETING_QUALITY = "cheapest_meeting_quality"
+    QUALITY_FIRST_WITHIN_BUDGET = "quality_first_within_budget"
+    LATENCY_FIRST_WITHIN_BUDGET = "latency_first_within_budget"
     WEIGHTED = "weighted"
     USER_SELECTED = "user_selected"
+    MANUAL_APPROVAL = "manual_approval"
     MANUAL_REVIEW = "manual_review"
+
+
+class DataOrigin(str, Enum):
+    SIMULATED = "simulated"
+    ESTIMATED = "estimated"
+    PROVIDER_REPORTED = "provider_reported"
+    BILLING_CONFIRMED = "billing_confirmed"
 
 
 # ── Quality floor ──────────────────────────────────────────────────────
@@ -155,6 +165,10 @@ class UserRequest(BaseModel):
     role: str = "requester"  # "requester" or "admin"
     preferred_strategy: Optional[str] = None  # for user_selected policy
     override_reason: Optional[str] = None
+    max_budget: Optional[float] = None
+    max_latency: Optional[float] = None
+    quality_level: Optional[str] = None
+    policy_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -180,7 +194,9 @@ class CostEstimate(BaseModel):
     estimated_cost: float
     currency: str = "USD"
     source: str = "placeholder"
+    source_updated_at: str = "2026-10-01"
     is_simulated: bool = True
+    data_origin: DataOrigin = DataOrigin.SIMULATED
     breakdown: dict[str, float] = Field(default_factory=dict)
 
 
@@ -191,7 +207,9 @@ class CostRecord(BaseModel):
     actual_cost: float
     currency: str = "USD"
     source: str = "placeholder"
+    source_updated_at: str = "2026-10-01"
     is_simulated: bool = True
+    data_origin: DataOrigin = DataOrigin.SIMULATED
     attempts: int = 1
     includes_retries: bool = False
     breakdown: dict[str, float] = Field(default_factory=dict)
@@ -254,6 +272,7 @@ class ExecutionResult(BaseModel):
     actual_cost: float = 0.0
     latency_s: float = 0.0
     is_simulated: bool = True
+    data_origin: DataOrigin = DataOrigin.SIMULATED
     error: Optional[str] = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
