@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 import firebase_admin
@@ -150,7 +150,7 @@ class FirebaseRepository(StorageInterface):
             "isPlaceholder": bool(gen.get("is_placeholder", True)),
             "placeholderLabel": gen.get("placeholder_label") or "DEMO PLACEHOLDER: illustrative placeholder asset",
             "configVersion": gen.get("config_version", 1),
-            "createdAt": gen.get("created_at") or datetime.utcnow().isoformat() + "Z",
+            "createdAt": gen.get("created_at") or datetime.now(timezone.utc).isoformat(),
             "serverTimestamp": {".sv": "timestamp"},
         }
 
@@ -365,7 +365,7 @@ class FirebaseRepository(StorageInterface):
             "rating": feedback.get("rating"),
             "suggested_tier": feedback.get("suggested_tier"),
             "comment": feedback.get("comment"),
-            "created_at": feedback.get("created_at") or datetime.utcnow().isoformat() + "Z",
+            "created_at": feedback.get("created_at") or datetime.now(timezone.utc).isoformat(),
         }
         self._get_ref(f"feedback/{fb_id}").set(fb_data)
 
@@ -391,7 +391,7 @@ class FirebaseRepository(StorageInterface):
             "version": version,
             "config_data": config_data,
             "author": author,
-            "saved_at": datetime.utcnow().isoformat() + "Z",
+            "saved_at": datetime.now(timezone.utc).isoformat(),
             "serverTimestamp": {".sv": "timestamp"},
         }
         self._get_ref(f"config/{domain}/versions/{version}").set(ver_record)

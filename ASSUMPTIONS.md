@@ -131,3 +131,21 @@ This document records all explicit assumptions, simulated data caveats, and arch
 - **Added Units Proxy**: Local processing time is converted into relative compute units via configurable factor (`time_to_units_rate: 0.1`) and added to unit totals.
 - **Real-Cost Caveat**: Every ColourReady outcome prominently displays and stores the caveat: `"cost does not scale exactly with pixels"`.
 - **Engine Isolation**: `backend/engine/colour_ready.py` imports only standard libraries, OpenCV, NumPy, and Pillow; zero imports from `backend.domains`, `backend.adapters`, or `backend.api`.
+
+## 16. Frontend Firebase Web API Key & Console Restrictions
+- **Public Client Key**: The Firebase Web API Key (`apiKey: "AIzaSyBB..."`) configured in `frontend/index.html` (under `window.FIREBASE_CONFIG`) is a public client identifier required by the Firebase Web SDK for browser-side authentication and Realtime Database listeners.
+- **Mandatory Console Restrictions**: Public client API keys cannot be hidden in client-side HTML/JS bundles. To secure this key against abuse or quota exhaustion, it **must be restricted** in the Google Cloud / Firebase Console:
+  1. **Application Restrictions**: Configure HTTP Referrer (Web site) restrictions to whitelist only authorized domain origins (e.g., `localhost:8000`, `127.0.0.1:8000`, and authorized production domains).
+  2. **API Restrictions**: Restrict the key to only authorize calls to necessary Firebase APIs (e.g., Identity Toolkit API / Firebase Authentication, and Firebase Realtime Database API).
+- **Backend Admin Credentials Separation**: Server-side administrative operations and mutations use Firebase Admin SDK credentials (`GOOGLE_APPLICATION_CREDENTIALS`), which are strictly isolated on the backend and never exposed to the frontend.
+
+## 17. Credential Isolation & Gemini Key Rotation
+- **Git History Absence**: Verification via `git log --all -- .env` confirmed that `.env` was never committed to the git repository history and is strictly git-ignored.
+- **Distribution Exposure & Rotation Recommendation**: Because `.env` containing a live `GEMINI_API_KEY` was packaged inside the distributed `.zip` archive, the key was distributed to recipients. It is strongly advised to rotate this key immediately in Google AI Studio / Google Cloud Console to invalidate the distributed credential.
+- **Header Transmission & Sanitization**: The backend Gemini adapter sends the key via the `x-goog-api-key` HTTP header rather than query parameters (`?key=...`), and all logging/error formatters actively sanitize API keys and full URLs before output.
+
+## 18. Groq API Keys for Prompt Pre-verification & Chatbot
+- **Primary & Fallback Provisioning**: `GROQ_API_KEY` and `GROQ_API_KEY_FALLBACK` environment variables are provisioned for prompt pre-verification, prompt preprocessing, and chatbot workflows.
+- **Failover Architecture**: When processing prompt pre-verification or chatbot interactions, the primary key is utilized first; if rate limits (HTTP 429) or transient provider outages occur, requests gracefully failover to the fallback key without disrupting user interactions.
+- **Secret Hygiene**: Both Groq keys are stored strictly in `.env` (git-ignored) with placeholder values in `.env.example`, ensuring zero secrets are committed or printed.
+

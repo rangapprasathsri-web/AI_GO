@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import copy
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -49,7 +49,7 @@ class ConfigVersionManager:
         entry = {
             "version": version_num,
             "config": config.model_dump(),
-            "saved_at": datetime.utcnow().isoformat(),
+            "saved_at": datetime.now(timezone.utc).isoformat(),
             "author": author,
         }
         self._versions.append(entry)

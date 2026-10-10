@@ -21,10 +21,12 @@ import base64
 import io
 import logging
 import os
+import re
 import sys
 import time
 from typing import Any, Optional
 
+import httpx
 import requests
 from PIL import Image
 
@@ -240,6 +242,17 @@ class LiveImageAdapter(BaseAdapter):
         # Demo mode
         return self._fallback_mock.execute(strategy, request)
 
+    def _sanitize_text(self, text: str) -> str:
+        if not text:
+            return ""
+        if self._gemini_api_key:
+            text = text.replace(self._gemini_api_key, "[REDACTED]")
+        if self._openai_api_key:
+            text = text.replace(self._openai_api_key, "[REDACTED]")
+        text = re.sub(r"key=[A-Za-z0-9_-]+", "key=[REDACTED]", text)
+        text = re.sub(r"https?://[^\s'\"<>]+", "[URL_REDACTED]", text)
+        return text
+
     def _execute_gemini(self, strategy: StrategyConfig, request: UserRequest) -> ExecutionResult:
         """
         Generate image using Google AI Studio / Gemini API.
@@ -260,8 +273,11 @@ class LiveImageAdapter(BaseAdapter):
             model = "gemini-3-pro-image"
             cost = 0.060
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={self._gemini_api_key}"
-        headers = {"Content-Type": "application/json"}
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": self._gemini_api_key,
+        }
         prompt_text = request.prompt.strip() or "Cute cat"
         category = request.inputs.get("_category", "").lower()
         if "color" in category:
@@ -274,7 +290,7 @@ class LiveImageAdapter(BaseAdapter):
 
         for attempt in range(2):
             try:
-                resp = requests.post(url, json=payload, headers=headers, timeout=20)
+                resp = httpx.post(url, json=payload, headers=headers, timeout=20.0)
                 if resp.status_code == 200:
                     data = resp.json()
                     cands = data.get("candidates", [])
@@ -306,10 +322,11 @@ class LiveImageAdapter(BaseAdapter):
                                     },
                                 )
                 elif resp.status_code == 429:
-                    logger.warning(f"Google Gemini rate limit / quota exceeded (429): {resp.text[:200]}")
+                    logger.warning("Google Gemini rate limit / quota exceeded (429)")
                     break
             except Exception as e:
-                logger.warning(f"Google Gemini request attempt {attempt + 1} failed: {e}")
+                safe_err = self._sanitize_text(str(e))
+                logger.warning(f"Google Gemini request attempt {attempt + 1} failed: {safe_err}")
                 time.sleep(1.0)
 
         return ExecutionResult(
@@ -396,12 +413,14 @@ class LiveImageAdapter(BaseAdapter):
                         },
                     )
                 else:
-                    logger.warning(f"OpenAI API error {resp.status_code}: {resp.text}")
+                    safe_resp = self._sanitize_text(resp.text[:200])
+                    logger.warning(f"OpenAI API error {resp.status_code}: {safe_resp}")
                     if resp.status_code == 401:
                         # Bad key, do not retry
                         break
             except Exception as e:
-                logger.warning(f"OpenAI request attempt {attempt + 1} failed: {e}")
+                safe_err = self._sanitize_text(str(e))
+                logger.warning(f"OpenAI request attempt {attempt + 1} failed: {safe_err}")
                 time.sleep(1.0)
 
         # Return failed result if all retries exhausted
@@ -494,7 +513,8 @@ class LiveImageAdapter(BaseAdapter):
                         },
                     )
             except Exception as e:
-                logger.warning(f"Live diffusion attempt with {active_tag} failed: {e}")
+                safe_err = self._sanitize_text(str(e))
+                logger.warning(f"Live diffusion attempt with {active_tag} failed: {safe_err}")
 
         return ExecutionResult(
             request_id=request.id,

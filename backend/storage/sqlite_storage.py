@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Generator, Optional
 
@@ -557,7 +557,7 @@ class SQLiteStorage(StorageInterface):
             conn.execute("""
                 INSERT INTO config_versions (domain, version, config_data, author, saved_at)
                 VALUES (?, ?, ?, ?, ?)
-            """, (domain, version, json.dumps(config_data), author, datetime.utcnow().isoformat()))
+            """, (domain, version, json.dumps(config_data), author, datetime.now(timezone.utc).isoformat()))
 
     def get_config_versions(self, domain: str) -> list[dict[str, Any]]:
         with self._get_conn() as conn:
@@ -711,7 +711,7 @@ class SQLiteStorage(StorageInterface):
                 1 if gen.get("is_placeholder", True) else 0,
                 gen.get("placeholder_label", ""),
                 gen.get("preview_url") or gen.get("preview_image_url"),
-                gen.get("created_at") or datetime.utcnow().isoformat(),
+                gen.get("created_at") or datetime.now(timezone.utc).isoformat(),
                 json.dumps(gen.get("purpose_fit")) if gen.get("purpose_fit") is not None else None,
                 json.dumps(gen.get("colour_ready")) if gen.get("colour_ready") is not None else None,
             ))
@@ -792,7 +792,7 @@ class SQLiteStorage(StorageInterface):
                 feedback.get("rating"),
                 feedback.get("suggested_tier"),
                 feedback.get("comment"),
-                feedback.get("created_at") or datetime.utcnow().isoformat(),
+                feedback.get("created_at") or datetime.now(timezone.utc).isoformat(),
             ))
 
     def get_feedback(self, generation_id: str) -> Optional[dict[str, Any]]:

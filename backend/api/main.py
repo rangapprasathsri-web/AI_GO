@@ -1,30 +1,48 @@
 """
 FastAPI application for Adaptive AI Request Optimizer.
 
-Exposes REST endpoints for:
-- Purpose capture and request routing
-- Side-by-side decision preview (recommended vs next level up)
-- Execution and quality gate verification
-- Human ratings (1 to 5 stars)
-- Role-based responses (requester vs admin)
-- School quota tracking and showback report
-- Live hot-reloading configuration management
-- Workload evaluation with lever savings attribution
+Configuration Domain Coexistence:
+1. Legacy Domain (`backend/domains/education_images.yaml`):
+   - Domain ID: 'education_images'
+   - Used by legacy orchestrator and decision pipeline routes:
+     * POST /api/request (Request intake and pipeline processing)
+     * POST /api/preview (Decision preview and policy explanation)
+     * POST /api/rating (Human in the loop 1-5 star ratings)
+     * GET /api/quota/{school_id} and GET /api/showback (School spend showback)
+     * GET /api/analytics (Legacy aggregate metrics)
+     * POST /api/eval (Workload evaluation runner)
+     * PUT /api/config when domain == 'education_images'
+
+2. Resource Optimizer Domain (`backend/domains/image_resource_optimizer.yaml`):
+   - Domain ID: 'image_resource_optimizer'
+   - Used by modern purpose-driven compute optimization routes:
+     * POST /api/recommend (Interactive tier recommendation & purpose floor)
+     * POST /api/generate (Tier-confirmed image generation, ColourReady pipeline, Purpose-Fit validation)
+     * GET /api/history and GET /api/history/{gen_id} (Resource unit generation logs)
+     * GET /api/history/export (CSV export of computational unit savings)
+     * GET /api/summary and GET /api/analytics/savings (Avoided compute and origin breakdown)
+     * POST /api/feedback and GET /api/feedback (User quality rating & next-tier escalation)
+     * GET /api/benchmark and POST /api/benchmark/run (Comparative multi-prompt benchmark suite)
+     * GET /api/config and PUT /api/config (Active domain configuration management)
 """
 from __future__ import annotations
 
 import base64
 import io
+import logging
+import os
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Header, Query, Response
+from fastapi import Depends, FastAPI, HTTPException, Header, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+logger = logging.getLogger(__name__)
 
 from backend.adapters.live_image_adapter import LiveImageAdapter
 from backend.adapters.mock_image import MockImageAdapter
@@ -61,13 +79,46 @@ app = FastAPI(
     version="2.0.0",
 )
 
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000")
+allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def require_admin_token(x_admin_token: Optional[str] = Header(None, alias="X-Admin-Token")):
+    """Server-side admin authorization guard. role=admin query params cannot unlock."""
+    admin_token = os.getenv("ADMIN_TOKEN", "").strip()
+    if not admin_token:
+        # If ADMIN_TOKEN is unset, allow in demo mode
+        return True
+    if not x_admin_token or x_admin_token != admin_token:
+        raise HTTPException(
+            status_code=401,
+            detail="Admin token required or invalid. Please supply X-Admin-Token header.",
+        )
+    return True
+
+
+def make_legacy_alias(legacy_path: str, api_path: str, methods: list[str] = ["GET"]):
+    """Registers legacy_path as a thin alias calling the real /api/* endpoint handler."""
+    for method in methods:
+        for route in list(app.routes):
+            if getattr(route, "path", None) == api_path and method in getattr(route, "methods", []):
+                app.add_api_route(
+                    legacy_path,
+                    route.endpoint,
+                    methods=[method],
+                    dependencies=getattr(route, "dependencies", None),
+                    response_model=getattr(route, "response_model", None),
+                    include_in_schema=False,
+                )
+                break
 
 # ── State Initialization ──────────────────────────────────────────────
 STORAGE = create_storage(db_path="data/optimizer.db")
@@ -237,17 +288,27 @@ def serialize_record(record: RequestRecord, role: str) -> Dict[str, Any]:
 
 # ── Endpoints ─────────────────────────────────────────────────────────
 
-@app.get("/health")
 @app.get("/api/health")
 def health_check():
     meas_env = detect_measurement_level()
     storage_status = getattr(STORAGE, "get_status", lambda: {"active_backend": "sqlite"})()
+    raw_mode = ACTIVE_IMAGE_ADAPTER.mode
+    image_mode = "live-diffusion" if raw_mode == "live_diffusion" else raw_mode
+    admin_token_set = bool(os.getenv("ADMIN_TOKEN", "").strip())
     return {
         "status": "healthy",
         "service": "Adaptive AI Image Resource Optimizer",
         "active_domain": CURRENT_CONFIG.domain,
         "resource_domain": RESOURCE_CONFIG.domain,
         "version": RESOURCE_CONFIG.version,
+        "config_versions": {
+            "education_images": CURRENT_CONFIG.version,
+            "image_resource_optimizer": RESOURCE_CONFIG.version,
+        },
+        "education_images_version": CURRENT_CONFIG.version,
+        "image_resource_optimizer_version": RESOURCE_CONFIG.version,
+        "active_image_mode": image_mode,
+        "image_mode": image_mode,
         "measurement_level": meas_env.level,
         "measurement_level_name": meas_env.level_name,
         "measurement_environment": meas_env.to_dict(),
@@ -258,10 +319,11 @@ def health_check():
         "is_real_provider": ACTIVE_IMAGE_ADAPTER.is_real,
         "real_generations_used": ACTIVE_IMAGE_ADAPTER.real_generations_count,
         "real_generations_cap": ACTIVE_IMAGE_ADAPTER.real_generations_cap,
+        "admin_configured": admin_token_set,
+        "admin_open": not admin_token_set,
     }
 
 
-@app.get("/config")
 @app.get("/api/config")
 def get_config(domain: Optional[str] = None, role: str = Query(default="requester")):
     """Get active domain configuration (sanitized, no secrets)."""
@@ -275,8 +337,7 @@ def get_config(domain: Optional[str] = None, role: str = Query(default="requeste
     return sanitize_config(RESOURCE_CONFIG.model_dump())
 
 
-@app.put("/config")
-@app.put("/api/config")
+@app.put("/api/config", dependencies=[Depends(require_admin_token)])
 def update_domain_config(req: ConfigUpdateRequest):
     """Admin updates configuration dynamically without restart."""
     global CURRENT_CONFIG, ORCHESTRATOR, RESOURCE_CONFIG, RESOURCE_OPTIMIZER
@@ -303,11 +364,13 @@ def update_domain_config(req: ConfigUpdateRequest):
                 "config": sanitize_config(CURRENT_CONFIG.model_dump()),
             }
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            req_id = getattr(req, "request_id", None) or "cfg-legacy"
+            logger.error("Configuration update failed for legacy domain [request_id=%s]: %s", req_id, str(e), exc_info=True)
+            raise HTTPException(status_code=400, detail=f"Configuration update failed: {str(e)}")
 
     try:
         updated = update_config(RESOURCE_CONFIG, req.updates)
-        val_errors, _ = validate_config(updated)
+        val_errors = validate_config(updated)
         if val_errors:
             raise ConfigValidationError(val_errors)
         RESOURCE_CONFIG = updated
@@ -325,7 +388,9 @@ def update_domain_config(req: ConfigUpdateRequest):
             "config": sanitize_config(RESOURCE_CONFIG.model_dump()),
         }
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        req_id = getattr(req, "request_id", None) or "cfg-resource"
+        logger.error("Configuration update failed for resource domain [request_id=%s]: %s", req_id, str(e), exc_info=True)
+        raise HTTPException(status_code=400, detail=f"Configuration update failed: {str(e)}")
 
 
 class RollbackRequest(BaseModel):
@@ -339,7 +404,7 @@ def list_config_versions():
     return STORAGE.get_config_versions(CURRENT_CONFIG.domain)
 
 
-@app.post("/api/config/rollback")
+@app.post("/api/config/rollback", dependencies=[Depends(require_admin_token)])
 def rollback_configuration(req: RollbackRequest):
     """Roll back configuration to specified or previous version."""
     global CURRENT_CONFIG, ORCHESTRATOR
@@ -384,7 +449,6 @@ def rollback_configuration(req: RollbackRequest):
     }
 
 
-@app.post("/recommend")
 @app.post("/api/recommend")
 def recommend_tier(req: RecommendRequest):
     """
@@ -422,7 +486,6 @@ def recommend_tier(req: RecommendRequest):
     return rec
 
 
-@app.post("/generate")
 @app.post("/api/generate")
 def generate_image_tier(req: GenerateRequest):
     """
@@ -649,7 +712,7 @@ def generate_image_tier(req: GenerateRequest):
         "placeholder_label": placeholder_label,
         "preview_url": preview_url,
         "purpose_fit": fit_res.to_dict(),
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "explanation": rec_result.get("explanation"),
         "deciding_factor": rec_result.get("deciding_factor"),
         "provider_info": {
@@ -673,18 +736,41 @@ def generate_image_tier(req: GenerateRequest):
     return gen_record
 
 
-@app.get("/history")
-def get_resource_history(
-    purpose: Optional[str] = None,
-    tier: Optional[str] = None,
-    status: Optional[str] = None,
-    limit: int = Query(default=100, ge=1, le=500),
-):
-    """Retrieve history of image generations with units and savings."""
-    return STORAGE.list_generations(purpose=purpose, tier=tier, status=status, limit=limit)
+@app.get("/api/history/export")
+@app.get("/api/history/export.csv")
+def export_history_csv():
+    """Export generation history as CSV."""
+    import csv
+    records = STORAGE.list_generations(limit=1000)
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "id", "timestamp", "purpose", "tier", "estimated_units",
+        "baseline_units", "savings_units", "savings_percentage",
+        "data_origin", "status", "override_flag", "override_reason"
+    ])
+    for r in records:
+        writer.writerow([
+            r.get("id"),
+            r.get("created_at"),
+            r.get("purpose"),
+            r.get("tier"),
+            r.get("estimated_units"),
+            r.get("baseline_units"),
+            r.get("savings_units"),
+            r.get("savings_percentage"),
+            r.get("data_origin"),
+            r.get("status"),
+            r.get("override_flag"),
+            r.get("override_reason") or "",
+        ])
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=generation_history.csv"}
+    )
 
 
-@app.get("/history/{gen_id}")
 @app.get("/api/history/{gen_id}")
 def get_resource_generation_by_id(gen_id: str):
     """Retrieve a single generation or request by ID."""
@@ -697,7 +783,6 @@ def get_resource_generation_by_id(gen_id: str):
     raise HTTPException(status_code=404, detail=f"Generation '{gen_id}' not found")
 
 
-@app.get("/summary")
 @app.get("/api/summary")
 def get_resource_summary():
     """Retrieve cumulative savings summary with data_origin split."""
@@ -708,7 +793,6 @@ def get_resource_summary():
     return summary
 
 
-@app.get("/analytics/savings")
 @app.get("/api/analytics/savings")
 def get_savings_analytics(uid: Optional[str] = None):
     """
@@ -717,7 +801,7 @@ def get_savings_analytics(uid: Optional[str] = None):
     and purpose breakdowns from historical generation records.
     """
     records = STORAGE.list_generations(limit=1000)
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     week_ago = now - timedelta(days=7)
     month_ago = now - timedelta(days=30)
 
@@ -764,8 +848,15 @@ def get_savings_analytics(uid: Optional[str] = None):
         created_dt = now
         if created_str:
             try:
-                created_dt = datetime.fromisoformat(created_str.replace("Z", "+00:00").split("+")[0])
-            except Exception:
+                if "+" in created_str or created_str.endswith("Z"):
+                    created_dt = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+                    if created_dt.tzinfo is None:
+                        created_dt = created_dt.replace(tzinfo=timezone.utc)
+                else:
+                    created_dt = datetime.fromisoformat(created_str).replace(tzinfo=timezone.utc)
+            except Exception as e:
+                rec_id = r.get("id") or "unknown"
+                logger.warning("Failed to parse generation created_at '%s' for record [request_id=%s]: %s", created_str, rec_id, e)
                 created_dt = now
 
         if created_dt >= week_ago:
@@ -887,42 +978,6 @@ def get_savings_analytics(uid: Optional[str] = None):
     }
 
 
-@app.get("/history/export.csv")
-@app.get("/api/history/export")
-def export_history_csv():
-    """Export generation history as CSV."""
-    import csv
-    records = STORAGE.list_generations(limit=1000)
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow([
-        "id", "timestamp", "purpose", "tier", "estimated_units",
-        "baseline_units", "savings_units", "savings_percentage",
-        "data_origin", "status", "override_flag", "override_reason"
-    ])
-    for r in records:
-        writer.writerow([
-            r.get("id"),
-            r.get("created_at"),
-            r.get("purpose"),
-            r.get("tier"),
-            r.get("estimated_units"),
-            r.get("baseline_units"),
-            r.get("savings_units"),
-            r.get("savings_percentage"),
-            r.get("data_origin"),
-            r.get("status"),
-            r.get("override_flag"),
-            r.get("override_reason") or "",
-        ])
-    return Response(
-        content=output.getvalue(),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=generation_history.csv"}
-    )
-
-
-@app.post("/feedback")
 @app.post("/api/feedback")
 def submit_feedback(req: FeedbackRequest):
     """
@@ -953,7 +1008,7 @@ def submit_feedback(req: FeedbackRequest):
         "rating": req.rating.lower(),
         "suggested_tier": suggested_tier,
         "comment": req.comment or suggestion_reason,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
     STORAGE.save_feedback(feedback_record)
     return {
@@ -967,7 +1022,6 @@ def submit_feedback(req: FeedbackRequest):
     }
 
 
-@app.get("/feedback")
 @app.get("/api/feedback")
 def list_user_feedback(generation_id: Optional[str] = None):
     """Retrieve recorded user feedback."""
@@ -977,7 +1031,6 @@ def list_user_feedback(generation_id: Optional[str] = None):
     return STORAGE.list_feedback()
 
 
-@app.get("/replay")
 @app.get("/api/replay")
 def get_replay_items(purpose: Optional[str] = None, tier: Optional[str] = None):
     """Get replay snapshot entries for offline demonstration safety net."""
@@ -988,7 +1041,6 @@ def get_replay_items(purpose: Optional[str] = None, tier: Optional[str] = None):
     return rc.list_replays()
 
 
-@app.get("/benchmark")
 @app.get("/api/benchmark")
 def get_benchmark_results():
     """Retrieve the latest multi-prompt benchmark summary and results."""
@@ -1003,8 +1055,7 @@ def get_benchmark_results():
         return json.load(f)
 
 
-@app.post("/benchmark/run")
-@app.post("/api/benchmark/run")
+@app.post("/api/benchmark/run", dependencies=[Depends(require_admin_token)])
 def run_benchmark_endpoint():
     """Execute reproducible multi-prompt benchmark across all policies."""
     runner = BenchmarkRunner()
@@ -1013,7 +1064,6 @@ def run_benchmark_endpoint():
     return results
 
 
-@app.get("/reports/{filename}")
 @app.get("/api/reports/{filename}")
 def download_benchmark_report(filename: str):
     """Download generated benchmark reports (json, csv, md)."""
@@ -1286,7 +1336,7 @@ def get_analytics():
     return STORAGE.get_analytics_summary(CURRENT_CONFIG.domain)
 
 
-@app.post("/api/eval")
+@app.post("/api/eval", dependencies=[Depends(require_admin_token)])
 def run_evaluation(sample_size: int = Query(default=30, ge=10, le=100), seed: int = Query(default=42)):
     """
     Run evaluation comparing baseline against adaptive optimizer
@@ -1314,19 +1364,47 @@ def run_evaluation(sample_size: int = Query(default=30, ge=10, le=100), seed: in
     }
 
 
+# ── Legacy Route Aliases (Thin aliases through one helper so behaviour cannot drift) ──
+make_legacy_alias("/health", "/api/health", ["GET"])
+make_legacy_alias("/config", "/api/config", ["GET", "PUT"])
+make_legacy_alias("/recommend", "/api/recommend", ["POST"])
+make_legacy_alias("/generate", "/api/generate", ["POST"])
+make_legacy_alias("/history/export.csv", "/api/history/export", ["GET"])
+make_legacy_alias("/history/{gen_id}", "/api/history/{gen_id}", ["GET"])
+make_legacy_alias("/history", "/api/history", ["GET"])
+make_legacy_alias("/summary", "/api/summary", ["GET"])
+make_legacy_alias("/analytics/savings", "/api/analytics/savings", ["GET"])
+make_legacy_alias("/feedback", "/api/feedback", ["POST", "GET"])
+make_legacy_alias("/replay", "/api/replay", ["GET"])
+make_legacy_alias("/benchmark", "/api/benchmark", ["GET"])
+make_legacy_alias("/benchmark/run", "/api/benchmark/run", ["POST"])
+make_legacy_alias("/reports/{filename}", "/api/reports/{filename}", ["GET"])
+
+
 # ── Mount Static Frontend Files ───────────────────────────────────────
 frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
-frontend_dir.mkdir(parents=True, exist_ok=True)
+fonts_dir = frontend_dir / "fonts"
 
 if (frontend_dir / "index.html").exists():
     app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
-    if (frontend_dir / "fonts").exists():
-        app.mount("/fonts", StaticFiles(directory=str(frontend_dir / "fonts")), name="fonts")
 
     @app.get("/")
     def serve_index():
-        return FileResponse(str(frontend_dir / "index.html"))
+        idx_path = frontend_dir / "index.html"
+        if not idx_path.is_file():
+            raise HTTPException(status_code=404, detail="index.html not found")
+        return FileResponse(str(idx_path))
 
     @app.get("/tokens.css")
     def serve_tokens():
-        return FileResponse(str(frontend_dir / "tokens.css"), media_type="text/css")
+        tokens_path = frontend_dir / "tokens.css"
+        if not tokens_path.is_file():
+            raise HTTPException(status_code=404, detail="tokens.css not found")
+        return FileResponse(str(tokens_path), media_type="text/css")
+
+    @app.get("/fonts/{font_name}")
+    def serve_font(font_name: str):
+        font_path = fonts_dir / font_name
+        if not font_path.is_file():
+            raise HTTPException(status_code=404, detail=f"Font file '{font_name}' not found")
+        return FileResponse(str(font_path), media_type="font/woff2")

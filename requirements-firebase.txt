@@ -1,0 +1,3 @@
+# Optional extra for Firebase Realtime Database persistence
+# Default storage is SQLite; install this only if STORAGE_MODE=firebase
+firebase-admin>=6.2.0

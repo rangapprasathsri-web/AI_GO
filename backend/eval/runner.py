@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import statistics
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -263,7 +263,7 @@ class ReportWriter:
         domain: str,
     ) -> tuple[str, str]:
         """Write JSON and Markdown reports. Returns (json_path, md_path)."""
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
         report_data = {
             "evaluation_metadata": {

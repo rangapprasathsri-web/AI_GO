@@ -5,6 +5,7 @@ __pycache__/
 eval_reports/
 data/*.db
 data/outbox.json
+data/replay_cache.json
 .env
 .env.local
 *.service-account.json

@@ -7,7 +7,7 @@ They MUST NOT reference any specific domain, adapter, or API code.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Optional
 
@@ -186,7 +186,7 @@ class UserRequest(BaseModel):
     max_latency: Optional[float] = None
     quality_level: Optional[str] = None
     policy_id: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -300,7 +300,7 @@ class Decision(BaseModel):
     requires_approval: bool = False
     policy_used: str = ""
     filtered_strategies: dict[str, str] = Field(default_factory=dict)  # name -> reason filtered
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ── Execution models ──────────────────────────────────────────────────
@@ -355,4 +355,4 @@ class RequestRecord(BaseModel):
     moderation_reason: Optional[str] = None
     human_rating: Optional[int] = None  # 1-5 optional
     moderation_result: Optional[dict[str, Any]] = None
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

@@ -20,15 +20,20 @@ The **Adaptive AI Image Resource Optimizer** is a production-grade, configurable
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (3 Commands)
 
-### 1. Run the Test Suite
-The entire test suite (124 tests including all 8 required validation scenarios, edge cases, contracts, and boundary isolation) passes with zero external credentials:
 ```bash
-make test
-# or
-python -m pytest backend/tests/ -v
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Run all tests
+python -m pytest backend/tests -q
+
+# 3. Serve the application
+python -m uvicorn backend.api.main:app --host 0.0.0.0 --port 8000
 ```
+
+### Detailed Commands & Testing
 
 ### 2. Run the 7-Step Demo Script
 Reproduces the complete 7-step evaluation from Section 11 of the official problem statement:

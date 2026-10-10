@@ -8,7 +8,7 @@ All replay items are explicitly marked: 'Replay of an earlier run (date)'.
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -133,7 +133,7 @@ class ReplayCache:
     def save_replay(self, entry: dict[str, Any]) -> None:
         entries = self._load_all()
         entry_copy = dict(entry)
-        entry_copy["recorded_at"] = datetime.utcnow().isoformat() + "Z"
+        entry_copy["recorded_at"] = datetime.now(timezone.utc).isoformat()
         entry_copy["is_replay"] = True
         entry_copy["replay_label"] = f"Replay of an earlier run ({entry_copy['recorded_at']})"
         # Deduplicate by id if exists

@@ -235,19 +235,22 @@ class FallbackStorage(StorageInterface):
 def create_storage(mode: Optional[str] = None, db_path: str = "data/optimizer.db") -> StorageInterface:
     """
     Factory creating configured storage repository.
-    Handles STORAGE_MODE=local or STORAGE_MODE=firebase.
+    Handles STORAGE_MODE=sqlite/local or STORAGE_MODE=firebase.
+    Defaults to SQLite.
     """
-    selected_mode = mode or os.getenv("STORAGE_MODE", "firebase").lower()
+    selected_mode = mode or os.getenv("STORAGE_MODE", "sqlite").lower()
     fallback_sqlite = SQLiteStorage(db_path=db_path)
 
-    if selected_mode == "local":
+    if selected_mode in ("local", "sqlite"):
+        logger.info("[STORAGE] Active storage backend: SQLite (mode: %s, db_path: %s)", selected_mode, db_path)
         return FallbackStorage(primary=None, fallback=fallback_sqlite, storage_mode="local")
 
     # Mode is firebase: attempt initialization of FirebaseRepository
     try:
         from backend.storage.firebase_repository import FirebaseRepository
         primary_firebase = FirebaseRepository()
+        logger.info("[STORAGE] Active storage backend: Firebase RTDB (fallback: SQLite)")
         return FallbackStorage(primary=primary_firebase, fallback=fallback_sqlite, storage_mode="firebase")
     except Exception as e:
-        logger.warning(f"Could not initialize Firebase repository ({e}). Using SQLite fallback.")
+        logger.info(f"[STORAGE] Active storage backend: SQLite fallback (Firebase initialization skipped/failed: {e})")
         return FallbackStorage(primary=None, fallback=fallback_sqlite, storage_mode="firebase")

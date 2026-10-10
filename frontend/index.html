@@ -59,6 +59,7 @@
       --border: #E8E8ED;
       --border-strong: #D6D6DC;
       --lavender: #F2EDFF;
+      --lavender-border: #DCD2FD;
 
       /* Typography Colors (WCAG AA Compliant) */
       --ink: #111113;
@@ -91,6 +92,82 @@
       --shadow-hover: 0 4px 16px rgba(110, 52, 226, 0.12);
 
       /* Typography Stacks (Geist across the entire application) */
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --canvas: #0F0F12;
+        --surface: #18181D;
+        --border: #2A2A33;
+        --border-strong: #3D3D4A;
+        --lavender: #231B38;
+        --lavender-border: #44326A;
+
+        --ink: #F4F4F6;
+        --muted: #A3A3AF;
+        --muted-strong: #C4C4D0;
+
+        --purple-500: #A885FF;
+        --purple-600: #8652F5;
+        --purple-700: #6F3CE3;
+
+        --green: #7BCB2C;
+        --green-text: #95E848;
+        --green-surface: #182B10;
+        --amber-text: #FBBF24;
+        --amber-surface: #2E1F0B;
+        --rose-text: #FB7185;
+        --rose-surface: #2F1218;
+
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-pill: 9999px;
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+        --shadow-hover: 0 4px 16px rgba(134, 82, 245, 0.25);
+
+        --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-mono: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      }
+    }
+
+    [data-theme="dark"] {
+      --canvas: #0F0F12;
+      --surface: #18181D;
+      --border: #2A2A33;
+      --border-strong: #3D3D4A;
+      --lavender: #231B38;
+      --lavender-border: #44326A;
+
+      --ink: #F4F4F6;
+      --muted: #A3A3AF;
+      --muted-strong: #C4C4D0;
+
+      --purple-500: #A885FF;
+      --purple-600: #8652F5;
+      --purple-700: #6F3CE3;
+
+      --green: #7BCB2C;
+      --green-text: #95E848;
+      --green-surface: #182B10;
+      --amber-text: #FBBF24;
+      --amber-surface: #2E1F0B;
+      --rose-text: #FB7185;
+      --rose-surface: #2F1218;
+
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 4px 16px rgba(134, 82, 245, 0.25);
+
       --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       --font-mono: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
     }
@@ -3556,12 +3633,18 @@
               Edit tier parameters, purpose floors, budgets, and policies. Strict validation rejects invalid
               configurations without crashing.
             </div>
+            <div style="margin: 12px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <label for="adminTokenInput" style="font-size: 13px; font-weight: 500;">Admin Token:</label>
+              <input type="password" id="adminTokenInput" placeholder="Enter X-Admin-Token" class="text-input" style="max-width: 280px; padding: 6px 12px; font-size: 13px;" />
+              <span id="adminOpenNote" style="display: none; font-size: 12px; color: var(--amber-text); background: var(--amber-surface); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong);">demo: admin is open</span>
+            </div>
             <textarea id="configEditor" class="text-input"
               style="font-family: var(--font-mono); height: 260px; font-size: 13px; line-height: 1.45;" spellcheck="false"
               aria-label="Domain Configuration JSON Editor"></textarea>
             <div style="margin-top: 10px; font-size: 12px; color: var(--muted-strong);" id="configSaveStatus">
               Loaded active configuration.
             </div>
+          </div>
         </section>
       </div> <!-- /#viewAdmin -->
 
@@ -3671,6 +3754,15 @@
 
   <!-- JAVASCRIPT LOGIC & API INTEGRATION -->
   <script>
+    // Centralized Firebase Web Configuration (Public Client SDK Identifiers)
+    window.FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc",
+      authDomain: "ai-go-a6a7a.firebaseapp.com",
+      databaseURL: "https://ai-go-a6a7a-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ai-go-a6a7a",
+      appId: "1:135018196507:web:e2b2d62bbd35390221d2be"
+    };
+
     // State
     let currentPurpose = 'coloring_sheet';
     let currentSelectedTier = 'economy';
@@ -3855,7 +3947,7 @@
     }
 
     async function firebaseRestAuth(mode, email, password) {
-      const apiKey = "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc";
+      const apiKey = window.FIREBASE_CONFIG?.apiKey || "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc";
       const endpoint = mode === 'signup'
         ? `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`
         : `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
@@ -4371,6 +4463,14 @@
         if (curH) navigateTo(curH);
       });
 
+      const adminTokInput = document.getElementById('adminTokenInput');
+      if (adminTokInput) {
+        adminTokInput.value = localStorage.getItem('aigo_admin_token') || '';
+        adminTokInput.addEventListener('input', (e) => {
+          localStorage.setItem('aigo_admin_token', e.target.value.trim());
+        });
+      }
+
       if (window.location.search.includes('modal=1')) {
         openModal(
           "Below-Floor Quality Warning",
@@ -4388,6 +4488,10 @@
         if (providerElem && data.active_provider) {
           const capInfo = data.is_real_provider ? ` • Cap: ${data.real_generations_used}/${data.real_generations_cap} real calls` : ' • Demo Mode';
           providerElem.textContent = `Active Generator: ${data.active_provider} (${data.model_name})${capInfo}`;
+        }
+        const openNote = document.getElementById('adminOpenNote');
+        if (openNote) {
+          openNote.style.display = data.admin_open ? 'inline-block' : 'none';
         }
       } catch (e) {
         console.warn('Could not fetch provider status:', e);
@@ -5217,6 +5321,11 @@
       }
     }
 
+    function getAdminToken() {
+      const input = document.getElementById('adminTokenInput');
+      return (input?.value || localStorage.getItem('aigo_admin_token') || '').trim();
+    }
+
     async function runBenchmarkNow() {
       const btn = document.getElementById('btnRunBenchmark');
       const originalText = btn ? btn.textContent : '';
@@ -5225,8 +5334,16 @@
         btn.disabled = true;
       }
       try {
-        const res = await fetch('/benchmark/run', { method: 'POST' });
+        const headers = {};
+        const adminTok = getAdminToken();
+        if (adminTok) headers['X-Admin-Token'] = adminTok;
+
+        const res = await fetch('/api/benchmark/run', { method: 'POST', headers: headers });
         const data = await res.json();
+        if (!res.ok) {
+          alert('Benchmark execution failed: ' + (data.detail || JSON.stringify(data)));
+          return;
+        }
         await loadBenchmark();
         alert('Benchmark suite execution completed! All 20 standardized prompts evaluated.');
       } catch (err) {
@@ -5241,7 +5358,7 @@
 
     async function fetchConfig() {
       try {
-        const res = await fetch('/config');
+        const res = await fetch('/api/config');
         const data = await res.json();
         activeConfig = data;
         if (data.app_name) {
@@ -5261,9 +5378,13 @@
         const updates = JSON.parse(editor.value);
         status.textContent = 'Validating and saving configuration...';
 
-        const res = await fetch('/config', {
+        const headers = { 'Content-Type': 'application/json' };
+        const adminTok = getAdminToken();
+        if (adminTok) headers['X-Admin-Token'] = adminTok;
+
+        const res = await fetch('/api/config', {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           body: JSON.stringify({
             updates: updates,
             author: 'admin_studio'
@@ -5289,9 +5410,13 @@
     async function rollbackConfig() {
       const status = document.getElementById('configSaveStatus');
       try {
+        const headers = { 'Content-Type': 'application/json' };
+        const adminTok = getAdminToken();
+        if (adminTok) headers['X-Admin-Token'] = adminTok;
+
         const res = await fetch('/api/config/rollback', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           body: JSON.stringify({ author: 'admin_studio' })
         });
         const data = await res.json();
@@ -5374,7 +5499,7 @@
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const firebaseConfig = {
+    const firebaseConfig = window.FIREBASE_CONFIG || {
       apiKey: "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc",
       authDomain: "ai-go-a6a7a.firebaseapp.com",
       databaseURL: "https://ai-go-a6a7a-default-rtdb.asia-southeast1.firebasedatabase.app",

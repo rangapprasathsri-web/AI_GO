@@ -5,7 +5,7 @@ Pipeline: validate → moderate → analyse → filter → rank → explain → 
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Optional
 
 from backend.engine.analysis import AnalysisInterface, RulesBasedAnalyser
@@ -407,7 +407,7 @@ class Orchestrator:
         else:
             record.status = RequestStatus.FAILED
 
-        record.updated_at = datetime.utcnow()
+        record.updated_at = datetime.now(timezone.utc)
         return record
 
     # ── Private helpers ───────────────────────────────────────────────
