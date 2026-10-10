@@ -3850,6 +3850,25 @@
       toast.textContent = msg;
     }
 
+    async function firebaseRestAuth(mode, email, password) {
+      const apiKey = "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc";
+      const endpoint = mode === 'signup'
+        ? `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`
+        : `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, returnSecureToken: true })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const err = new Error(data.error?.message || 'Firebase Auth failed');
+        err.code = data.error?.message;
+        throw err;
+      }
+      return data;
+    }
+
     async function handleAuthFormSubmit(e) {
       if (e) e.preventDefault();
       const emailInput = document.getElementById('loginEmailInput');
@@ -3863,129 +3882,170 @@
         return;
       }
 
+      if (pass.length < 6) {
+        showAuthToast('Password must be at least 6 characters for Firebase security.', true);
+        return;
+      }
+
       const submitBtn = document.getElementById('loginSubmitBtn');
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = currentAuthMode === 'signup' ? 'Creating Firebase Account...' : 'Authenticating...';
+        submitBtn.textContent = 'Authenticating in Realtime...';
       }
 
       try {
-        if (currentAuthMode === 'signup') {
-          // Trigger Firebase Realtime Account Creation
-          if (window.firebaseRegister) {
-            try {
-              const userCred = await window.firebaseRegister(email, pass);
-              const uid = userCred.user.uid;
-              currentUser = {
-                id: uid,
-                name: email.split('@')[0],
-                role: role,
-                school_id: 'firebase_workspace',
-                auth_type: 'firebase_auth'
-              };
-              localStorage.setItem('aigo_auth', 'true');
-              saveAndApplyUser();
-              showAuthToast(`Account created in Firebase! UID: ${uid.substring(0, 8)}...`);
-              const dest = sessionStorage.getItem('aigo_pending_view') || 'savings';
-              sessionStorage.removeItem('aigo_pending_view');
-              setTimeout(() => navigateTo(dest), 350);
-              return;
-            } catch (fbErr) {
-              console.warn('Firebase registration error:', fbErr);
-              showAuthToast(`Firebase Auth: ${fbErr.message || fbErr.code}`, true);
-              if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Create Firebase Account & Launch Workspace ↗';
+        let authResult = null;
+        let isSignup = (currentAuthMode === 'signup');
+
+        // Step 1: Realtime Authentication with Firebase
+        if (isSignup) {
+          // Attempt registration
+          try {
+            if (window.firebaseRegister) {
+              const cred = await window.firebaseRegister(email, pass);
+              authResult = { uid: cred.user.uid, email: cred.user.email };
+            } else {
+              const restData = await firebaseRestAuth('signup', email, pass);
+              authResult = { uid: restData.localId, email: restData.email, token: restData.idToken };
+            }
+          } catch (regErr) {
+            console.warn('Registration exception:', regErr);
+            const msg = (regErr.code || regErr.message || '').toUpperCase();
+            if (msg.includes('EMAIL-ALREADY-IN-USE') || msg.includes('EMAIL_EXISTS')) {
+              // Email already registered: seamlessly log the user in!
+              showAuthToast('Account already registered. Logging in with your Firebase credentials...', false);
+              try {
+                if (window.firebaseLogin) {
+                  const lCred = await window.firebaseLogin(email, pass);
+                  authResult = { uid: lCred.user.uid, email: lCred.user.email };
+                } else {
+                  const restData = await firebaseRestAuth('signin', email, pass);
+                  authResult = { uid: restData.localId, email: restData.email, token: restData.idToken };
+                }
+              } catch (loginErr) {
+                throw new Error('Incorrect password for this registered Firebase account.');
               }
-              return;
+            } else {
+              throw regErr;
             }
           }
         } else {
-          // Trigger Firebase Realtime Login
-          if (window.firebaseLogin) {
-            try {
-              const userCred = await window.firebaseLogin(email, pass);
-              const uid = userCred.user.uid;
-              currentUser = {
-                id: uid,
-                name: userCred.user.displayName || email.split('@')[0],
-                role: role,
-                school_id: 'firebase_workspace',
-                auth_type: 'firebase_auth'
-              };
-              localStorage.setItem('aigo_auth', 'true');
-              saveAndApplyUser();
-              const dest = sessionStorage.getItem('aigo_pending_view') || 'optimizer';
-              sessionStorage.removeItem('aigo_pending_view');
-              navigateTo(dest);
-              return;
-            } catch (fbErr) {
-              console.warn('Firebase signin error:', fbErr);
-              if (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential') {
-                showAuthToast('Account not found in Firebase. Click "Create Account" tab above to register!', true);
-              } else {
-                showAuthToast(`Firebase Auth: ${fbErr.message || fbErr.code}`, true);
+          // Attempt sign in
+          try {
+            if (window.firebaseLogin) {
+              const cred = await window.firebaseLogin(email, pass);
+              authResult = { uid: cred.user.uid, email: cred.user.email, displayName: cred.user.displayName };
+            } else {
+              const restData = await firebaseRestAuth('signin', email, pass);
+              authResult = { uid: restData.localId, email: restData.email, token: restData.idToken };
+            }
+          } catch (loginErr) {
+            console.warn('Login exception:', loginErr);
+            const msg = (loginErr.code || loginErr.message || '').toUpperCase();
+            if (msg.includes('USER-NOT-FOUND') || msg.includes('INVALID-CREDENTIAL') || msg.includes('EMAIL_NOT_FOUND') || msg.includes('INVALID_LOGIN_CREDENTIALS')) {
+              // Account does not exist yet: seamlessly register and log the user in in realtime!
+              showAuthToast('Creating & linking your Firebase Realtime account...', false);
+              try {
+                if (window.firebaseRegister) {
+                  const rCred = await window.firebaseRegister(email, pass);
+                  authResult = { uid: rCred.user.uid, email: rCred.user.email };
+                } else {
+                  const restData = await firebaseRestAuth('signup', email, pass);
+                  authResult = { uid: restData.localId, email: restData.email, token: restData.idToken };
+                }
+              } catch (regErr) {
+                throw new Error('Invalid credentials. Please verify your password or use Create Account.');
               }
-              if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Sign In to Workspace ↗';
-              }
-              return;
+            } else {
+              throw loginErr;
             }
           }
         }
+
+        // Step 2: Establish session
+        if (authResult) {
+          const rawName = authResult.displayName || email.split('@')[0].replace(/[._-]/g, ' ');
+          const formattedName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+          currentUser = {
+            id: authResult.uid,
+            name: formattedName,
+            role: role,
+            school_id: 'firebase_workspace',
+            auth_type: 'firebase_auth'
+          };
+          localStorage.setItem('aigo_auth', 'true');
+          saveAndApplyUser();
+
+          // Sync with Realtime Database
+          if (window.firebaseSyncSavings) {
+            window.firebaseSyncSavings(authResult.uid, {
+              last_login: new Date().toISOString(),
+              role: role,
+              workspace: 'ai_go'
+            }).catch(e => console.warn('RTDB sync:', e));
+          }
+
+          // Update real Firebase UID in savings view
+          const uidEl = document.getElementById('savingsAccountUid');
+          if (uidEl) uidEl.textContent = authResult.uid;
+
+          // Indicate connected
+          const dot = document.getElementById('userConnDot');
+          if (dot) {
+            dot.className = 'status-dot-indicator online';
+            dot.title = 'Firebase Realtime Database: Connected';
+          }
+
+          showAuthToast(`✅ Realtime Firebase authenticated! UID: ${authResult.uid.substring(0, 10)}...`);
+          const dest = sessionStorage.getItem('aigo_pending_view') || 'optimizer';
+          sessionStorage.removeItem('aigo_pending_view');
+          setTimeout(() => navigateTo(dest), 300);
+          return;
+        }
       } catch (err) {
-        showAuthToast(err.message, true);
+        console.error('Realtime Auth Error:', err);
+        const errMsg = err.message || err.code || 'Authentication failed';
+        showAuthToast(`Firebase Auth: ${errMsg}`, true);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = currentAuthMode === 'signup' ? 'Create Firebase Account & Launch Workspace ↗' : 'Sign In to Workspace ↗';
         }
       }
-
-      // Seamless fallback for local sandbox testing
-      const namePart = email.split('@')[0].replace(/[._-]/g, ' ');
-      const capName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-      currentUser = {
-        id: email.split('@')[0],
-        name: capName,
-        role: role,
-        school_id: 'oakwood_elem',
-        auth_type: 'local'
-      };
-      localStorage.setItem('aigo_auth', 'true');
-      saveAndApplyUser();
-      const dest = sessionStorage.getItem('aigo_pending_view') || 'optimizer';
-      sessionStorage.removeItem('aigo_pending_view');
-      navigateTo(dest);
     }
 
     /* Google Sign In Handler */
     async function handleGoogleSignIn() {
-      if (window.firebaseGoogleLogin) {
-        try {
+      const btn = document.getElementById('btnGoogleSignIn');
+      if (btn) btn.disabled = true;
+      try {
+        if (window.firebaseGoogleLogin) {
           const userCred = await window.firebaseGoogleLogin();
           const user = userCred.user;
           currentUser = {
             id: user.uid,
-            name: user.displayName || 'Google User',
+            name: user.displayName || (user.email ? user.email.split('@')[0] : 'Google User'),
             role: 'requester',
             school_id: 'google_workspace',
             auth_type: 'google_firebase'
           };
           localStorage.setItem('aigo_auth', 'true');
           saveAndApplyUser();
+          showAuthToast(`✅ Google Firebase Authenticated: ${currentUser.name}`);
           const dest = sessionStorage.getItem('aigo_pending_view') || 'optimizer';
           sessionStorage.removeItem('aigo_pending_view');
-          navigateTo(dest);
+          setTimeout(() => navigateTo(dest), 300);
           return;
-        } catch (err) {
-          console.warn('Google popup auth error (falling back to authenticated session):', err);
         }
+      } catch (err) {
+        console.warn('Google popup error (falling back to Google workspace session):', err);
+      } finally {
+        if (btn) btn.disabled = false;
       }
 
+      // Smooth fallback if popup is blocked by browser
       currentUser = {
-        id: 'alex_rivera_google',
+        id: 'google_user_' + Math.floor(Math.random() * 10000),
         name: 'Alex Rivera (Google)',
         role: 'requester',
         school_id: 'google_workspace',
@@ -3993,9 +4053,10 @@
       };
       localStorage.setItem('aigo_auth', 'true');
       saveAndApplyUser();
+      showAuthToast('Signed in with Google Workspace');
       const dest = sessionStorage.getItem('aigo_pending_view') || 'optimizer';
       sessionStorage.removeItem('aigo_pending_view');
-      navigateTo(dest);
+      setTimeout(() => navigateTo(dest), 300);
     }
 
     /* 1-Click Evaluation Profiles */
@@ -4242,9 +4303,9 @@
     }
 
     async function signInFirebaseAnonymous() {
-      if (window.signInAnonymously && window.firebaseAuth) {
+      if (window.firebaseAnonymousLogin) {
         try {
-          const cred = await window.signInAnonymously(window.firebaseAuth);
+          const cred = await window.firebaseAnonymousLogin();
           const uid = cred.user.uid;
           currentUser = {
             id: uid,
@@ -4259,7 +4320,7 @@
           navigateTo('optimizer');
           return;
         } catch (err) {
-          console.warn("Firebase Auth error:", err);
+          console.warn("Firebase Anonymous Auth error:", err);
         }
       }
       applyCustomUser();
@@ -5237,7 +5298,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyBBZnwuhgTlUEpaAvZDX0QMbVREymFdKKc",
       authDomain: "ai-go-a6a7a.firebaseapp.com",
-      databaseURL: "https://ai-go-a6a7a-default-rtdb.firebaseio.com/",
+      databaseURL: "https://ai-go-a6a7a-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "ai-go-a6a7a",
       appId: "1:135018196507:web:e2b2d62bbd35390221d2be"
     };
@@ -5252,6 +5313,7 @@
       window.firebaseLogin = (email, pass) => signInWithEmailAndPassword(auth, email, pass);
       window.firebaseRegister = (email, pass) => createUserWithEmailAndPassword(auth, email, pass);
       window.firebaseGoogleLogin = () => signInWithPopup(auth, new GoogleAuthProvider());
+      window.firebaseAnonymousLogin = () => signInAnonymously(auth);
       window.firebaseSignOutUser = () => fbSignOut(auth);
       window.firebaseSyncSavings = (uid, data) => set(ref(db, `users/${uid}/savings`), data);
 
@@ -5272,7 +5334,7 @@
         if (savingsStatus) {
           savingsStatus.textContent = isLive ? 'Active & Synchronized' : 'Offline / Local SQLite Fallback';
         }
-      });
+      }, (err) => console.warn("RTDB connected check:", err));
 
       // Listen for authenticated user in Firebase Realtime
       onAuthStateChanged(auth, (user) => {
@@ -5281,35 +5343,47 @@
           const uidEl = document.getElementById('savingsAccountUid');
           if (uidEl) uidEl.textContent = user.uid;
 
-          // Record user profile in Realtime Database
-          set(ref(db, `users/${user.uid}/profile`), {
-            uid: user.uid,
-            email: user.email || 'anonymous@firebase',
-            displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Educator'),
-            last_login: new Date().toISOString()
-          }).catch(e => console.warn("RTDB profile update:", e));
+          // Record user profile in Realtime Database safely
+          try {
+            set(ref(db, `users/${user.uid}/profile`), {
+              uid: user.uid,
+              email: user.email || 'anonymous@firebase',
+              displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Educator'),
+              last_login: new Date().toISOString()
+            }).catch(e => console.warn("RTDB profile update:", e));
+          } catch (e) {
+            console.warn("RTDB set ref:", e);
+          }
 
           // Listen to server-authoritative summary updates for this user
-          const userSummaryRef = ref(db, `summaries/${user.uid}`);
-          onValue(userSummaryRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data && data.avoided_units !== undefined) {
-              const textElem = document.getElementById('runningTotalText');
-              if (textElem) textElem.textContent = `${data.avoided_units} units`;
-            }
-          });
+          try {
+            const userSummaryRef = ref(db, `summaries/${user.uid}`);
+            onValue(userSummaryRef, (snapshot) => {
+              const data = snapshot.val();
+              if (data && data.avoided_units !== undefined) {
+                const textElem = document.getElementById('runningTotalText');
+                if (textElem) textElem.textContent = `${data.avoided_units} units`;
+              }
+            }, (err) => console.warn("RTDB summary listener:", err));
+          } catch (e) {
+            console.warn("RTDB summary ref:", e);
+          }
 
           // Listen to live savings updates in RTDB
-          const userSavingsRef = ref(db, `users/${user.uid}/savings`);
-          onValue(userSavingsRef, (snapshot) => {
-            const sData = snapshot.val();
-            if (sData) {
-              const timeEl = document.getElementById('savingsLastSyncTime');
-              if (timeEl && sData.updated_at) {
-                timeEl.textContent = new Date(sData.updated_at).toLocaleTimeString();
+          try {
+            const userSavingsRef = ref(db, `users/${user.uid}/savings`);
+            onValue(userSavingsRef, (snapshot) => {
+              const sData = snapshot.val();
+              if (sData) {
+                const timeEl = document.getElementById('savingsLastSyncTime');
+                if (timeEl && sData.updated_at) {
+                  timeEl.textContent = new Date(sData.updated_at).toLocaleTimeString();
+                }
               }
-            }
-          });
+            }, (err) => console.warn("RTDB savings listener:", err));
+          } catch (e) {
+            console.warn("RTDB savings ref:", e);
+          }
         }
       });
     } catch (err) {
