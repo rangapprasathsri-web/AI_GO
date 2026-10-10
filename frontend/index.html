@@ -160,9 +160,9 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       transition: border-color 0.2s ease;
     }
@@ -172,28 +172,31 @@
       align-items: center;
       justify-content: space-between;
       height: 68px;
+      gap: 24px;
     }
 
     .brand-wrap {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
       color: var(--ink);
+      flex-shrink: 0;
     }
 
     /* Original Brand Mark: Rounded purple tile with 3 ascending tier bars */
     .brand-mark {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       background: var(--purple-600);
       border-radius: 9px;
-      display: flex;
+      display: inline-flex;
       align-items: flex-end;
       justify-content: center;
       gap: 3px;
       padding-bottom: 7px;
       flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(110, 52, 226, 0.22);
     }
 
     .brand-mark-bar {
@@ -220,6 +223,8 @@
     .brand-text {
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      line-height: 1.15;
     }
 
     .brand-name {
@@ -227,20 +232,37 @@
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--ink);
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
     .brand-tagline {
       font-size: 11px;
       color: var(--muted);
       font-weight: 500;
+      line-height: 1.2;
+      margin-top: 1px;
+    }
+
+    header.sticky-nav nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 8px;
       list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links li {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
     }
 
     .nav-links a {
@@ -248,31 +270,42 @@
       font-size: 14px;
       font-weight: 500;
       color: var(--muted-strong);
-      transition: color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      line-height: 1;
+      transition: color 0.15s ease, background-color 0.15s ease;
+      white-space: nowrap;
     }
 
     .nav-links a:hover {
       color: var(--purple-600);
+      background: var(--surface);
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      flex-shrink: 0;
     }
 
-    /* Running Total Pill */
+    /* Running Total Pill (hidden by default on public landing) */
     .running-total-pill {
-      display: inline-flex;
+      display: none;
       align-items: center;
       gap: 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 5px 12px;
+      padding: 0 12px;
+      height: 40px;
       font-size: 12px;
       font-weight: 500;
       color: var(--ink);
+      line-height: 1;
     }
 
     .running-total-value {
@@ -292,19 +325,20 @@
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
-      padding: 9px 18px;
+      padding: 0 18px;
+      height: 40px;
       border-radius: var(--radius-pill);
       border: none;
       cursor: pointer;
       box-shadow: 0 1px 3px rgba(110, 52, 226, 0.2);
       transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
-      min-height: 44px;
-      min-width: 44px;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .btn-pill-primary:hover {
       background: #5F2ACD;
-      transform: translateY(-1.5px);
+      transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(110, 52, 226, 0.28);
     }
 
@@ -318,12 +352,14 @@
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
-      padding: 9px 18px;
+      padding: 0 16px;
+      height: 40px;
       border-radius: var(--radius-pill);
       border: 1px solid var(--border);
       cursor: pointer;
       transition: background-color 0.18s ease, border-color 0.18s ease;
-      min-height: 44px;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .btn-pill-secondary:hover {
@@ -333,29 +369,42 @@
 
     .mobile-menu-btn {
       display: none;
-      background: none;
-      border: none;
-      font-size: 22px;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 18px;
+      line-height: 1;
       color: var(--ink);
       cursor: pointer;
-      padding: 6px;
+      padding: 0;
+      transition: background-color 0.18s ease;
     }
 
-    /* User Profile & Auth Button */
+    .mobile-menu-btn:hover {
+      background: #EBEBF2;
+    }
+
+    /* User Profile & Auth Button (hidden on public landing) */
     .user-profile-btn {
-      display: inline-flex;
+      display: none;
       align-items: center;
       gap: 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 7px 14px;
+      padding: 0 14px;
+      height: 40px;
       font-size: 13px;
       font-weight: 600;
       color: var(--ink);
       cursor: pointer;
       transition: all 0.18s ease;
-      min-height: 42px;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .user-profile-btn:hover {
@@ -1480,11 +1529,39 @@
       }
 
       .nav-links {
-        display: none;
+        display: none !important;
       }
 
       .mobile-menu-btn {
-        display: block;
+        display: inline-flex !important;
+      }
+
+      .nav-links.mobile-nav-active {
+        display: flex !important;
+        flex-direction: column;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 12px 32px rgba(17, 17, 19, 0.08);
+        gap: 8px;
+        align-items: stretch;
+        z-index: 150;
+      }
+
+      .nav-links.mobile-nav-active li {
+        width: 100%;
+        display: flex;
+      }
+
+      .nav-links.mobile-nav-active a {
+        width: 100%;
+        height: 42px;
+        padding: 0 14px;
+        border-radius: var(--radius-sm);
       }
     }
 
@@ -2126,14 +2203,14 @@
 
       <!-- Right action & running total pill -->
       <div class="nav-actions">
-        <div class="running-total-pill" id="headerRunningTotal">
+        <div class="running-total-pill" id="headerRunningTotal" style="display: none;">
           <span>Saved:</span>
           <span class="running-total-value" id="runningTotalText">0.0 units</span>
           <span class="origin-badge origin-simulated" id="runningTotalOrigin">Simulated</span>
         </div>
 
-        <!-- Sign In Button / User Profile -->
-        <button class="user-profile-btn" id="authBtn" onclick="handleNavAuthClick()" aria-label="Sign In or Switch Account">
+        <!-- Sign In Button / User Profile (visible only in authenticated workspace views) -->
+        <button class="user-profile-btn" id="authBtn" onclick="handleNavAuthClick()" aria-label="Sign In or Switch Account" style="display: none;">
           <span class="status-dot-indicator online" id="userConnDot" title="Firebase RTDB: Connected"></span>
           <span id="userNameDisplay">Sign In</span>
           <span class="user-role-tag" id="userRoleBadge">Guest</span>
@@ -3629,6 +3706,19 @@
         }
       }
 
+      // Hide admin button and saved units on public landing page navbar
+      const currentHash = (window.location.hash || '').replace('#', '') || 'landing';
+      const isPublic = ['landing', 'login'].includes(currentHash);
+      const authBtn = document.getElementById('authBtn');
+      const runningTotal = document.getElementById('headerRunningTotal');
+      if (isPublic) {
+        if (authBtn) authBtn.style.display = 'none';
+        if (runningTotal) runningTotal.style.display = 'none';
+      } else {
+        if (authBtn) authBtn.style.display = 'inline-flex';
+        if (runningTotal) runningTotal.style.display = 'none';
+      }
+
       // Update workspace pill text elements in all views
       const savedText = document.getElementById('runningTotalText')?.textContent || '0.0 units';
       document.querySelectorAll('.ws-user-name').forEach(el => el.textContent = logged ? (currentUser.name || currentUser.id) : 'Educator');
@@ -3661,21 +3751,27 @@
         }
       });
 
-      // Synchronize Nav Bars
+      // Synchronize Nav Bars & remove admin + saved units on public landing
       const publicNav = document.getElementById('publicNavLinks');
       const workspaceNav = document.getElementById('workspaceNavLinks');
       const navCtaBtn = document.getElementById('navCtaBtn');
       const navCtaText = document.getElementById('navCtaText');
+      const headerRunningTotal = document.getElementById('headerRunningTotal');
+      const authBtn = document.getElementById('authBtn');
 
       if (['landing', 'login'].includes(viewName)) {
         if (publicNav) publicNav.style.display = 'flex';
         if (workspaceNav) workspaceNav.style.display = 'none';
         if (navCtaBtn) navCtaBtn.style.display = 'inline-flex';
         if (navCtaText) navCtaText.textContent = isUserLoggedIn() ? 'Open Workspace' : 'Launch Workspace';
+        if (headerRunningTotal) headerRunningTotal.style.display = 'none';
+        if (authBtn) authBtn.style.display = 'none';
       } else {
         if (publicNav) publicNav.style.display = 'none';
         if (workspaceNav) workspaceNav.style.display = 'flex';
         if (navCtaBtn) navCtaBtn.style.display = 'none';
+        if (headerRunningTotal) headerRunningTotal.style.display = 'none';
+        if (authBtn) authBtn.style.display = 'inline-flex';
       }
 
       // Update workspace tab active states
@@ -4199,6 +4295,12 @@
         navigateTo('landing');
       }
 
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+          document.querySelectorAll('.nav-links').forEach(n => n.classList.remove('mobile-nav-active'));
+        });
+      });
+
       window.addEventListener('hashchange', () => {
         const curH = (window.location.hash || '').replace('#', '').trim();
         if (curH) navigateTo(curH);
@@ -4228,17 +4330,11 @@
     }
 
     function toggleMobileMenu() {
-      const navLinks = document.querySelector('.nav-links');
-      if (navLinks) {
-        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        navLinks.style.flexDirection = 'column';
-        navLinks.style.position = 'absolute';
-        navLinks.style.top = '68px';
-        navLinks.style.left = '0';
-        navLinks.style.right = '0';
-        navLinks.style.background = '#FFFFFF';
-        navLinks.style.padding = '20px';
-        navLinks.style.borderBottom = '1px solid var(--border)';
+      const currentView = (window.location.hash || '').replace('#', '') || 'landing';
+      const isWorkspace = ['optimizer', 'savings', 'benchmark', 'history', 'admin'].includes(currentView);
+      const targetNav = isWorkspace ? document.getElementById('workspaceNavLinks') : document.getElementById('publicNavLinks');
+      if (targetNav) {
+        targetNav.classList.toggle('mobile-nav-active');
       }
     }
 
