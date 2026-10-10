@@ -1,6 +1,6 @@
 # Multi-Prompt Policy Benchmark Report
 
-**Generated At**: 2026-10-10 15:59:49 UTC  
+**Generated At**: 2026-10-10 16:40:12 UTC  
 **Evaluation Mode**: Level 0: Simulated Proxy (Demo Mode) (mock)  
 **Reproducibility Seed**: `42`  
 **Baseline Execution**: Maximum tier was **actually run** for every prompt to establish measured comparison.

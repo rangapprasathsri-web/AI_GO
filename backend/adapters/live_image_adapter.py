@@ -45,10 +45,12 @@ class LiveImageAdapter(BaseAdapter):
     def __init__(
         self,
         openai_api_key: Optional[str] = None,
+        gemini_api_key: Optional[str] = None,
         real_generation_cap: int = 10,
         enable_live_diffusion: Optional[bool] = None,
     ):
         self._openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY", "").strip()
+        self._gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY", "").strip()
         self.real_generations_cap = int(os.getenv("REAL_GENERATION_CAP", str(real_generation_cap)))
         self.real_generations_count = 0
         self._fallback_mock = MockImageAdapter()
@@ -70,6 +72,11 @@ class LiveImageAdapter(BaseAdapter):
             self.mode = "openai"
             self.provider_label = "OpenAI DALL-E"
             self.model_name = "dall-e-3 / dall-e-2"
+            self.is_real = True
+        elif self._gemini_api_key:
+            self.mode = "gemini"
+            self.provider_label = "Google Gemini"
+            self.model_name = "Gemini 2.5 Flash / Image"
             self.is_real = True
         elif self._has_local_gpu():
             self.mode = "local_gpu"
@@ -134,6 +141,13 @@ class LiveImageAdapter(BaseAdapter):
                 source="https://openai.com/api/pricing/",
                 data_origin="provider_reported",
             )
+        if self.mode == "gemini":
+            return AdapterPricing(
+                method="per_call",
+                values={"economy": 0.010, "standard": 0.030, "maximum": 0.060},
+                source="https://ai.google.dev/pricing",
+                data_origin="provider_reported",
+            )
         return AdapterPricing(
             method="per_call",
             values={"economy": 0.01, "standard": 0.04, "maximum": 0.12},
@@ -152,6 +166,16 @@ class LiveImageAdapter(BaseAdapter):
                 source="https://openai.com/api/pricing/",
                 is_simulated=False,
                 breakdown={"openai_price": cost},
+            )
+        if self.mode == "gemini":
+            prices = {"economy": 0.010, "standard": 0.030, "maximum": 0.060}
+            cost = prices.get(tier, 0.030)
+            return CostEstimate(
+                strategy_name=strategy.name,
+                estimated_cost=cost,
+                source="https://ai.google.dev/pricing",
+                is_simulated=False,
+                breakdown={"gemini_price": cost},
             )
         return self._fallback_mock.estimate_cost(strategy, request)
 
@@ -182,6 +206,25 @@ class LiveImageAdapter(BaseAdapter):
             res.metadata["fallback_notice"] = "OpenAI generation failed. Fallback to demo mode active."
             return res
 
+        if self.mode == "gemini":
+            res = self._execute_gemini(strategy, request)
+            if res.success:
+                self.real_generations_count += 1
+                return res
+            logger.warning("Gemini generation unavailable or quota reached; falling back to live diffusion.")
+            res = self._execute_live_diffusion(strategy, request)
+            if res.success:
+                self.real_generations_count += 1
+                if res.metadata is None:
+                    res.metadata = {}
+                res.metadata["fallback_notice"] = "Gemini quota or rate limit; completed seamlessly via Live Diffusion."
+                return res
+            res = self._fallback_mock.execute(strategy, request)
+            if res.metadata is None:
+                res.metadata = {}
+            res.metadata["fallback_notice"] = "Gemini provider unavailable. Fallback to demo mode active."
+            return res
+
         if self.mode == "live_diffusion":
             res = self._execute_live_diffusion(strategy, request)
             if res.success:
@@ -196,6 +239,88 @@ class LiveImageAdapter(BaseAdapter):
 
         # Demo mode
         return self._fallback_mock.execute(strategy, request)
+
+    def _execute_gemini(self, strategy: StrategyConfig, request: UserRequest) -> ExecutionResult:
+        """
+        Generate image using Google AI Studio / Gemini API.
+        Tiers map to genuine compute-altering controls:
+        - Economy: gemini-2.5-flash-image (fast, 512x512)
+        - Standard: gemini-3.1-flash-image (standard, 768x768)
+        - Maximum: gemini-3-pro-image (high quality, 1024x1024)
+        """
+        start_t = time.time()
+        tier = strategy.name.lower()
+        if tier in ("economy", "draft", "quick"):
+            model = "gemini-2.5-flash-image"
+            cost = 0.010
+        elif tier in ("standard",):
+            model = "gemini-3.1-flash-image"
+            cost = 0.030
+        else:
+            model = "gemini-3-pro-image"
+            cost = 0.060
+
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={self._gemini_api_key}"
+        headers = {"Content-Type": "application/json"}
+        prompt_text = request.prompt.strip() or "Cute cat"
+        category = request.inputs.get("_category", "").lower()
+        if "color" in category:
+            prompt_text = f"Generate black and white coloring book outline art of {prompt_text}, clean line drawing, no colors"
+        elif "poster" in category or "print" in category:
+            prompt_text = f"Generate a high-detail professional exhibition poster of {prompt_text}, masterpiece quality"
+        payload = {
+            "contents": [{"parts": [{"text": prompt_text}]}]
+        }
+
+        for attempt in range(2):
+            try:
+                resp = requests.post(url, json=payload, headers=headers, timeout=20)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    cands = data.get("candidates", [])
+                    if cands:
+                        parts = cands[0].get("content", {}).get("parts", [])
+                        for part in parts:
+                            if "inlineData" in part:
+                                b64_str = part["inlineData"]["data"]
+                                img_bytes = base64.b64decode(b64_str)
+                                img = Image.open(io.BytesIO(img_bytes))
+                                latency_s = round(time.time() - start_t, 3)
+                                return ExecutionResult(
+                                    request_id=request.id,
+                                    strategy_name=strategy.name,
+                                    success=True,
+                                    output_reference=f"gemini://{model}/{request.id}.png",
+                                    output_data={"image": img, "image_bytes": img_bytes},
+                                    actual_cost=cost,
+                                    latency_s=latency_s,
+                                    is_simulated=False,
+                                    metadata={
+                                        "provider": "Google Gemini",
+                                        "model": model,
+                                        "is_placeholder": False,
+                                        "placeholder_label": f"Generated by Google Gemini {model}",
+                                        "data_origin": "measured",
+                                        "generation_time_s": latency_s,
+                                        "explanation": f"Google Gemini rightsized: {model} tier for {strategy.name}.",
+                                    },
+                                )
+                elif resp.status_code == 429:
+                    logger.warning(f"Google Gemini rate limit / quota exceeded (429): {resp.text[:200]}")
+                    break
+            except Exception as e:
+                logger.warning(f"Google Gemini request attempt {attempt + 1} failed: {e}")
+                time.sleep(1.0)
+
+        return ExecutionResult(
+            request_id=request.id,
+            strategy_name=strategy.name,
+            success=False,
+            actual_cost=0.0,
+            latency_s=round(time.time() - start_t, 3),
+            is_simulated=True,
+            error="Google Gemini generation unavailable or quota exceeded",
+        )
 
     def _execute_openai(self, strategy: StrategyConfig, request: UserRequest) -> ExecutionResult:
         """

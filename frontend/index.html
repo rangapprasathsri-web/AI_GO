@@ -680,6 +680,198 @@
       box-shadow: 0 0 0 3px rgba(110, 52, 226, 0.12);
     }
 
+    /* Step Flow Badges */
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--purple-700);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      box-shadow: 0 1px 3px rgba(110, 52, 226, 0.25);
+    }
+
+    .step-badge-success {
+      background: #15803D !important;
+      box-shadow: 0 1px 3px rgba(21, 128, 61, 0.25) !important;
+    }
+
+    /* Prompt Hero Section Styles */
+    .prompt-hero-container {
+      background: linear-gradient(145deg, #FAF8FF 0%, #F3EDFF 100%);
+      border: 2px solid #D6C2FA;
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(110, 52, 226, 0.07);
+      position: relative;
+    }
+
+    .prompt-hero-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .prompt-hero-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .prompt-hero-subtitle {
+      font-size: 13.5px;
+      color: var(--muted-strong);
+      line-height: 1.5;
+      margin: 0 0 16px 0;
+    }
+
+    .prompt-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .prompt-icon-addon {
+      position: absolute;
+      left: 16px;
+      font-size: 18px;
+      pointer-events: none;
+      user-select: none;
+      z-index: 2;
+    }
+
+    .prompt-hero-input {
+      font-size: 16px;
+      font-weight: 500;
+      padding: 16px 46px 16px 46px;
+      border: 2px solid #C8B5F9;
+      border-radius: var(--radius-md);
+      width: 100%;
+      box-sizing: border-box;
+      background: #FFFFFF;
+      color: var(--ink);
+      box-shadow: 0 3px 12px rgba(110, 52, 226, 0.08);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .prompt-hero-input:focus {
+      outline: none;
+      border-color: var(--purple-700);
+      box-shadow: 0 0 0 4px rgba(110, 52, 226, 0.18), 0 4px 16px rgba(110, 52, 226, 0.12);
+    }
+
+    .prompt-clear-btn {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .prompt-clear-btn:hover {
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .prompt-chips-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .prompt-chips-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--purple-700);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .prompt-chip {
+      background: #FFFFFF;
+      border: 1px solid #E2D9F3;
+      border-radius: var(--radius-pill);
+      padding: 6px 13px;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .prompt-chip:hover {
+      background: var(--lavender);
+      border-color: var(--purple-600);
+      color: var(--purple-700);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(110, 52, 226, 0.14);
+    }
+
+    .tier-purpose-hint {
+      font-size: 12px;
+      color: var(--muted-strong);
+      margin-top: 4px;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .tier-specs-line {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--purple-700);
+      font-family: var(--font-mono);
+      background: rgba(110, 52, 226, 0.06);
+      padding: 3px 8px;
+      border-radius: 4px;
+      width: fit-content;
+      margin-top: 4px;
+    }
+
+    .tier-units-display,
+    .tier-savings-display {
+      display: none;
+    }
+
+    /* Comparison Verified Panel */
+    .comparison-verified-panel {
+      animation: fadeInPanel 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInPanel {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .extra-inputs-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1515,30 +1707,37 @@
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
           <div>
             <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-700);">QUICK-START WORKFLOW</div>
-            <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use AI GO in 3 Steps</h3>
+            <h3 style="font-size: 20px; font-weight: 700; color: var(--ink); margin-top: 2px;">How to Use AI GO in 4 Steps</h3>
           </div>
-          <span class="role-badge" style="padding: 4px 10px;">Zero Waste AI</span>
+          <span class="role-badge" style="padding: 4px 10px;">Adaptive AI</span>
         </div>
         <div class="how-to-use-grid">
           <div class="how-to-use-step">
             <div class="how-to-use-num">1</div>
-            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Choose Purpose</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Enter Prompt</div>
             <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
-              Select what your image is for (e.g. Coloring Sheet, Slide Background, or Print Poster).
+              Type your image concept in the Hero Prompt field or choose a quick inspiration chip.
             </p>
           </div>
           <div class="how-to-use-step">
             <div class="how-to-use-num">2</div>
-            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Review Match</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Select Use Case</div>
             <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
-              The engine rightsizes parameters and calculates transparent avoided compute savings vs Maximum tier.
+              Pick your intended purpose. The optimizer selects the lowest suitable quality tier.
             </p>
           </div>
           <div class="how-to-use-step">
             <div class="how-to-use-num">3</div>
-            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Generate & Save</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Generate Image</div>
             <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
-              Hit Generate to inspect the image, view counterfactual proof, and sync savings to Firebase RTDB.
+              Hit Generate to trigger live rendering with adaptive compute rightsizing.
+            </p>
+          </div>
+          <div class="how-to-use-step">
+            <div class="how-to-use-num">4</div>
+            <div style="font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 4px;">Verify Savings</div>
+            <p style="font-size: 13px; color: var(--muted-strong); line-height: 1.45;">
+              Inspect output fitness gate and view verified numerical compute units saved vs Maximum baseline.
             </p>
           </div>
         </div>
@@ -1549,220 +1748,317 @@
         <div class="section-eyebrow">INTERACTIVE GENERATOR</div>
         <h2 class="section-title" id="toolHeading">Adaptive Request & Optimizer</h2>
 
-        <div class="card">
-          <div class="card-title">
-            <span>1. What is this image for?</span>
-            <span class="chip-lavender">Lowest Suitable Tier Policy</span>
-          </div>
-          <div class="card-subtitle">
-            Select the intended purpose. The decision engine selects the lowest quality tier that satisfies this
-            purpose.
-          </div>
-
-          <!-- Purpose Selection Grid (Section 4 Schema) -->
-          <div class="purpose-grid" id="purposeGrid" role="radiogroup" aria-label="Select Image Purpose">
-            <div class="purpose-card selected" data-purpose="coloring_sheet" onclick="selectPurpose('coloring_sheet')"
-              role="radio" aria-checked="true" tabindex="0">
-              <div class="purpose-header">
-                <span class="purpose-icon" aria-hidden="true">🖍️</span>
-                <span class="purpose-name">Coloring Sheet</span>
-              </div>
-              <div class="purpose-desc">Line art outline. Low detail needed unless large print size requested.</div>
-              <span class="chip-lavender">Floor: Economy</span>
-            </div>
-
-            <div class="purpose-card" data-purpose="educational_illustration"
-              onclick="selectPurpose('educational_illustration')" role="radio" aria-checked="false" tabindex="0">
-              <div class="purpose-header">
-                <span class="purpose-icon" aria-hidden="true">📖</span>
-                <span class="purpose-name">Educational Illustration</span>
-              </div>
-              <div class="purpose-desc">Visual teaching aid or textbook figure. Standard detail suggested.</div>
-              <span class="chip-lavender">Floor: Economy</span>
-            </div>
-
-            <div class="purpose-card" data-purpose="presentation_graphic"
-              onclick="selectPurpose('presentation_graphic')" role="radio" aria-checked="false" tabindex="0">
-              <div class="purpose-header">
-                <span class="purpose-icon" aria-hidden="true">📊</span>
-                <span class="purpose-name">Presentation Graphic</span>
-              </div>
-              <div class="purpose-desc">Slide decks & screen visuals. Crisp display quality required.</div>
-              <span class="chip-lavender">Floor: Standard</span>
-            </div>
-
-            <div class="purpose-card" data-purpose="social_media_artwork"
-              onclick="selectPurpose('social_media_artwork')" role="radio" aria-checked="false" tabindex="0">
-              <div class="purpose-header">
-                <span class="purpose-icon" aria-hidden="true">📱</span>
-                <span class="purpose-name">Social Media Artwork</span>
-              </div>
-              <div class="purpose-desc">Feed artwork and banners for web platforms.</div>
-              <span class="chip-lavender">Floor: Economy</span>
-            </div>
-
-            <div class="purpose-card" data-purpose="professional_print_artwork"
-              onclick="selectPurpose('professional_print_artwork')" role="radio" aria-checked="false" tabindex="0">
-              <div class="purpose-header">
-                <span class="purpose-icon" aria-hidden="true">🖨️</span>
-                <span class="purpose-name">Professional / Print</span>
-              </div>
-              <div class="purpose-desc">High-DPI exhibition prints, brochures, or publication assets.</div>
-              <span class="chip-lavender">Floor: Maximum</span>
-            </div>
-
-            <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')" role="radio"
-              aria-checked="false" tabindex="0">
-              <div class="purpose-header">
-                <span class="purpose-icon" aria-hidden="true">⚙️</span>
-                <span class="purpose-name">Custom Purpose</span>
-              </div>
-              <div class="purpose-desc">Specify custom requirements. Conservative default applied on uncertainty.</div>
-              <span class="chip-lavender">Conservative Default</span>
-            </div>
-          </div>
-
-          <!-- Prompt Input -->
-          <div style="margin-bottom: 20px;">
-            <label class="input-label" for="promptInput">YOUR PROMPT</label>
-            <input type="text" id="promptInput" class="text-input"
-              placeholder="e.g. Cute farm kitten playing with a ball of wool" value="Cute kitten playing with wool"
-              oninput="onPromptInputChanged()">
-          </div>
-
-          <!-- Dynamic Extra Fields (Print & Custom Inputs) -->
-          <div class="extra-inputs-row" id="extraInputsRow" style="display: none;">
-            <div>
-              <label class="input-label" for="printUseCheck">
-                <input type="checkbox" id="printUseCheck" onchange="triggerRecommend()"> Print Use Intended
-              </label>
-              <div style="font-size: 11px; color: var(--muted-strong);">Flags output for physical reproduction.</div>
-            </div>
-
-            <div>
-              <label class="input-label" for="printSizeSelect">PRINT SIZE</label>
-              <select id="printSizeSelect" class="select-input" onchange="triggerRecommend()">
-                <option value="">Standard Paper (A4 / Letter)</option>
-                <option value="A3">A3 (Medium Poster)</option>
-                <option value="A1">A1 / Poster (Large Print — raises floor to Standard)</option>
-                <option value="BANNER">Banner / Billboard (Large Format)</option>
-              </select>
-            </div>
-
-            <div id="customDetailGroup" style="display: none;">
-              <label class="input-label" for="requiredDetailSelect">REQUIRED DETAIL</label>
-              <select id="requiredDetailSelect" class="select-input" onchange="triggerRecommend()">
-                <option value="">Not Specified (Uncertain)</option>
-                <option value="low">Low Detail</option>
-                <option value="high">High Detail (Raises to Standard)</option>
-                <option value="maximum">Maximum Detail (Raises to Maximum)</option>
-              </select>
-            </div>
-
-            <div id="customResGroup" style="display: none;">
-              <label class="input-label" for="targetResInput">TARGET RESOLUTION (PX)</label>
-              <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024"
-                oninput="triggerRecommend()">
-            </div>
-          </div>
-
-          <!-- Recommendation Panel -->
-          <div class="recommendation-panel" id="recommendationPanel" aria-live="polite">
-            <div class="rec-top-row">
+        <div class="card" style="box-shadow: var(--shadow-card);">
+          <!-- STEP 1: HERO PROMPT GETTING SECTION -->
+          <div class="prompt-hero-container" id="promptHeroSection">
+            <div class="prompt-hero-header">
               <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="rec-tier-badge" id="recTierBadge">Economy Recommended</span>
-                <span class="origin-badge origin-simulated" id="recOriginBadge">Simulated Proxy</span>
+                <span class="step-badge">STEP 1</span>
+                <h3 class="prompt-hero-title">What would you like to create?</h3>
               </div>
-              <div class="rec-factor-tag" id="recFactorTag">Deciding Factor: purpose_floor</div>
+              <span class="chip-lavender">Adaptive AI Studio</span>
             </div>
-            <div class="rec-explanation" id="recExplanationText">
-              Coloring sheet: Economy tier satisfies the quality floor with minimal compute.
+            <p class="prompt-hero-subtitle">
+              Enter any concept or subject below. AI GO dynamically aligns resolution and diffusion steps to save maximum compute without waste.
+            </p>
+
+            <div class="prompt-input-wrapper">
+              <div class="prompt-icon-addon" aria-hidden="true">✨</div>
+              <input type="text" id="promptInput" class="prompt-hero-input"
+                placeholder="e.g. Cute farm kitten playing with a ball of wool"
+                value="Cute kitten playing with wool"
+                oninput="onPromptInputChanged()"
+                aria-label="Image prompt description"
+                autocomplete="off">
+              <button type="button" class="prompt-clear-btn" onclick="clearPromptInput()" title="Clear prompt" aria-label="Clear prompt">✕</button>
+            </div>
+
+            <!-- Quick Inspiration Chips -->
+            <div class="prompt-chips-bar">
+              <span class="prompt-chips-label">Quick Ideas:</span>
+              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Cute kitten playing with wool', 'coloring_sheet')">🐱 Cute Kitten</button>
+              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Cross section diagram of plant photosynthesis cell', 'educational_illustration')">🌿 Plant Cell Diagram</button>
+              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Minimal quarterly revenue growth trend visual', 'presentation_graphic')">📊 Business Slide</button>
+              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Vibrant cyberpunk city street at rainy neon night', 'social_media_artwork')">🌃 Cyberpunk City</button>
+              <button type="button" class="prompt-chip" onclick="setQuickPrompt('Detailed vintage botanical illustration of wild roses', 'professional_print_artwork')">🌹 Fine Art Print</button>
             </div>
           </div>
 
-          <!-- Quality Tier Selector (Segmented Control) -->
-          <div class="tier-selector-container">
-            <label class="input-label" style="margin-bottom: 10px;">
-              2. SELECT QUALITY TIER (PRE-SELECTED BY RECOMMENDATION)
-            </label>
-            <div class="tier-selector-grid" id="tierSelectorGrid" role="radiogroup" aria-label="Select Quality Tier">
-              <!-- Economy Card -->
-              <div class="tier-card is-recommended-card selected" id="tierCard-economy" onclick="selectTier('economy')"
+          <!-- STEP 2: SELECTION OF USE CASE & QUALITY TIER -->
+          <div style="margin-top: 10px;">
+            <div class="card-title">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="step-badge">STEP 2</span>
+                <span>Select Use Case & Quality Floor</span>
+              </div>
+              <span class="chip-lavender">Lowest Suitable Tier Policy</span>
+            </div>
+            <div class="card-subtitle">
+              Select the intended purpose. The decision engine selects the lowest quality tier that satisfies this purpose.
+            </div>
+
+            <!-- Purpose Selection Grid (Section 4 Schema) -->
+            <div class="purpose-grid" id="purposeGrid" role="radiogroup" aria-label="Select Image Purpose">
+              <div class="purpose-card selected" data-purpose="coloring_sheet" onclick="selectPurpose('coloring_sheet')"
                 role="radio" aria-checked="true" tabindex="0">
-                <div class="tier-name-row">
-                  <span class="tier-title">Economy</span>
-                  <span class="origin-badge origin-simulated">768×768</span>
+                <div class="purpose-header">
+                  <span class="purpose-icon" aria-hidden="true">🖍️</span>
+                  <span class="purpose-name">Coloring Sheet</span>
                 </div>
-                <div class="tier-params-meta">20 steps • Model factor 1.0</div>
-                <div class="tier-units-display" id="economyUnits">11.8 units</div>
-                <div class="tier-savings-display" id="economySavings">~90.0% savings vs Maximum</div>
+                <div class="purpose-desc">Line art outline. Low detail needed unless large print size requested.</div>
+                <span class="chip-lavender">Floor: Economy</span>
               </div>
 
-              <!-- Standard Card -->
-              <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')" role="radio"
-                aria-checked="false" tabindex="0">
-                <div class="tier-name-row">
-                  <span class="tier-title">Standard</span>
-                  <span class="origin-badge origin-simulated">1024×1024</span>
+              <div class="purpose-card" data-purpose="educational_illustration"
+                onclick="selectPurpose('educational_illustration')" role="radio" aria-checked="false" tabindex="0">
+                <div class="purpose-header">
+                  <span class="purpose-icon" aria-hidden="true">📖</span>
+                  <span class="purpose-name">Educational Illustration</span>
                 </div>
-                <div class="tier-params-meta">30 steps • Model factor 1.0</div>
-                <div class="tier-units-display" id="standardUnits">31.5 units</div>
-                <div class="tier-savings-display" id="standardSavings">~73.3% savings vs Maximum</div>
+                <div class="purpose-desc">Visual teaching aid or textbook figure. Standard detail suggested.</div>
+                <span class="chip-lavender">Floor: Economy</span>
               </div>
 
-              <!-- Maximum Card -->
-              <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')" role="radio"
-                aria-checked="false" tabindex="0">
-                <div class="tier-name-row">
-                  <span class="tier-title">Maximum</span>
-                  <span class="origin-badge origin-simulated">1536×1536</span>
+              <div class="purpose-card" data-purpose="presentation_graphic"
+                onclick="selectPurpose('presentation_graphic')" role="radio" aria-checked="false" tabindex="0">
+                <div class="purpose-header">
+                  <span class="purpose-icon" aria-hidden="true">📊</span>
+                  <span class="purpose-name">Presentation Graphic</span>
                 </div>
-                <div class="tier-params-meta">50 steps • Model factor 1.0</div>
-                <div class="tier-units-display" id="maximumUnits">118.0 units</div>
-                <div class="tier-savings-display" style="color: var(--muted);" id="maximumSavings">0.0% savings
-                  (Baseline)</div>
+                <div class="purpose-desc">Slide decks & screen visuals. Crisp display quality required.</div>
+                <span class="chip-lavender">Floor: Standard</span>
               </div>
+
+              <div class="purpose-card" data-purpose="social_media_artwork"
+                onclick="selectPurpose('social_media_artwork')" role="radio" aria-checked="false" tabindex="0">
+                <div class="purpose-header">
+                  <span class="purpose-icon" aria-hidden="true">📱</span>
+                  <span class="purpose-name">Social Media Artwork</span>
+                </div>
+                <div class="purpose-desc">Feed artwork and banners for web platforms.</div>
+                <span class="chip-lavender">Floor: Economy</span>
+              </div>
+
+              <div class="purpose-card" data-purpose="professional_print_artwork"
+                onclick="selectPurpose('professional_print_artwork')" role="radio" aria-checked="false" tabindex="0">
+                <div class="purpose-header">
+                  <span class="purpose-icon" aria-hidden="true">🖨️</span>
+                  <span class="purpose-name">Professional / Print</span>
+                </div>
+                <div class="purpose-desc">High-DPI exhibition prints, brochures, or publication assets.</div>
+                <span class="chip-lavender">Floor: Maximum</span>
+              </div>
+
+              <div class="purpose-card" data-purpose="custom" onclick="selectPurpose('custom')" role="radio"
+                aria-checked="false" tabindex="0">
+                <div class="purpose-header">
+                  <span class="purpose-icon" aria-hidden="true">⚙️</span>
+                  <span class="purpose-name">Custom Purpose</span>
+                </div>
+                <div class="purpose-desc">Specify custom requirements. Conservative default applied on uncertainty.</div>
+                <span class="chip-lavender">Conservative Default</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Extra Fields (Print & Custom Inputs) -->
+            <div class="extra-inputs-row" id="extraInputsRow" style="display: none;">
+              <div>
+                <label class="input-label" for="printUseCheck">
+                  <input type="checkbox" id="printUseCheck" onchange="triggerRecommend()"> Print Use Intended
+                </label>
+                <div style="font-size: 11px; color: var(--muted-strong);">Flags output for physical reproduction.</div>
+              </div>
+
+              <div>
+                <label class="input-label" for="printSizeSelect">PRINT SIZE</label>
+                <select id="printSizeSelect" class="select-input" onchange="triggerRecommend()">
+                  <option value="">Standard Paper (A4 / Letter)</option>
+                  <option value="A3">A3 (Medium Poster)</option>
+                  <option value="A1">A1 / Poster (Large Print — raises floor to Standard)</option>
+                  <option value="BANNER">Banner / Billboard (Large Format)</option>
+                </select>
+              </div>
+
+              <div id="customDetailGroup" style="display: none;">
+                <label class="input-label" for="requiredDetailSelect">REQUIRED DETAIL</label>
+                <select id="requiredDetailSelect" class="select-input" onchange="triggerRecommend()">
+                  <option value="">Not Specified (Uncertain)</option>
+                  <option value="low">Low Detail</option>
+                  <option value="high">High Detail (Raises to Standard)</option>
+                  <option value="maximum">Maximum Detail (Raises to Maximum)</option>
+                </select>
+              </div>
+
+              <div id="customResGroup" style="display: none;">
+                <label class="input-label" for="targetResInput">TARGET RESOLUTION (PX)</label>
+                <input type="number" id="targetResInput" class="text-input" placeholder="e.g. 1024"
+                  oninput="triggerRecommend()">
+              </div>
+            </div>
+
+            <!-- Recommendation Panel -->
+            <div class="recommendation-panel" id="recommendationPanel" aria-live="polite">
+              <div class="rec-top-row">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="rec-tier-badge" id="recTierBadge">Economy Recommended</span>
+                  <span class="origin-badge origin-simulated" id="recOriginBadge">Simulated Proxy</span>
+                </div>
+                <div class="rec-factor-tag" id="recFactorTag">Deciding Factor: purpose_floor</div>
+              </div>
+              <div class="rec-explanation" id="recExplanationText">
+                Coloring sheet: Economy tier satisfies the quality floor with minimal compute.
+              </div>
+            </div>
+
+            <!-- Quality Tier Selector (Segmented Control) - Clean & Focused without raw numbers upfront -->
+            <div class="tier-selector-container">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+                <label class="input-label" style="margin-bottom: 0;">
+                  QUALITY TIER (PRE-SELECTED BY RECOMMENDATION)
+                </label>
+                <span style="font-size: 12px; color: var(--muted-strong);">Savings numbers verified upon generation</span>
+              </div>
+              <div class="tier-selector-grid" id="tierSelectorGrid" role="radiogroup" aria-label="Select Quality Tier">
+                <!-- Economy Card -->
+                <div class="tier-card is-recommended-card selected" id="tierCard-economy" onclick="selectTier('economy')"
+                  role="radio" aria-checked="true" tabindex="0">
+                  <div class="tier-name-row">
+                    <span class="tier-title">Economy</span>
+                    <span class="origin-badge origin-simulated">768×768</span>
+                  </div>
+                  <div class="tier-purpose-hint">Best for line art, coloring pages, quick sketches</div>
+                  <div class="tier-specs-line">20 steps • Model factor 1.0</div>
+                  <div class="tier-units-display" id="economyUnits">11.8 units</div>
+                  <div class="tier-savings-display" id="economySavings">~90.0% savings vs Maximum</div>
+                </div>
+
+                <!-- Standard Card -->
+                <div class="tier-card" id="tierCard-standard" onclick="selectTier('standard')" role="radio"
+                  aria-checked="false" tabindex="0">
+                  <div class="tier-name-row">
+                    <span class="tier-title">Standard</span>
+                    <span class="origin-badge origin-simulated">1024×1024</span>
+                  </div>
+                  <div class="tier-purpose-hint">Balanced clarity for presentation decks & web graphics</div>
+                  <div class="tier-specs-line">30 steps • Model factor 1.0</div>
+                  <div class="tier-units-display" id="standardUnits">31.5 units</div>
+                  <div class="tier-savings-display" id="standardSavings">~73.3% savings vs Maximum</div>
+                </div>
+
+                <!-- Maximum Card -->
+                <div class="tier-card" id="tierCard-maximum" onclick="selectTier('maximum')" role="radio"
+                  aria-checked="false" tabindex="0">
+                  <div class="tier-name-row">
+                    <span class="tier-title">Maximum</span>
+                    <span class="origin-badge origin-simulated">1536×1536</span>
+                  </div>
+                  <div class="tier-purpose-hint">High-fidelity unoptimized baseline for prints & posters</div>
+                  <div class="tier-specs-line">50 steps • Model factor 1.0</div>
+                  <div class="tier-units-display" id="maximumUnits">118.0 units</div>
+                  <div class="tier-savings-display" style="color: var(--muted);" id="maximumSavings">0.0% savings (Baseline)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inline Notice for Override Confirmation (also backed by modal) -->
+            <div id="overrideWarningBox"
+              style="display: none; background: var(--amber-surface); border: 1px solid rgba(138, 75, 0, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--amber-text);">
+              <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality Warning
+              </div>
+              <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor
+                recommended for this purpose.</div>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="overrideConfirmCheckbox">
+                <span>I confirm this below-floor choice (will be logged in audit trail).</span>
+              </label>
+            </div>
+
+            <!-- Budget Error Box -->
+            <div id="budgetErrorBox"
+              style="display: none; background: var(--rose-surface); border: 1px solid rgba(179, 27, 56, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--rose-text);">
+              <div style="font-weight: 700; margin-bottom: 2px;">🛑 Blocked by Hard Budget</div>
+              <div id="budgetMessageText">Selected tier exceeds hard budget limit.</div>
             </div>
           </div>
 
-          <!-- Inline Notice for Override Confirmation (also backed by modal) -->
-          <div id="overrideWarningBox"
-            style="display: none; background: var(--amber-surface); border: 1px solid rgba(138, 75, 0, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--amber-text);">
-            <div style="font-weight: 700; margin-bottom: 4px;" id="overrideWarningTitle">⚠️ Below-Floor Quality Warning
+          <!-- STEP 3: GENERATING IMAGE -->
+          <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span class="step-badge">STEP 3</span>
+              <button class="btn-pill-primary" id="btnGenerate" onclick="generateImage()" style="font-size: 15px; padding: 12px 28px;">
+                Generate Image <span aria-hidden="true">↗</span>
+              </button>
             </div>
-            <div id="overrideWarningText" style="margin-bottom: 8px;">Selected tier is below the quality floor
-              recommended for this purpose.</div>
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-              <input type="checkbox" id="overrideConfirmCheckbox">
-              <span>I confirm this below-floor choice (will be logged in audit trail).</span>
-            </label>
-          </div>
-
-          <!-- Budget Error Box -->
-          <div id="budgetErrorBox"
-            style="display: none; background: var(--rose-surface); border: 1px solid rgba(179, 27, 56, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; font-size: 13px; color: var(--rose-text);">
-            <div style="font-weight: 700; margin-bottom: 2px;">🛑 Blocked by Hard Budget</div>
-            <div id="budgetMessageText">Selected tier exceeds hard budget limit.</div>
-          </div>
-
-          <!-- Generate Action -->
-          <div style="display: flex; align-items: center; gap: 16px; margin-top: 14px; flex-wrap: wrap;">
-            <button class="btn-pill-primary" id="btnGenerate" onclick="generateImage()">
-              Generate Image <span aria-hidden="true">↗</span>
-            </button>
-            <span style="font-size: 13px; color: var(--muted-strong);" id="generationStatusNotice">Ready to
-              generate</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; color: var(--muted-strong); font-weight: 500;" id="generationStatusNotice">Ready to generate</span>
+            </div>
           </div>
         </div>
 
-        <!-- Centerpiece Resource Comparison Panel -->
-        <div class="card" id="comparisonPanel" aria-labelledby="comparisonHeading">
+        <!-- STEP 4: VERIFY THE NUMERICAL VALUES OF SAVINGS (Initially hidden; revealed once generation ends) -->
+        <div class="card comparison-verified-panel" id="comparisonPanel" aria-labelledby="comparisonHeading" style="display: none; margin-top: 28px; border: 2px solid #C4B5FD; box-shadow: 0 8px 30px rgba(110, 52, 226, 0.08);">
           <div class="card-title">
-            <span id="comparisonHeading">3. Resource Comparison & Avoided Compute</span>
-            <span class="origin-badge origin-simulated" id="comparisonDataOrigin">Simulated Proxy</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="step-badge step-badge-success">STEP 4</span>
+              <span id="comparisonHeading">Verified Generation & Avoided Compute Savings</span>
+            </div>
+            <span class="origin-badge origin-measured" id="comparisonDataOrigin">Verified Savings</span>
           </div>
           <div class="card-subtitle">
             Every number is explicitly attributed. "Saved" represents estimated savings vs maximum tier (not run).
+          </div>
+
+          <!-- Image Preview & Side-by-Side (P1) -->
+          <div class="preview-section" style="margin-bottom: 24px;">
+            <!-- Selected Output Preview -->
+            <div class="preview-box">
+              <div class="preview-box-header">
+                <span class="preview-box-title">Generated Output Preview</span>
+                <span class="origin-badge origin-simulated" id="outputTierBadge">Economy Output</span>
+              </div>
+              <div class="preview-img-container">
+                <img id="generatedImagePreview" src=""
+                  alt="Generated image output preview with DEMO PLACEHOLDER watermark" style="display: none;">
+                <div id="imagePlaceholderNotice"
+                  style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
+                  Generate an image to view the output preview.
+                </div>
+              </div>
+              <div class="placeholder-honesty-note" id="placeholderHonestyLabel">
+                🏷️ DEMO PLACEHOLDER: illustrative placeholder asset, not real model output.
+              </div>
+
+              <!-- Feedback Control (P0) -->
+              <div id="goodEnoughControl" style="margin-top: 12px; padding: 12px 14px; background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                  <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Good enough for your purpose?</span>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-pill-secondary" id="btnFeedbackYes" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('yes')">✓ Yes</button>
+                    <button type="button" class="btn-pill-secondary" id="btnFeedbackNo" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('no')">✕ No</button>
+                  </div>
+                </div>
+                <div id="feedbackResultNotice" style="display: none; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);"></div>
+              </div>
+            </div>
+
+            <!-- Maximum Tier Reference Preview -->
+            <div class="preview-box">
+              <div class="preview-box-header">
+                <span class="preview-box-title">Maximum Quality Reference</span>
+                <span class="origin-badge origin-estimated">1536×1536 Baseline</span>
+              </div>
+              <div class="preview-img-container">
+                <img id="maxTierImagePreview" src=""
+                  alt="Maximum quality reference preview with DEMO PLACEHOLDER watermark" style="display: none;">
+                <div id="maxPlaceholderNotice"
+                  style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
+                  Reference baseline: Illustrative placeholder asset differing in resolution.
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--muted-strong); margin-top: 8px;">
+                ℹ️ Illustrative placeholders: they differ only in resolution. Baseline was not run.
+              </div>
+            </div>
           </div>
 
           <!-- Progress Bar: Units Used vs Maximum -->
@@ -1805,8 +2101,7 @@
                 <span class="origin-badge origin-measured">Savings</span>
               </div>
               <div class="metric-value" style="color: var(--green-text);" id="metricSavingsUnits">+106.2 units</div>
-              <div class="metric-sub" style="font-weight: 700; color: var(--green-text);" id="metricSavingsPct">90.0%
-                compute reduction</div>
+              <div class="metric-sub" style="font-weight: 700; color: var(--green-text);" id="metricSavingsPct">90.0% compute reduction</div>
             </div>
 
             <!-- Metric 4: Energy & Carbon -->
@@ -1815,10 +2110,8 @@
                 <span class="metric-label">Energy & Carbon</span>
                 <span class="origin-badge origin-simulated">Strict Policy</span>
               </div>
-              <div class="metric-value" style="font-size: 16px; color: var(--muted-strong);" id="metricEnergyValue">null
-                (Not Estimated)</div>
-              <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never presented
-                as Wh without measured hardware data.</div>
+              <div class="metric-value" style="font-size: 16px; color: var(--muted-strong);" id="metricEnergyValue">null (Not Estimated)</div>
+              <div class="metric-sub" id="metricEnergyReason">Energy model disabled: simulated units are never presented as Wh without measured hardware data.</div>
             </div>
 
             <!-- Metric 5: Purpose-Fit Verification Gate (P0) -->
@@ -1840,59 +2133,6 @@
               </div>
               <div style="font-size: 11px; color: var(--muted-strong); margin-top: 6px;">
                 ℹ️ Automated proxy checks, not a judgement of whether a person will like the image.
-              </div>
-            </div>
-          </div>
-
-          <!-- Image Preview & Side-by-Side (P1) -->
-          <div class="preview-section">
-            <!-- Selected Output Preview -->
-            <div class="preview-box">
-              <div class="preview-box-header">
-                <span class="preview-box-title">Generated Output Preview</span>
-                <span class="origin-badge origin-simulated" id="outputTierBadge">Economy Placeholder</span>
-              </div>
-              <div class="preview-img-container">
-                <img id="generatedImagePreview" src=""
-                  alt="Generated image output preview with DEMO PLACEHOLDER watermark" style="display: none;">
-                <div id="imagePlaceholderNotice"
-                  style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
-                  Generate an image to view the synthetic placeholder output.
-                </div>
-              </div>
-              <div class="placeholder-honesty-note" id="placeholderHonestyLabel">
-                🏷️ DEMO PLACEHOLDER: illustrative placeholder asset, not real model output.
-              </div>
-
-              <!-- Feedback Control (P0) -->
-              <div id="goodEnoughControl" style="margin-top: 12px; padding: 12px 14px; background: #F8F8FC; border: 1px solid var(--border); border-radius: var(--radius-sm); display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                  <span style="font-size: 13px; font-weight: 600; color: var(--ink);">Good enough for your purpose?</span>
-                  <div style="display: flex; gap: 8px;">
-                    <button type="button" class="btn-pill-secondary" id="btnFeedbackYes" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('yes')">✓ Yes</button>
-                    <button type="button" class="btn-pill-secondary" id="btnFeedbackNo" style="padding: 4px 12px; font-size: 12px;" onclick="submitFeedback('no')">✕ No</button>
-                  </div>
-                </div>
-                <div id="feedbackResultNotice" style="display: none; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);"></div>
-              </div>
-            </div>
-
-            <!-- Maximum Tier Reference Preview -->
-            <div class="preview-box">
-              <div class="preview-box-header">
-                <span class="preview-box-title">Maximum Quality Reference</span>
-                <span class="origin-badge origin-estimated">1536×1536 Baseline</span>
-              </div>
-              <div class="preview-img-container">
-                <img id="maxTierImagePreview" src=""
-                  alt="Maximum quality reference preview with DEMO PLACEHOLDER watermark" style="display: none;">
-                <div id="maxPlaceholderNotice"
-                  style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">
-                  Reference baseline: Illustrative placeholder asset differing in resolution.
-                </div>
-              </div>
-              <div style="font-size: 11px; color: var(--muted-strong); margin-top: 8px;">
-                ℹ️ Illustrative placeholders: they differ only in resolution. Baseline was not run.
               </div>
             </div>
           </div>
@@ -2551,6 +2791,27 @@
       debounceTimer = setTimeout(triggerRecommend, 300);
     }
 
+    function setQuickPrompt(promptText, purposeKey) {
+      const input = document.getElementById('promptInput');
+      if (input) {
+        input.value = promptText;
+      }
+      if (purposeKey) {
+        selectPurpose(purposeKey);
+      } else {
+        triggerRecommend();
+      }
+    }
+
+    function clearPromptInput() {
+      const input = document.getElementById('promptInput');
+      if (input) {
+        input.value = '';
+        input.focus();
+        triggerRecommend();
+      }
+    }
+
     async function triggerRecommend() {
       const prompt = document.getElementById('promptInput').value;
       const printUse = document.getElementById('printUseCheck').checked;
@@ -2778,13 +3039,84 @@
           if (maxNotice) maxNotice.style.display = 'none';
         }
 
-        // Update comparison panel
+        // Step 4: Reveal and Update verified comparison panel & savings
+        const compPanel = document.getElementById('comparisonPanel');
+        if (compPanel) {
+          compPanel.style.display = 'block';
+          compPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Reveal the tier cards verified units once generation completes
+        document.querySelectorAll('.tier-units-display, .tier-savings-display').forEach(el => {
+          el.style.display = 'block';
+        });
+
+        // Update comparison panel numerical values
         document.getElementById('metricSelectedUnits').textContent = `${data.estimated_units} units`;
         document.getElementById('metricBaselineUnits').textContent = `${data.baseline_units} units`;
         document.getElementById('metricSavingsUnits').textContent = `+${data.savings_units} units`;
         document.getElementById('metricSavingsPct').textContent = `${data.savings_percentage}% compute reduction`;
 
-        notice.textContent = `Completed in ${data.latency_s}s. Saved ${data.savings_units} units (${data.savings_percentage}%)!`;
+        // Update progress bar
+        const baselineVal = data.baseline_units || 118.0;
+        const pctUsed = Math.min(100, Math.max(0, (data.estimated_units / baselineVal) * 100)).toFixed(1);
+        const barFill = document.getElementById('progressBarFill');
+        const pctText = document.getElementById('progressPercentText');
+        if (barFill) barFill.style.width = `${pctUsed}%`;
+        if (pctText) pctText.textContent = `${pctUsed}% of Maximum`;
+
+        // Update Purpose-Fit Verification Gate with API result
+        if (data.purpose_fit) {
+          const pf = data.purpose_fit;
+          const verdictEl = document.getElementById('metricFitVerdict');
+          const badgeEl = document.getElementById('fitVerdictBadge');
+          const scoreEl = document.getElementById('metricFitScore');
+          const summaryEl = document.getElementById('metricFitSummary');
+          const failedWrap = document.getElementById('failedChecksListWrap');
+          const failedList = document.getElementById('failedChecksList');
+
+          if (scoreEl) scoreEl.textContent = `Score: ${(pf.score * 100).toFixed(0)}%`;
+
+          if (pf.verdict === 'yes') {
+            if (verdictEl) {
+              verdictEl.textContent = 'Fit for Purpose: PASSED';
+              verdictEl.style.color = 'var(--green-text)';
+            }
+            if (badgeEl) {
+              badgeEl.textContent = 'Verdict: PASSED';
+              badgeEl.className = 'origin-badge origin-measured';
+            }
+            if (summaryEl) summaryEl.textContent = pf.explanation || 'Image passes quality threshold for intended purpose. Savings claimed!';
+            if (failedWrap) failedWrap.style.display = 'none';
+          } else if (pf.verdict === 'borderline') {
+            if (verdictEl) {
+              verdictEl.textContent = 'Fit for Purpose: BORDERLINE';
+              verdictEl.style.color = 'var(--amber-text)';
+            }
+            if (badgeEl) {
+              badgeEl.textContent = 'Verdict: BORDERLINE';
+              badgeEl.className = 'origin-badge origin-simulated';
+            }
+            if (summaryEl) summaryEl.textContent = pf.explanation || 'Minor quality degradation detected, but usable.';
+            if (failedWrap) failedWrap.style.display = 'none';
+          } else {
+            if (verdictEl) {
+              verdictEl.textContent = 'Fit for Purpose: REJECTED';
+              verdictEl.style.color = 'var(--rose-text)';
+            }
+            if (badgeEl) {
+              badgeEl.textContent = 'Verdict: REJECTED';
+              badgeEl.className = 'origin-badge origin-estimated';
+            }
+            if (summaryEl) summaryEl.textContent = pf.explanation || 'Image fails quality threshold for purpose. No savings claimed.';
+            if (failedWrap && pf.failed_checks && pf.failed_checks.length > 0) {
+              failedWrap.style.display = 'block';
+              failedList.innerHTML = pf.failed_checks.map(c => `<li>${c}</li>`).join('');
+            }
+          }
+        }
+
+        notice.textContent = `Completed in ${data.latency_s}s. Saved ${data.savings_units} units (${data.savings_percentage}%)! See verified savings below ↓`;
 
         // Refresh summary, history and provider status
         fetchSummary();
