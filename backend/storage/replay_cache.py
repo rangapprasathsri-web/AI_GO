@@ -8,6 +8,7 @@ All replay items are explicitly marked: 'Replay of an earlier run (date)'.
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -92,10 +93,15 @@ class ReplayCache:
     """Manages cached pre-recorded generation runs for offline safety net."""
 
     def __init__(self, file_path: Path = REPLAY_CACHE_FILE):
+        if os.getenv("VERCEL") and file_path == REPLAY_CACHE_FILE:
+            file_path = Path("/tmp/replay_cache.json")
         self.file_path = file_path
-        self.file_path.parent.mkdir(parents=True, exist_ok=True)
-        if not self.file_path.exists():
-            self._save_all(_init_default_cache())
+        try:
+            self.file_path.parent.mkdir(parents=True, exist_ok=True)
+            if not self.file_path.exists():
+                self._save_all(_init_default_cache())
+        except Exception:
+            pass
 
     def _load_all(self) -> list[dict[str, Any]]:
         try:

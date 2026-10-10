@@ -6,6 +6,7 @@ Persists requests, decisions, executions, costs, and quality results.
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -31,15 +32,23 @@ class SQLiteStorage(StorageInterface):
     """SQLite implementation of the storage interface."""
 
     def __init__(self, db_path: str = "data/optimizer.db"):
+        if os.getenv("VERCEL") and db_path == "data/optimizer.db":
+            db_path = "/tmp/optimizer.db"
         self.db_path = db_path
-        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        try:
+            Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
         self._init_db()
 
     @contextmanager
     def _get_conn(self) -> Generator[sqlite3.Connection, None, None]:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA journal_mode=WAL")
+        try:
+            conn.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass
         try:
             yield conn
             conn.commit()
