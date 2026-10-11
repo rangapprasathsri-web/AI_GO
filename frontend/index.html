@@ -4911,6 +4911,107 @@
       }
     }
 
+    let currentEnhancedData = null;
+
+    async function enhancePromptWithLLM() {
+      const promptInput = document.getElementById('promptInput');
+      const rawPrompt = (promptInput?.value || '').trim();
+      const btn = document.getElementById('btnEnhancePrompt');
+      const btnText = document.getElementById('enhanceBtnText');
+      const panel = document.getElementById('promptEnhancementPanel');
+      const printSize = document.getElementById('printSizeSelect')?.value || 'A4';
+
+      const promptToAnalyze = rawPrompt || 'Educational classroom visual illustration';
+
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.textContent = 'Analyzing & Routing...';
+
+      try {
+        const res = await fetch('/api/prompt/preprocess', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: promptToAnalyze,
+            purpose: currentPurpose,
+            print_size: printSize
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error(`LLM Preprocessor failed with status ${res.status}`);
+        }
+
+        const data = await res.json();
+        currentEnhancedData = data;
+
+        // Populate panel fields
+        const modelBadge = document.getElementById('enhancementModelBadge');
+        if (modelBadge) {
+          modelBadge.textContent = data.model_display_name || data.recommended_model || 'Gemini 2.5 Flash';
+        }
+
+        const provBadge = document.getElementById('enhancementProviderBadge');
+        if (provBadge) {
+          provBadge.textContent = `Router: ${data.provider_used || 'Multi-Key'}`;
+        }
+
+        const expText = document.getElementById('enhancementExplanationText');
+        if (expText) {
+          expText.textContent = data.explanation || 'Right-sized model and prompt to minimize unnecessary compute.';
+        }
+
+        const impList = document.getElementById('enhancementImprovementsList');
+        if (impList) {
+          const improvements = Array.isArray(data.improvements) ? data.improvements : ['Optimized prompt structure'];
+          impList.innerHTML = improvements.map(item => `<li>${item}</li>`).join('');
+        }
+
+        const revisedInput = document.getElementById('revisedPromptInput');
+        if (revisedInput) {
+          revisedInput.value = data.revised_prompt || promptToAnalyze;
+        }
+
+        if (panel) {
+          panel.style.display = 'block';
+          panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } catch (err) {
+        console.error('Prompt preprocessor error:', err);
+        // Fallback local enhancement if network is unreachable
+        const fallbackRevised = `Clear instructional visual of ${promptToAnalyze}, balanced vibrant colors, clean subject focus, pedagogical clarity`;
+        const revisedInput = document.getElementById('revisedPromptInput');
+        if (revisedInput) revisedInput.value = fallbackRevised;
+        const expText = document.getElementById('enhancementExplanationText');
+        if (expText) expText.textContent = 'Deterministic rule-based preprocessor active: right-sized prompt layout.';
+        const impList = document.getElementById('enhancementImprovementsList');
+        if (impList) impList.innerHTML = '<li>Tailored prompt phrasing for target tier</li><li>Clarified visual focus</li>';
+        const modelBadge = document.getElementById('enhancementModelBadge');
+        if (modelBadge) modelBadge.textContent = 'Gemini 2.5 Flash (Economy Tier)';
+        if (panel) panel.style.display = 'block';
+      } finally {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.textContent = 'AI Model Advisor & Prompt Enhancer';
+      }
+    }
+
+    function dismissPromptEnhancement() {
+      const panel = document.getElementById('promptEnhancementPanel');
+      if (panel) panel.style.display = 'none';
+    }
+
+    function applyEnhancedPrompt() {
+      const revisedInput = document.getElementById('revisedPromptInput');
+      const promptInput = document.getElementById('promptInput');
+      if (revisedInput && promptInput && revisedInput.value.trim()) {
+        promptInput.value = revisedInput.value.trim();
+      }
+      if (currentEnhancedData && currentEnhancedData.recommended_tier) {
+        selectTier(currentEnhancedData.recommended_tier.toLowerCase());
+      }
+      dismissPromptEnhancement();
+      triggerRecommend();
+    }
+
     async function triggerRecommend() {
       const prompt = document.getElementById('promptInput').value;
       const printUse = document.getElementById('printUseCheck').checked;

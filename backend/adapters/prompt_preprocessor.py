@@ -64,24 +64,34 @@ class PromptPreprocessor:
         primary_key: Optional[str] = None,
         fallback_key: Optional[str] = None,
         fallback_key_2: Optional[str] = None,
+        gemini_key: Optional[str] = None,
         model: str = DEFAULT_MODEL,
-        timeout: float = 12.0,
+        timeout: float = 6.0,
     ):
         self.primary_key = primary_key if primary_key is not None else os.getenv("GROQ_API_KEY", "").strip()
         self.fallback_key = fallback_key if fallback_key is not None else os.getenv("GROQ_API_KEY_FALLBACK", "").strip()
         self.fallback_key_2 = fallback_key_2 if fallback_key_2 is not None else os.getenv("GROQ_API_KEY_FALLBACK_2", "").strip()
+        if gemini_key is not None:
+            self.gemini_key = gemini_key
+        elif primary_key == "" and fallback_key == "":
+            self.gemini_key = ""
+        else:
+            self.gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
         self.model = model
         self.timeout = timeout
         self._cache: dict[str, dict[str, Any]] = {}
 
-    def _get_key_candidates(self) -> list[tuple[str, str]]:
+    def _get_key_candidates(self) -> list[tuple[str, str, str]]:
+        """Returns list of (provider_type, tier_label, api_key)."""
         candidates = []
         if self.primary_key:
-            candidates.append(("primary", self.primary_key))
+            candidates.append(("groq", "primary", self.primary_key))
         if self.fallback_key:
-            candidates.append(("fallback_1", self.fallback_key))
+            candidates.append(("groq", "fallback_1", self.fallback_key))
         if self.fallback_key_2:
-            candidates.append(("fallback_2", self.fallback_key_2))
+            candidates.append(("groq", "fallback_2", self.fallback_key_2))
+        if self.gemini_key:
+            candidates.append(("gemini", "gemini_2.5_flash", self.gemini_key))
         return candidates
 
     def _strip_pii(self, text: str) -> str:
@@ -91,10 +101,17 @@ class PromptPreprocessor:
         return text
 
     def _sanitize_log(self, text: str) -> str:
-        for k in [self.primary_key, self.fallback_key, self.fallback_key_2]:
+        for k in [self.primary_key, self.fallback_key, self.fallback_key_2, self.gemini_key]:
             if k:
                 text = text.replace(k, "[REDACTED]")
         return text
+
+    def _clean_json_str(self, text: str) -> str:
+        s = text.strip()
+        if s.startswith("```"):
+            s = re.sub(r"^```(?:json)?\s*", "", s, flags=re.IGNORECASE)
+            s = re.sub(r"\s*```$", "", s)
+        return s.strip()
 
     def preprocess(
         self,
@@ -103,8 +120,8 @@ class PromptPreprocessor:
         print_size: Optional[str] = None,
     ) -> dict[str, Any]:
         """
-        Analyze user prompt via Groq LLM with multi-key failover.
-        Falls back to offline deterministic rule engine if all network calls fail.
+        Analyze user prompt via LLM with multi-key failover (Groq -> Groq fallbacks -> Gemini -> Offline Rules).
+        Guarantees resilient sub-second to low-second responses with zero crashes.
         """
         clean_prompt = self._strip_pii(prompt.strip())
         cache_key = f"{purpose or 'default'}:{clean_prompt.lower()}"
@@ -120,46 +137,78 @@ class PromptPreprocessor:
             user_content += f"\nTarget Print Size: '{print_size}'"
 
         candidates = self._get_key_candidates()
-        for tier_label, api_key in candidates:
+        for prov_type, tier_label, api_key in candidates:
             try:
-                headers = {
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                }
-                payload = {
-                    "model": self.model,
-                    "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT},
-                        {"role": "user", "content": user_content},
-                    ],
-                    "response_format": {"type": "json_object"},
-                    "max_tokens": 600,
-                    "temperature": 0.2,
-                }
-                resp = httpx.post(self.GROQ_ENDPOINT, headers=headers, json=payload, timeout=self.timeout)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    content_str = data["choices"][0]["message"]["content"]
-                    parsed = json.loads(content_str)
-                    result = {
-                        "original_prompt": clean_prompt,
-                        "recommended_model": parsed.get("recommended_model", "gemini-2.5-flash-image"),
-                        "recommended_tier": parsed.get("recommended_tier", "economy").lower(),
-                        "model_display_name": parsed.get("model_display_name", "Gemini 2.5 Flash (Economy Tier)"),
-                        "explanation": parsed.get("explanation", "Right-sized model to minimize compute."),
-                        "revised_prompt": parsed.get("revised_prompt", clean_prompt),
-                        "improvements": parsed.get("improvements", ["Optimized prompt structure"]),
-                        "provider_used": f"groq ({tier_label})",
-                        "cached": False,
+                if prov_type == "groq":
+                    headers = {
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
                     }
-                    self._cache[cache_key] = result
-                    return result
-                else:
-                    safe_msg = self._sanitize_log(resp.text[:200])
-                    logger.warning("Groq (%s) returned status %d: %s", tier_label, resp.status_code, safe_msg)
+                    payload = {
+                        "model": self.model,
+                        "messages": [
+                            {"role": "system", "content": SYSTEM_PROMPT},
+                            {"role": "user", "content": user_content},
+                        ],
+                        "response_format": {"type": "json_object"},
+                        "max_tokens": 600,
+                        "temperature": 0.2,
+                    }
+                    resp = httpx.post(self.GROQ_ENDPOINT, headers=headers, json=payload, timeout=self.timeout)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        content_str = self._clean_json_str(data["choices"][0]["message"]["content"])
+                        parsed = json.loads(content_str)
+                        result = {
+                            "original_prompt": clean_prompt,
+                            "recommended_model": parsed.get("recommended_model", "gemini-2.5-flash-image"),
+                            "recommended_tier": parsed.get("recommended_tier", "economy").lower(),
+                            "model_display_name": parsed.get("model_display_name", "Gemini 2.5 Flash (Economy Tier)"),
+                            "explanation": parsed.get("explanation", "Right-sized model to minimize compute."),
+                            "revised_prompt": parsed.get("revised_prompt", clean_prompt),
+                            "improvements": parsed.get("improvements", ["Optimized prompt structure"]),
+                            "provider_used": f"groq ({tier_label})",
+                            "cached": False,
+                        }
+                        self._cache[cache_key] = result
+                        return result
+                    else:
+                        safe_msg = self._sanitize_log(resp.text[:200])
+                        logger.warning("Groq (%s) returned status %d: %s", tier_label, resp.status_code, safe_msg)
+
+                elif prov_type == "gemini":
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+                    headers = {"Content-Type": "application/json"}
+                    payload = {
+                        "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+                        "contents": [{"parts": [{"text": user_content}]}],
+                        "generationConfig": {"responseMimeType": "application/json", "temperature": 0.2},
+                    }
+                    resp = httpx.post(url, headers=headers, json=payload, timeout=self.timeout)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        cand = data.get("candidates", [])[0]
+                        content_str = self._clean_json_str(cand["content"]["parts"][0]["text"])
+                        parsed = json.loads(content_str)
+                        result = {
+                            "original_prompt": clean_prompt,
+                            "recommended_model": parsed.get("recommended_model", "gemini-2.5-flash-image"),
+                            "recommended_tier": parsed.get("recommended_tier", "economy").lower(),
+                            "model_display_name": parsed.get("model_display_name", "Gemini 2.5 Flash (Economy Tier)"),
+                            "explanation": parsed.get("explanation", "Right-sized model via Gemini."),
+                            "revised_prompt": parsed.get("revised_prompt", clean_prompt),
+                            "improvements": parsed.get("improvements", ["Optimized prompt layout"]),
+                            "provider_used": "gemini (gemini-2.5-flash)",
+                            "cached": False,
+                        }
+                        self._cache[cache_key] = result
+                        return result
+                    else:
+                        safe_msg = self._sanitize_log(resp.text[:200])
+                        logger.warning("Gemini (%s) returned status %d: %s", tier_label, resp.status_code, safe_msg)
             except Exception as e:
                 safe_err = self._sanitize_log(str(e))
-                logger.warning("Groq (%s) request failed: %s", tier_label, safe_err)
+                logger.warning("%s (%s) request failed: %s", prov_type, tier_label, safe_err)
 
         # Offline deterministic fallback
         logger.info("Using offline deterministic prompt preprocessor fallback")

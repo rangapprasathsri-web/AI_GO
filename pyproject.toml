@@ -1,3 +1,24 @@
+[project]
+name = "ai-go"
+version = "2.0.0"
+description = "Adaptive AI Image Resource Optimizer"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.100",
+    "uvicorn>=0.23",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "Pillow>=10.0",
+    "httpx>=0.24",
+    "python-multipart>=0.0.6",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "numpy>=1.24",
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+]
+
 [tool.vercel]
 entrypoint = "backend.api.main:app"
 

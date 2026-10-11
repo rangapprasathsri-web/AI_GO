@@ -499,6 +499,7 @@ def recommend_tier(req: RecommendRequest):
 
 
 @app.post("/api/prompt/preprocess")
+@app.post("/prompt/preprocess")
 def preprocess_prompt_endpoint(req: PromptPreprocessRequest):
     """
     LLM-powered prompt pre-verification, right-sized model recommendation,
@@ -1419,6 +1420,10 @@ fonts_dir = static_dir / "fonts" if (static_dir / "fonts").exists() else (fronte
 
 if (static_dir / "index.html").exists() or (frontend_dir / "index.html").exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    if (dist_dir / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=str(dist_dir / "assets")), name="assets")
+    elif (frontend_dir / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=str(frontend_dir / "assets")), name="assets")
 
     @app.api_route("/", methods=["GET", "HEAD"])
     def serve_index():
