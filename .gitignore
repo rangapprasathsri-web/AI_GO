@@ -15,3 +15,6 @@ serviceAccountKey.json
 firebase-debug.log
 database-debug.log
 ui-debug.log
+node_modules/
+dist/
+.vercel/

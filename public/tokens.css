@@ -1,0 +1,172 @@
+/* ==========================================================================
+   MINIMAL EDITORIAL SAAS DESIGN TOKENS
+   All colors, surfaces, borders, and typography variables.
+   ========================================================================== */
+
+/* Self-Hosted Geist Font Family */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Geist-Regular.woff2') format('woff2'),
+       url('/static/fonts/Geist-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Geist-Medium.woff2') format('woff2'),
+       url('/static/fonts/Geist-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Geist-SemiBold.woff2') format('woff2'),
+       url('/static/fonts/Geist-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Geist-Bold.woff2') format('woff2'),
+       url('/static/fonts/Geist-Bold.woff2') format('woff2');
+}
+
+:root {
+  /* Surfaces & Canvas */
+  --canvas: #FFFFFF;
+  --surface: #F7F7FA;
+  --border: #E8E8ED;
+  --border-strong: #D6D6DC;
+  --lavender: #F2EDFF;
+  --lavender-border: #DCD2FD;
+
+  /* Typography Colors (WCAG AA Compliant) */
+  --ink: #111113;
+  --muted: #6B6B72;
+  --muted-strong: #55555C;
+
+  /* Accent & Brand Colors */
+  --purple-500: #9B73F5;
+  --purple-600: #6E34E2;
+  --purple-700: #5221BA;
+
+  /* Status Colors (Always Paired with Text) */
+  --green: #6AAF24;
+  --green-text: #286208;
+  --green-surface: #F0F9E8;
+  --amber-text: #8A4B00;
+  --amber-surface: #FFF8E6;
+  --rose-text: #B31B38;
+  --rose-surface: #FFF1F3;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* Shadows (Subtle & Quiet) */
+  --shadow-sm: 0 1px 2px rgba(17, 17, 19, 0.04);
+  --shadow-card: 0 2px 8px rgba(17, 17, 19, 0.04), 0 1px 2px rgba(17, 17, 19, 0.02);
+  --shadow-hover: 0 4px 16px rgba(110, 52, 226, 0.12);
+
+  /* Typography Stacks */
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Dark Theme Support (Auto system preference and explicit toggle) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #0F0F12;
+    --surface: #18181D;
+    --border: #2A2A33;
+    --border-strong: #3D3D4A;
+    --lavender: #231B38;
+    --lavender-border: #44326A;
+
+    --ink: #F4F4F6;
+    --muted: #A3A3AF;
+    --muted-strong: #C4C4D0;
+
+    --purple-500: #A885FF;
+    --purple-600: #8652F5;
+    --purple-700: #6F3CE3;
+
+    --green: #7BCB2C;
+    --green-text: #95E848;
+    --green-surface: #182B10;
+    --amber-text: #FBBF24;
+    --amber-surface: #2E1F0B;
+    --rose-text: #FB7185;
+    --rose-surface: #2F1218;
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 9999px;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-hover: 0 4px 16px rgba(134, 82, 245, 0.25);
+
+    --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+}
+
+[data-theme="dark"] {
+  --canvas: #0F0F12;
+  --surface: #18181D;
+  --border: #2A2A33;
+  --border-strong: #3D3D4A;
+  --lavender: #231B38;
+  --lavender-border: #44326A;
+
+  --ink: #F4F4F6;
+  --muted: #A3A3AF;
+  --muted-strong: #C4C4D0;
+
+  --purple-500: #A885FF;
+  --purple-600: #8652F5;
+  --purple-700: #6F3CE3;
+
+  --green: #7BCB2C;
+  --green-text: #95E848;
+  --green-surface: #182B10;
+  --amber-text: #FBBF24;
+  --amber-surface: #2E1F0B;
+  --rose-text: #FB7185;
+  --rose-surface: #2F1218;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 4px 16px rgba(134, 82, 245, 0.25);
+
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Reduced Motion Compliance */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

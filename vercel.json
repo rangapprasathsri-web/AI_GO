@@ -1,35 +1,81 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/logo.png",
-      "dest": "/frontend/logo.png"
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/frontend/logo.png"
+      "source": "/health",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/tokens.css",
-      "dest": "/frontend/tokens.css"
+      "source": "/recommend",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/fonts/(.*)",
-      "dest": "/frontend/fonts/$1"
+      "source": "/generate",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/summary",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.py"
+      "source": "/analytics/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/analytics",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/benchmark/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/benchmark",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/feedback",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/history/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/history",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/config/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/config",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/prompt/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/replay",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/reports/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/docs",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "/api/index.py"
     }
   ]
 }

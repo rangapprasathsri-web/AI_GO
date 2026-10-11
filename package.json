@@ -1,0 +1,15 @@
+{
+  "name": "ai-go",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI GO — Adaptive AI Image Resource Optimizer",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.4.4"
+  }
+}

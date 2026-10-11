@@ -80,7 +80,10 @@ app = FastAPI(
     version="2.0.0",
 )
 
-allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000")
+allowed_origins_env = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:8000,http://127.0.0.1:8000,http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173",
+)
 allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
 
 app.add_middleware(
@@ -1407,43 +1410,59 @@ make_legacy_alias("/reports/{filename}", "/api/reports/{filename}", ["GET"])
 
 
 # ── Mount Static Frontend Files ───────────────────────────────────────
-frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
-fonts_dir = frontend_dir / "fonts"
+root_project_dir = Path(__file__).resolve().parent.parent.parent
+dist_dir = root_project_dir / "dist"
+frontend_dir = root_project_dir / "frontend"
 
-if (frontend_dir / "index.html").exists():
-    app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
+static_dir = dist_dir if (dist_dir / "index.html").exists() else frontend_dir
+fonts_dir = static_dir / "fonts" if (static_dir / "fonts").exists() else (frontend_dir / "fonts")
 
-    @app.get("/")
+if (static_dir / "index.html").exists() or (frontend_dir / "index.html").exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+    @app.api_route("/", methods=["GET", "HEAD"])
     def serve_index():
-        idx_path = frontend_dir / "index.html"
+        idx_path = static_dir / "index.html"
+        if not idx_path.is_file():
+            idx_path = frontend_dir / "index.html"
         if not idx_path.is_file():
             raise HTTPException(status_code=404, detail="index.html not found")
         return FileResponse(str(idx_path))
 
     @app.api_route("/logo.png", methods=["GET", "HEAD"])
     def serve_logo():
-        logo_path = frontend_dir / "logo.png"
+        logo_path = static_dir / "logo.png"
+        if not logo_path.is_file():
+            logo_path = frontend_dir / "logo.png"
         if not logo_path.is_file():
             raise HTTPException(status_code=404, detail="logo.png not found")
         return FileResponse(str(logo_path), media_type="image/png")
 
     @app.api_route("/favicon.ico", methods=["GET", "HEAD"])
     def serve_favicon():
-        logo_path = frontend_dir / "logo.png"
-        if not logo_path.is_file():
+        ico_path = static_dir / "favicon.ico"
+        if not ico_path.is_file():
+            ico_path = static_dir / "logo.png"
+        if not ico_path.is_file():
+            ico_path = frontend_dir / "logo.png"
+        if not ico_path.is_file():
             raise HTTPException(status_code=404, detail="favicon not found")
-        return FileResponse(str(logo_path), media_type="image/png")
+        return FileResponse(str(ico_path), media_type="image/png")
 
-    @app.get("/tokens.css")
+    @app.api_route("/tokens.css", methods=["GET", "HEAD"])
     def serve_tokens():
-        tokens_path = frontend_dir / "tokens.css"
+        tokens_path = static_dir / "tokens.css"
+        if not tokens_path.is_file():
+            tokens_path = frontend_dir / "tokens.css"
         if not tokens_path.is_file():
             raise HTTPException(status_code=404, detail="tokens.css not found")
         return FileResponse(str(tokens_path), media_type="text/css")
 
-    @app.get("/fonts/{font_name}")
+    @app.api_route("/fonts/{font_name}", methods=["GET", "HEAD"])
     def serve_font(font_name: str):
         font_path = fonts_dir / font_name
+        if not font_path.is_file():
+            font_path = frontend_dir / "fonts" / font_name
         if not font_path.is_file():
             raise HTTPException(status_code=404, detail=f"Font file '{font_name}' not found")
         return FileResponse(str(font_path), media_type="font/woff2")

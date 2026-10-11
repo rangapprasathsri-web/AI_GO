@@ -142,7 +142,14 @@ def test_scenario_6_resource_values_carry_origin_and_label(resource_service):
 
 
 # ── Scenario 7: Demo mode works with no credentials ───────────────────────────
-def test_scenario_7_demo_mode_works_without_credentials(client):
+def test_scenario_7_demo_mode_works_without_credentials(client, monkeypatch):
+    from backend.api.main import ACTIVE_IMAGE_ADAPTER
+    monkeypatch.setattr(ACTIVE_IMAGE_ADAPTER, "_gemini_api_key", "")
+    monkeypatch.setattr(ACTIVE_IMAGE_ADAPTER, "_openai_api_key", "")
+    monkeypatch.setattr(ACTIVE_IMAGE_ADAPTER, "_enable_live_diffusion", False)
+    monkeypatch.setattr(ACTIVE_IMAGE_ADAPTER, "mode", "demo")
+    monkeypatch.setattr(ACTIVE_IMAGE_ADAPTER, "is_real", False)
+    monkeypatch.setattr(ACTIVE_IMAGE_ADAPTER, "provider_label", "Demo Mode (Mock)")
     res = client.post("/recommend", json={"prompt": "A sunny mountain landscape", "purpose": "coloring_sheet"})
     assert res.status_code == 200
     rec_data = res.json()
