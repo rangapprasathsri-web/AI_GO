@@ -65,6 +65,7 @@ class PromptPreprocessor:
         fallback_key: Optional[str] = None,
         fallback_key_2: Optional[str] = None,
         gemini_key: Optional[str] = None,
+        gemini_key_fallback: Optional[str] = None,
         model: str = DEFAULT_MODEL,
         timeout: float = 6.0,
     ):
@@ -77,6 +78,14 @@ class PromptPreprocessor:
             self.gemini_key = ""
         else:
             self.gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
+
+        if gemini_key_fallback is not None:
+            self.gemini_key_fallback = gemini_key_fallback
+        elif primary_key == "" and fallback_key == "":
+            self.gemini_key_fallback = ""
+        else:
+            self.gemini_key_fallback = os.getenv("GEMINI_API_KEY_FALLBACK", "").strip()
+
         self.model = model
         self.timeout = timeout
         self._cache: dict[str, dict[str, Any]] = {}
@@ -92,6 +101,8 @@ class PromptPreprocessor:
             candidates.append(("groq", "fallback_2", self.fallback_key_2))
         if self.gemini_key:
             candidates.append(("gemini", "gemini_2.5_flash", self.gemini_key))
+        if self.gemini_key_fallback:
+            candidates.append(("gemini", "gemini_2.5_flash_fallback", self.gemini_key_fallback))
         return candidates
 
     def _strip_pii(self, text: str) -> str:

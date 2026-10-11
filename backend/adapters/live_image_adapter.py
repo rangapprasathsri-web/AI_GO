@@ -53,6 +53,7 @@ class LiveImageAdapter(BaseAdapter):
     ):
         self._openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY", "").strip()
         self._gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY", "").strip()
+        self._gemini_api_key_fallback = os.getenv("GEMINI_API_KEY_FALLBACK", "").strip()
         if real_generation_cap is not None:
             self.real_generations_cap = real_generation_cap
         else:
@@ -303,7 +304,12 @@ class LiveImageAdapter(BaseAdapter):
                 error="Google Gemini free quota exceeded",
             )
 
-        for attempt in range(1):
+        gemini_keys = [k for k in [self._gemini_api_key, self._gemini_api_key_fallback] if k]
+        for key in gemini_keys:
+            headers = {
+                "Content-Type": "application/json",
+                "x-goog-api-key": key,
+            }
             try:
                 resp = httpx.post(url, json=payload, headers=headers, timeout=4.0)
                 if resp.status_code == 200:
@@ -337,13 +343,14 @@ class LiveImageAdapter(BaseAdapter):
                                     },
                                 )
                 elif resp.status_code in (429, 403, 400):
-                    self._gemini_quota_exceeded = True
-                    logger.warning("Google Gemini returned %d (quota or access limit); failing over cleanly.", resp.status_code)
-                    break
+                    logger.warning("Google Gemini key returned %d (quota or access limit); trying next candidate.", resp.status_code)
+                    continue
             except Exception as e:
                 safe_err = self._sanitize_text(str(e))
                 logger.warning(f"Google Gemini request failed: {safe_err}")
-                break
+                continue
+
+        self._gemini_quota_exceeded = True
 
         return ExecutionResult(
             request_id=request.id,
