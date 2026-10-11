@@ -394,22 +394,31 @@
 
     .nav-links a {
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 500;
       color: var(--muted-strong);
       display: inline-flex;
       align-items: center;
+      gap: 6px;
       height: 36px;
-      padding: 0 12px;
-      border-radius: var(--radius-sm);
+      padding: 0 14px;
+      border-radius: var(--radius-pill);
       line-height: 1;
-      transition: color 0.15s ease, background-color 0.15s ease;
+      transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
       white-space: nowrap;
+      border: 1px solid transparent;
     }
 
     .nav-links a:hover {
-      color: var(--purple-600);
-      background: var(--surface);
+      color: var(--purple-700);
+      background: #F4F4F8;
+    }
+
+    .nav-links a.is-active {
+      color: var(--purple-700);
+      background: var(--lavender);
+      border-color: rgba(110, 52, 226, 0.25);
+      font-weight: 600;
     }
 
     .nav-actions {
@@ -1978,63 +1987,34 @@
       color: var(--purple-700);
     }
 
-    /* ── Workspace Sub-Navigation Bar ───────────────────────────────────── */
+    /* ── Workspace Status Pill (Sub-Navigation Removed) ─────────────────── */
     .workspace-subnav {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       flex-wrap: wrap;
       gap: 12px;
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 8px 14px;
-      margin-bottom: 28px;
-      box-shadow: 0 1px 3px rgba(17, 17, 19, 0.04);
+      margin-bottom: 24px;
     }
 
     .workspace-tabs {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
+      display: none !important;
     }
 
     .workspace-tab-btn {
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: var(--radius-pill);
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--muted-strong);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .workspace-tab-btn:hover {
-      background: #F4F4F8;
-      color: var(--ink);
-    }
-
-    .workspace-tab-btn.is-active {
-      background: var(--lavender);
-      color: var(--purple-700);
-      border-color: rgba(110, 52, 226, 0.2);
+      display: none !important;
     }
 
     .workspace-session-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
       font-size: 12px;
-      background: #F7F7FA;
-      padding: 6px 12px;
+      background: #FFFFFF;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
       border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(17, 17, 19, 0.04);
     }
 
     /* ── Visual History Gallery Section ─────────────────────────────────── */
@@ -2812,26 +2792,8 @@
            VIEW 3: OPTIMIZER GENERATOR WORKSPACE (AUTHENTICATED)
            ===================================================================== -->
       <div id="viewOptimizer" class="app-view" style="display: none;">
-        <!-- Workspace Sub-Navigation -->
+        <!-- Workspace Session Status -->
         <div class="workspace-subnav">
-          <div class="workspace-tabs">
-            <button type="button" class="workspace-tab-btn is-active" id="tabBtn-optimizer"
-              onclick="navigateTo('optimizer')">
-              ✨ <span>Optimizer Generator</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" id="tabBtn-savings" onclick="navigateTo('savings')">
-              📈 <span>Savings Analytics</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" id="tabBtn-benchmark" onclick="navigateTo('benchmark')">
-              📊 <span>Benchmark Suite</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" id="tabBtn-history" onclick="navigateTo('history')">
-              🖼️ <span>Image History</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" id="tabBtn-admin" onclick="navigateTo('admin')">
-              ⚙️ <span>Admin Studio</span>
-            </button>
-          </div>
           <div class="workspace-session-pill">
             <span>👤 <strong class="ws-user-name">Educator</strong></span>
             <span class="user-role-tag ws-user-role">Requester</span>
@@ -3388,25 +3350,8 @@
            VIEW: RESOURCE SAVINGS & IMPACT ANALYTICS (AUTHENTICATED)
            ===================================================================== -->
       <div id="viewSavings" class="app-view" style="display: none;">
-        <!-- Workspace Sub-Navigation -->
+        <!-- Workspace Session Status -->
         <div class="workspace-subnav">
-          <div class="workspace-tabs">
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('optimizer')">
-              ✨ <span>Optimizer Generator</span>
-            </button>
-            <button type="button" class="workspace-tab-btn is-active" onclick="navigateTo('savings')">
-              📈 <span>Savings Analytics</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('benchmark')">
-              📊 <span>Benchmark Suite</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('history')">
-              🖼️ <span>Image History</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('admin')">
-              ⚙️ <span>Admin Studio</span>
-            </button>
-          </div>
           <div class="workspace-session-pill">
             <span>👤 <strong class="ws-user-name">Educator</strong></span>
             <span class="user-role-tag ws-user-role">Requester</span>
@@ -3611,25 +3556,8 @@
            VIEW 4: MULTI-PROMPT BENCHMARK SUITE (AUTHENTICATED)
            ===================================================================== -->
       <div id="viewBenchmark" class="app-view" style="display: none;">
-        <!-- Workspace Sub-Navigation -->
+        <!-- Workspace Session Status -->
         <div class="workspace-subnav">
-          <div class="workspace-tabs">
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('optimizer')">
-              ✨ <span>Optimizer Generator</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('savings')">
-              📈 <span>Savings Analytics</span>
-            </button>
-            <button type="button" class="workspace-tab-btn is-active" onclick="navigateTo('benchmark')">
-              📊 <span>Benchmark Suite</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('history')">
-              🖼️ <span>Image History</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('admin')">
-              ⚙️ <span>Admin Studio</span>
-            </button>
-          </div>
           <div class="workspace-session-pill">
             <span>👤 <strong class="ws-user-name">Educator</strong></span>
             <span class="user-role-tag ws-user-role">Requester</span>
@@ -3772,25 +3700,8 @@
            VIEW 5: IMAGE HISTORY & VISUAL GALLERY (AUTHENTICATED)
            ===================================================================== -->
       <div id="viewHistory" class="app-view" style="display: none;">
-        <!-- Workspace Sub-Navigation -->
+        <!-- Workspace Session Status -->
         <div class="workspace-subnav">
-          <div class="workspace-tabs">
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('optimizer')">
-              ✨ <span>Optimizer Generator</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('savings')">
-              📈 <span>Savings Analytics</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('benchmark')">
-              📊 <span>Benchmark Suite</span>
-            </button>
-            <button type="button" class="workspace-tab-btn is-active" onclick="navigateTo('history')">
-              🖼️ <span>Image History</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('admin')">
-              ⚙️ <span>Admin Studio</span>
-            </button>
-          </div>
           <div class="workspace-session-pill">
             <span>👤 <strong class="ws-user-name">Educator</strong></span>
             <span class="user-role-tag ws-user-role">Requester</span>
@@ -3921,25 +3832,8 @@
            VIEW 6: SYSTEM GOVERNANCE ADMIN STUDIO (AUTHENTICATED)
            ===================================================================== -->
       <div id="viewAdmin" class="app-view" style="display: none;">
-        <!-- Workspace Sub-Navigation -->
+        <!-- Workspace Session Status -->
         <div class="workspace-subnav">
-          <div class="workspace-tabs">
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('optimizer')">
-              ✨ <span>Optimizer Generator</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('savings')">
-              📈 <span>Savings Analytics</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('benchmark')">
-              📊 <span>Benchmark Suite</span>
-            </button>
-            <button type="button" class="workspace-tab-btn" onclick="navigateTo('history')">
-              🖼️ <span>Image History</span>
-            </button>
-            <button type="button" class="workspace-tab-btn is-active" onclick="navigateTo('admin')">
-              ⚙️ <span>Admin Studio</span>
-            </button>
-          </div>
           <div class="workspace-session-pill">
             <span>👤 <strong class="ws-user-name">Educator</strong></span>
             <span class="user-role-tag ws-user-role">Requester</span>
@@ -4221,11 +4115,11 @@
       if (headerRunningTotal) headerRunningTotal.style.display = 'none';
       if (authBtn) authBtn.style.display = 'none';
 
-      // Update workspace tab active states
-      document.querySelectorAll('.workspace-tab-btn').forEach(btn => {
-        const btnId = btn.id || '';
-        const isMatch = btnId.endsWith(viewName) || (btn.getAttribute('onclick') || '').includes(`navigateTo('${viewName}')`);
-        btn.classList.toggle('is-active', isMatch);
+      // Synchronize workspace navbar links active state
+      document.querySelectorAll('#workspaceNavLinks a').forEach(link => {
+        const onclickAttr = link.getAttribute('onclick') || '';
+        const isMatch = onclickAttr.includes(`'${viewName}'`) || onclickAttr.includes(`"${viewName}"`);
+        link.classList.toggle('is-active', isMatch);
       });
 
       // Synchronize user pills
